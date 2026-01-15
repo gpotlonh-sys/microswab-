@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microswab Profile</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+<style>
+  body { margin:0; font-family:'Inter','Arial',sans-serif; background:#fefefe; color:#1c1c1c; padding-bottom:70px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#fff; border-bottom:1px solid #eaeaea; position:sticky; top:0; z-index:1000; }
+  .topbar .logo { font-family:'Poppins',sans-serif; font-size:22px; font-weight:700; color:#6a0dad; }
+  .topbar .search { flex:1; margin-left:10px; display:flex; align-items:center; background:#f3f3f3; padding:4px 10px; border-radius:25px; position:relative; }
+  .topbar .search input { border:none; outline:none; background:transparent; font-size:14px; flex:1; }
+  .topbar .search span { font-size:20px; color:#888; cursor:pointer; }
+  .search-results { position:absolute; top:38px; left:0; right:0; background:#fff; border:1px solid #ddd; max-height:200px; overflow-y:auto; display:none; z-index:1001; }
+  .search-result { padding:8px 12px; border-bottom:1px solid #eee; cursor:pointer; display:flex; align-items:center; gap:10px; }
+  .search-result img { width:35px; height:35px; border-radius:50%; object-fit:cover; }
+
+  .profile-header { background:#fff; padding:14px 16px; border-bottom:1px solid #eaeaea; display:flex; flex-direction:column; }
+  .profile-top { display:flex; align-items:center; gap:16px; }
+  .avatar-container { position:relative; width:100px; height:100px; flex-shrink:0; cursor:pointer; }
+  .avatar-container img.avatar { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid #6a0dad; transition:transform 0.2s; }
+  .avatar-container img.avatar:hover { transform:scale(1.05); }
+  .avatar-container .add-icon {
+  position:absolute;
+  bottom:0;
+  right:0;
+  background:#6a0dad;
+  color:#fff;
+  font-size:16px;
+  width:22px;
+  height:22px;
+  display:none; /* 👈 hidden by default */
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  border:2px solid #fff;
+  transition:transform 0.2s ease;
+}
+  .avatar-container:hover .add-icon { transform:scale(1.2); }
+  .avatar-container .add-icon {
+  pointer-events: auto; /* allow clicks */
+  display: none; /* hidden by default */
+}
+
+.avatar-container:hover .add-icon {
+  transform: none; /* don't scale if hidden */
+}
+
+  .profile-stats-inline { display:flex; gap:20px; flex:1; justify-content:flex-start; margin-left:16px; }
+  .profile-stats-inline .stat { text-align:center; }
+  .profile-stats-inline .stat .count { font-weight:700; font-size:16px; display:block; }
+  .profile-stats-inline .stat .label { font-size:12px; color:#555; display:block; }
+
+  .username { font-size:18px; font-weight:700; margin:12px 0 4px; text-align:left; }
+  .bio { font-size:13px; color:#555; margin-bottom:12px; line-height:1.4; word-break:break-word; }
+
+  .profile-buttons { display:flex; gap:8px; margin-bottom:12px; }
+  .profile-buttons button { flex:1; min-width:60px; padding:6px 8px; font-size:13px; font-weight:600; border-radius:20px; cursor:pointer; text-align:center; border:1px solid transparent; transition:all 0.2s; }
+  .follow-btn { background:#6a0dad; color:#fff; border:1px solid #6a0dad; }
+  .follow-btn.following { background:#fff; color:#6a0dad; border:1px solid #6a0dad; }
+  .follow-btn:hover { opacity:0.85; }
+  .edit-btn { background:#6a0dad; color:#fff; border:1px solid #6a0dad; }
+  .edit-btn:hover { background:#fff; color:#6a0dad; }
+
+  .profile-dashboard { display:flex; justify-content:space-around; border-top:1px solid #eee; border-bottom:1px solid #eee; background:#fff; margin-bottom:6px; }
+  .dashboard-tab { flex:1; text-align:center; padding:6px 0; cursor:pointer; color:#888; }
+  .dashboard-tab.active { color:#6a0dad; border-bottom:3px solid #6a0dad; }
+  .dashboard-tab span { font-size:20px; }
+  /* ===== Profile video preview style ===== */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.video-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Play icon */
+.video-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 56px;
+  color: rgba(255,255,255,0.9);
+  pointer-events: none;
+}
+
+/* Views bottom-left */
+.video-views {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+  /* ======================= POSTS GRID ======================= */
+  .user-posts { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; padding:8px; }
+
+  .post { border:1px solid #eee; border-radius:12px; overflow:hidden; background:#fff; display:flex; flex-direction:column; gap:6px; transition: transform 0.2s, box-shadow 0.2s; }
+  .post:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+  .post-header { display:flex; align-items:center; padding:6px; gap:8px; }
+  .poster-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; cursor:pointer; border:1px solid #ddd; }
+  .post-header .username { font-weight:600; color:#1c1c1c; text-decoration:none; }
+  .post-header .follow-btn { margin-left:auto; padding:4px 10px; font-size:12px; border-radius:16px; border:1px solid #6a0dad; background:#6a0dad; color:#fff; cursor:pointer; transition:all 0.2s; }
+  .post-header .follow-btn.following { background:#fff; color:#6a0dad; }
+  .post-header .follow-btn:hover { opacity:0.85; }
+
+  .post-title { font-weight:600; padding:0 6px; font-size:14px; line-height:1.4; color:#1c1c1c; }
+  .post img.main { width:100%; object-fit:cover; aspect-ratio:1/1; border-radius:8px; }
+
+  .post-actions { display:flex; justify-content:space-between; padding:4px 6px; font-size:14px; border-top:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0; background:#fafafa; }
+  .post-actions div { display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none; padding:4px; border-radius:50%; background:#fff; }
+  .post-actions div span.material-icons { font-size:18px; color:#555; }
+  .post-actions div span.like-count,
+  .post-actions div span.comment-count,
+  .post-actions div span.views-count { font-size:13px; color:#333; }
+
+  .post-actions .like.liked span.material-icons { color:orange; }
+
+  .learn-skill { padding:6px; }
+  .learn-skill button { width:100%; padding:8px 0; background:#6a0dad; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.2s; }
+  .learn-skill button:hover { opacity:0.9; }
+
+  .comment-section { padding:6px; display:none; flex-direction:column; gap:6px; }
+  .comment-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:8px; outline:none; font-size:13px; }
+  .comment-list { display:flex; flex-direction:column; gap:4px; }
+  .comment-item { display:flex; align-items:center; gap:6px; font-size:13px; color:#1c1c1c; }
+  .comment-item img { width:28px; height:28px; border-radius:50%; object-fit:cover; }
+
+  .bottom-nav { position:fixed; bottom:0; width:100%; background:#fff; display:flex; justify-content:space-between; box-shadow:0 -3px 10px rgba(0,0,0,0.08); z-index:1000; }
+  .bottom-nav a { flex:1; text-decoration:none; color:#555; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4px 0; font-size:10px; }
+  .bottom-nav a span { font-size:20px; }
+  .plus-button { font-size:26px !important; color:#6a0dad; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Microswab</div>
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Search skills...">
+    <span class="material-icons-outlined" id="searchBtn">search</span>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<div id="profilePage">
+  <div class="profile-header">
+    <div class="profile-top">
+      <div class="avatar-container" id="avatarContainer">
+  <img id="profilePic" class="avatar" src="default-avatar.jpg" alt="Profile Picture">
+  <span class="add-icon" id="addIcon">➕</span>
+</div>
+      <div class="profile-stats-inline">
+        <div class="stat"><span class="count" id="postsCount">0</span><span class="label">Posts</span></div>
+        <div class="stat"><span class="count" id="followersCount">0</span><span class="label">Followers</span></div>
+        <div class="stat"><span class="count" id="followingCount">0</span><span class="label">Following</span></div>
+      </div>
+    </div>
+    <h2 class="username" id="username">User</h2>
+    <p class="bio" id="bio">Loading bio...</p>
+    <div class="profile-buttons">
+      <button class="follow-btn" id="followBtn">Follow</button>
+      <button class="edit-btn" onclick="window.location.href='profile-setup.html'">Edit</button>
+    </div>
+    <div class="profile-dashboard">
+      <div class="dashboard-tab active" data-tab="posts"><span class="material-icons-outlined">grid_on</span></div>
+      <div class="dashboard-tab" data-tab="videos"><span class="material-icons-outlined">smart_display</span></div>
+      <div class="dashboard-tab" data-tab="tags"><span class="material-icons-outlined">person_pin</span></div>
+    </div>
+  </div>
+
+<div class="user-posts" id="postsGrid"></div>
+</div>
+
+<div class="bottom-nav">
+  <a href="home.html"><span class="material-icons-outlined">home</span>Home</a>
+  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>learning</a>
+  <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>
+<a href="reels.html" class="reels-btn">
+    <span class="material-icons-outlined">video_library</span>
+    videos
+  </a>
+  <a href="profile.html"><span class="material-icons-outlined">person</span>Profile</a>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+// ====== STEP 1: Fix old posts without likesArray ======
+async function fixOldLikes() {
+  const skillsSnap = await getDocs(collection(db, "skills"));
+  skillsSnap.docs.forEach(async skillDoc => {
+    const data = skillDoc.data();
+    if (!data.likesArray) {
+      await updateDoc(skillDoc.ref, { likesArray: [] });
+      console.log("Fixed likesArray for post:", skillDoc.id);
+    }
+  });
+}
+fixOldLikes(); // Run once
+// Helper to get a query parameter from URL
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  arrayUnion,
+  arrayRemove,
+  increment,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+  authDomain:"vs-code-d4d6b.firebaseapp.com",
+  projectId:"vs-code-d4d6b",
+  storageBucket:"vs-code-d4d6b.appspot.com",
+  appId:"1:1012283563694:web:f25cfd82e9f762f617d73f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const profilePic = document.getElementById("profilePic");
+const fileInput = document.getElementById("fileInput");
+const usernameEl = document.getElementById("username");
+const bioEl = document.getElementById("bio");
+const postsCountEl = document.getElementById("postsCount");
+const followersCountEl = document.getElementById("followersCount");
+const followingCountEl = document.getElementById("followingCount");
+const followBtn = document.getElementById("followBtn");
+const postsGrid = document.getElementById("postsGrid");
+
+let profileUserId = "";
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user) return;
+  const urlUid = getQueryParam("uid"); // get uid from URL
+profileUserId = urlUid || user.uid;  // if no uid, use logged-in user
+
+  const userRef = doc(db, "users", profileUserId);
+ const addIcon = document.getElementById("addIcon");
+
+// Always hide by default
+addIcon.style.display = "none";
+
+// Show ONLY if the logged-in user is the profile owner
+if(auth.currentUser.uid === profileUserId){
+    addIcon.style.display = "flex"; // show
+    addIcon.addEventListener("click", () => {
+        fileInput.click();
+    });
+} else {
+  addIcon.style.display = "none"; // 👈 HIDE for others
+}
+
+  // ===== Real-time profile info =====
+onSnapshot(userRef, snap=>{
+  if(!snap.exists()) return;
+  const data = snap.data();
+  usernameEl.textContent = (data.firstName||"User")+" "+(data.secondName||"");
+  bioEl.textContent = data.bio || "No bio yet.";
+  profilePic.src = data.photoURL || "default-avatar.jpg";
+
+  function formatFollowers(count, isOfficialProfile) {
+  if (isOfficialProfile) return "13.7K";
+  if (count >= 1000) return (count / 1000).toFixed(1) + "K";
+  return count;
+}
+
+// Inside the onSnapshot where you update follower count:
+const isOfficialProfile = profileUserId === "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
+followersCountEl.textContent = formatFollowers(
+  data.followers?.length || 0,
+  isOfficialProfile
+);
+  followingCountEl.textContent = data.following?.length || 0;
+
+  // ===== BUTTONS VISIBILITY BASED ON PROFILE =====
+  if(auth.currentUser.uid === profileUserId){
+    // Viewing own profile
+    followBtn.style.display = "none";
+    document.querySelector(".edit-btn").style.display = "inline-block";
+  } else {
+    // Viewing another user's profile
+    followBtn.style.display = "inline-block"
+    document.querySelector(".edit-btn").style.display = "none";
+  }
+
+  // ===== FOLLOW BUTTON STATE =====
+  if(data.followers?.includes(auth.currentUser.uid)){
+    followBtn.classList.add("following");
+    followBtn.textContent = "Following";
+  } else {
+    followBtn.classList.remove("following");
+    followBtn.textContent = "Follow";
+  }
+});
+
+  // ===== Real-time user posts =====
+  const postsQuery = query(collection(db,"skills"), where("posterUserId","==",profileUserId));
+  onSnapshot(postsQuery, snapshot=>{
+    postsGrid.innerHTML = "";
+    postsCountEl.textContent = snapshot.docs.length;
+
+    snapshot.docs.forEach(async skillDoc=>{
+      const skill = skillDoc.data();
+      const skillId = skillDoc.id;
+
+      const post = document.createElement("div");
+      post.className = "post";
+      post.id = "post-" + skillId;
+
+      post.innerHTML = `
+        <div class="post-header">
+  <img src="default-avatar.jpg" alt="Profile" class="poster-avatar">
+  <a href="#" class="username">Loading...</a>
+  <button class="follow-btn">Follow</button>
+${skill.posterUserId === auth.currentUser.uid 
+    ? `<span class="material-icons delete-menu" style="cursor:pointer;">more_vert</span>` 
+    : ""}
+</div>
+        <div class="post-title">${skill.title || ""}</div>
+       ${skill.postType === "video" && skill.videoURL
+  ? `
+    <div class="video-wrapper" style="position:relative; cursor:pointer;">
+  <video 
+    class="main" 
+    src="${skill.videoURL}"        <!-- Add the actual video URL here -->
+    muted 
+    playsinline 
+    preload="metadata"             <!-- Load metadata to show first frame -->
+    style="width:100%; border-radius:8px; object-fit:cover;"
+  ></video>
+
+  <!-- Play button in the center -->
+  <span class="material-icons" style="
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    font-size:48px;
+    color:white;
+    text-shadow: 0 0 6px rgba(0,0,0,0.6);
+  ">play_circle_filled</span>
+
+  <!-- Views at bottom-left -->
+  <div style="
+    position:absolute;
+    bottom:8px;
+    left:8px;
+    background:rgba(0,0,0,0.4);
+    color:#fff;
+    padding:2px 6px;
+    border-radius:12px;
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    gap:2px;
+  ">
+    <span class="material-icons" style="font-size:14px;">visibility</span>
+    <span>${skill.views || 0}</span>
+  </div>
+</div>
+  `
+  : skill.fileURL
+    ? `<img class="main" src="${skill.fileURL}" alt="skill-image">`
+    : ""
+}
+        <div class="post-actions">
+  <div class="like"><span class="material-icons">thumb_up</span><span class="like-count">${skill.likes || 0}</span></div>
+  <div class="comment"><span class="material-icons">chat_bubble_outline</span><span class="comment-count">${skill.comments?.length || 0}</span></div>
+  <div class="views"><span class="material-icons">visibility</span><span class="views-count">${skill.views || 0}</span></div>
+  <div class="share"><span class="material-icons">share</span><span class="share-count">${skill.shares || 0}</span></div>
+</div>
+        <div class="learn-skill"><button>Learn Skill</button></div>
+        <div class="comment-section">
+          <input class="comment-input" type="text" placeholder="Write a comment..." />
+          <div class="comment-list"></div>
+        </div>
+      `;
+      postsGrid.appendChild(post);
+      
+      // 🎬 When clicking a video in profile, go to reels.html showing that video
+const videoWrapper = post.querySelector(".video-wrapper");
+if (videoWrapper) {
+  videoWrapper.addEventListener("click", () => {
+    window.location.href = `reels.html?videoId=${skillId}`;
+  });
+}
+      
+    // ===== DELETE POST (OWNER ONLY) =====
+const deleteMenu = post.querySelector(".delete-menu");
+
+if (deleteMenu) {
+  deleteMenu.addEventListener("click", async () => {
+    // ✅ Prevent non-owners from deleting
+    if(skill.posterUserId !== auth.currentUser.uid){
+      alert("You cannot delete this post!");
+      return;
+    }
+
+    const confirmDelete = confirm(
+      "Are you sure you want to permanently delete this post? This action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const skillRef = doc(db, "skills", skillId);
+
+      // 🔥 Delete all comments subcollection
+      const commentsSnap = await getDocs(collection(db, "skills", skillId, "comments"));
+      for (const c of commentsSnap.docs) {
+        await deleteDoc(c.ref);
+      }
+
+      // 🔥 Delete skill document
+      await deleteDoc(skillRef);
+
+      // 🔥 Remove from UI immediately
+      post.remove();
+
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Error deleting this post. Check console.");
+    }
+  });
+}
+      // --- Poster info ---
+      const posterSnap = await getDoc(doc(db,"users",skill.posterUserId));
+      if(posterSnap.exists()){
+        const poster = posterSnap.data();
+        const nameEl = post.querySelector(".username");
+        const imgEl = post.querySelector(".poster-avatar");
+        const followBtnPost = post.querySelector(".follow-btn");
+
+        nameEl.textContent = (poster.firstName||"") + (poster.secondName ? " " + poster.secondName : "");
+        imgEl.src = poster.photoURL || "default-avatar.jpg";
+        nameEl.href = `profile.html?uid=${skill.posterUserId}`;
+        imgEl.addEventListener("click", ()=> window.location.href=`profile.html?uid=${skill.posterUserId}`);
+
+        // Follow button on post
+        onSnapshot(userRef, snap=>{
+          const following = snap.data()?.following || [];
+          followBtnPost.classList.toggle("following", following.includes(skill.posterUserId));
+          followBtnPost.textContent = following.includes(skill.posterUserId) ? "Following" : "Follow";
+        });
+
+        followBtnPost.addEventListener("click", async ()=>{
+          const posterRef = doc(db,"users",skill.posterUserId);
+          const meSnap = await getDoc(userRef);
+          if(!meSnap.exists()) return;
+          const following = meSnap.data().following || [];
+          if(following.includes(skill.posterUserId)){
+            await updateDoc(userRef,{following: arrayRemove(skill.posterUserId)});
+            await updateDoc(posterRef,{followers: arrayRemove(profileUserId)});
+          } else {
+            await updateDoc(userRef,{following: arrayUnion(skill.posterUserId)});
+            await updateDoc(posterRef,{followers: arrayUnion(profileUserId)});
+          }
+        });
+      }
+
+      // --- Like button ---
+const likeBtn = post.querySelector(".like");
+const likeCount = post.querySelector(".like-count");
+
+// Ensure likesArray exists and is an array
+const likesArray = Array.isArray(skill.likesArray) ? skill.likesArray : [];
+
+// Set initial liked state for current user
+if(profileUserId && likesArray.includes(profileUserId)) {
+  likeBtn.classList.add("liked");
+}
+
+// Listen for real-time changes to likes
+onSnapshot(doc(db, "skills", skillId), snap => {
+  if(!snap.exists()) return;
+  const data = snap.data();
+
+  // Make sure likes is a number
+  const likesNumber = Number(data.likes) || 0;
+  likeCount.textContent = likesNumber;
+
+  // Update button state for current user
+  if(profileUserId && Array.isArray(data.likesArray) && data.likesArray.includes(profileUserId)){
+    likeBtn.classList.add("liked");
+  } else {
+    likeBtn.classList.remove("liked");
+  }
+});
+
+// Handle click
+likeBtn.addEventListener("click", async () => {
+  if(!profileUserId) { alert("Please log in to like."); return; }
+
+  const skillRef = doc(db, "skills", skillId);
+  const docSnap = await getDoc(skillRef);
+  if(!docSnap.exists()) return;
+
+  // Ensure likesArray exists
+  const likedBy = Array.isArray(docSnap.data().likesArray) ? docSnap.data().likesArray : [];
+
+  if(likedBy.includes(profileUserId)){
+    await updateDoc(skillRef, { likes: increment(-1), likesArray: arrayRemove(profileUserId) });
+  } else {
+    await updateDoc(skillRef, { likes: increment(1), likesArray: arrayUnion(profileUserId) });
+  }
+});
+
+      // --- Comments section ---
+      const commentBtn = post.querySelector(".comment");
+      const commentInput = post.querySelector(".comment-input");
+      const commentList = post.querySelector(".comment-list");
+      const commentCountEl = post.querySelector(".comment-count");
+      const commentsCol = collection(db,"skills",skillId,"comments");
+
+      // Show/hide comments on click
+      commentBtn.addEventListener("click", ()=>{
+        commentList.parentElement.style.display = commentList.parentElement.style.display==="flex"?"none":"flex";
+      });
+
+      // Real-time comments
+      onSnapshot(commentsCol, snapshotComments=>{
+        if(commentList.parentElement.style.display==="none") return;
+        commentList.innerHTML="";
+        commentCountEl.textContent = snapshotComments.size;
+        snapshotComments.docs.forEach(async cSnap=>{
+          const c = cSnap.data();
+          let cName = "Unknown", cPhoto="default-avatar.jpg";
+          try{
+            const uSnap = await getDoc(doc(db,"users",c.userId));
+            if(uSnap.exists()){
+              const u = uSnap.data();
+              cName = (u.firstName||"") + (u.secondName? " "+u.secondName:"");
+              cPhoto = u.photoURL || "default-avatar.jpg";
+            }
+          } catch(e){ console.error(e); }
+          const commentEl = document.createElement("div");
+          commentEl.className="comment-item";
+          commentEl.innerHTML = `<img src="${cPhoto}" /><div><strong>${cName}</strong> <span>${c.text}</span></div>`;
+          commentList.appendChild(commentEl);
+        });
+      });
+
+      // Add new comment
+      commentInput.addEventListener("keypress", async e=>{
+        if(e.key==="Enter" && commentInput.value.trim()!==""){
+          const text = commentInput.value.trim();
+          const commentRef = doc(collection(db,"skills",skillId,"comments"));
+          await updateDoc(doc(db,"skills",skillId),{
+            comments: arrayUnion({userId: profileUserId,text,timestamp:new Date()})
+          });
+          await setDoc(commentRef,{userId: profileUserId,text,timestamp:new Date()});
+          commentInput.value="";
+        }
+      });
+
+      // --- Learn Skill button ---
+     post.querySelector(".learn-skill button").addEventListener("click", async ()=>{
+    if(!skillId || !auth.currentUser) return;
+
+    const userRef = doc(db, "users", auth.currentUser.uid);
+
+    // Save skillId to user's learnedSkills array
+    await updateDoc(userRef, {
+        learnedSkills: arrayUnion(skillId)
+    });
+
+    // Redirect to the skill page
+    window.location.href = `teacherchat.html?skillId=${encodeURIComponent(skillId)}`;
+});
+
+      // --- Views increment ---
+      (async()=>{
+        try{
+          const skillRef = doc(db,"skills",skillId);
+          if(!skill.viewsArray || !skill.viewsArray.includes(profileUserId)){
+            await updateDoc(skillRef,{views: increment(1), viewsArray: arrayUnion(profileUserId)});
+            const prev = parseInt(post.querySelector('.views-count').textContent||"0",10);
+            post.querySelector('.views-count').textContent = prev+1;
+          }
+        }catch(e){console.error(e);}
+      })();
+
+    }); // end snapshot.docs.forEach
+  }); // end onSnapshot posts
+
+  // ===== Main follow & message & avatar =====
+  followBtn.addEventListener("click", async ()=>{
+    const meSnap = await getDoc(userRef);
+    const following = meSnap.data().following || [];
+    if(following.includes(profileUserId)){
+      await updateDoc(userRef,{following: arrayRemove(profileUserId)});
+    } else {
+      await updateDoc(userRef,{following: arrayUnion(profileUserId)});
+    }
+  });
+
+
+  fileInput.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "microswab-profile"); // 👈 YOUR PRESET
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dcpa8046h/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Cloudinary upload failed");
+    }
+
+    const data = await response.json();
+    console.log("UPLOAD SUCCESS:", data);
+
+    // Update UI immediately
+    profilePic.src = data.secure_url;
+
+    // Save to Firestore
+    await updateDoc(doc(db, "users", auth.currentUser.uid), {
+      photoURL: data.secure_url
+    });
+
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
+    alert("Upload failed. Check console.");
+  }
+});
+
+});
+</script>
+</body>
+</html>

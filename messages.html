@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>courses </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+<style>
+body, html {
+  margin:0; padding:0; height:100%;
+  font-family:Arial,sans-serif;
+  background:#f0f2f5;
+}
+.header {
+  background:#fff;
+  padding:14px 18px;
+  font-weight:bold;
+  font-size:20px;
+  border-bottom:1px solid #ddd;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.search-bar {
+  display:flex;
+  padding:8px 18px;
+  background:#f0f2f5;
+  border-bottom:1px solid #ddd;
+}
+.search-bar input {
+  flex:1;
+  padding:8px 12px;
+  border-radius:20px;
+  border:1px solid #ccc;
+  outline:none;
+}
+.search-bar button {
+  margin-left:8px;
+  padding:8px 12px;
+  border-radius:20px;
+  border:none;
+  background:#0084ff;
+  color:white;
+}
+#myCoursesGrid {
+  padding:12px 18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.course-card {
+  background:#fff;
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  cursor:pointer;
+  transition: transform 0.2s;
+}
+.course-card:hover { transform: translateY(-3px); }
+.course-card img {
+  width:100%;
+  height:100px;
+  border-radius:8px;
+  object-fit:cover;
+}
+.course-card .title {
+  font-weight:600;
+  margin-top:6px;
+}
+.course-card .teacher {
+  font-size:12px;
+  color:#555;
+}
+.conversation-list {
+  list-style:none;
+  padding:0;
+  margin:0;
+  overflow-y:auto;
+  height:calc(100vh - 310px);
+}
+.conversation-item {
+  display:flex;
+  align-items:center;
+  padding:12px 18px;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  cursor:pointer;
+}
+.conversation-item:hover { background:#f5f6f7; }
+.avatar { position:relative; margin-right:14px; }
+.avatar img {
+  width:52px; height:52px;
+  border-radius:50%;
+  object-fit:cover;
+}
+.online-dot {
+  position:absolute;
+  bottom:-2px; right:-2px;
+  width:12px; height:12px;
+  background:#4caf50;
+  border:2px solid #fff;
+  border-radius:50%;
+}
+.conversation-info { flex:1; min-width:0; }
+.name { font-weight:600; font-size:16px; }
+.last-message {
+  font-size:14px;
+  color:#555;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.last-message.unread { font-weight:bold; color:#000; }
+.meta { text-align:right; min-width:70px; }
+.timestamp { font-size:12px; color:#888; margin-bottom:6px; }
+.unread-badge {
+  background:#0084ff;
+  color:#fff;
+  font-size:12px;
+  padding:3px 7px;
+  border-radius:12px;
+  transition: all 0.3s ease;
+}
+.unread-badge.hidden {
+  opacity:0;
+  transform: scale(0.5);
+}
+.empty-state {
+  text-align:center;
+  padding:40px 20px;
+  color:#777;
+}
+.new-chat-btn {
+  position:fixed;
+  bottom:80px;
+  right:20px;
+  background:#0084ff;
+  color:white;
+  border:none;
+  border-radius:50%;
+  width:56px;
+  height:56px;
+  font-size:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 6px rgba(0,0,0,0.2);
+  cursor:pointer;
+}
+.bottom-nav {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:8px 0;
+  box-shadow:0 -3px 6px rgba(0,0,0,0.1);
+}
+.bottom-nav a {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#555;
+  font-size:11px;
+}
+.bottom-nav a span { font-size:24px; }
+.plus-button { font-size:28px !important; color:#6a0dad; }
+
+/* ===== New Chat Modal ===== */
+#newChatModal {
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+  z-index:200;
+}
+#newChatModal .modal-content {
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  width:90%;
+  max-width:400px;
+  text-align:center;
+}
+#newChatModal input {
+  width:100%;
+  padding:10px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  outline:none;
+}
+#newChatModal button {
+  padding:10px 16px;
+  border:none;
+  background:#0084ff;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  courses
+  <button id="filterUnreadBtn">Unread</button>
+</div>
+
+<div class="search-bar">
+  <input id="searchInput" placeholder="Search teachers..." />
+  <button id="clearSearch">Clear</button>
+</div>
+
+<!-- ===== Learned Courses ===== -->
+<div id="myCoursesGrid"></div>
+
+<!-- ===== Conversation List ===== -->
+<ul class="conversation-list" id="conversationList"></ul>
+
+<button class="new-chat-btn" id="newChatBtn">+</button>
+
+<div class="bottom-nav">
+  <a href="home.html"><span class="material-icons-outlined">home</span>Home</a>
+  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Learning</a>
+  <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>
+  <a href="reels.html" class="reels-btn"><span class="material-icons-outlined">video_library</span>Videos</a>
+  <a href="profile.html"><span class="material-icons-outlined">person</span>Profile</a>
+</div>
+
+<!-- ===== New Chat Modal ===== -->
+<div id="newChatModal">
+  <div class="modal-content">
+    <h3>Start New Chat</h3>
+    <input id="newChatUid" placeholder="Enter teacher UID">
+    <button id="startChatBtn">Start Chat</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import {
+  getFirestore, collection, query, where, onSnapshot,
+  doc, getDoc, updateDoc, setDoc
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+  authDomain: "vs-code-d4d6b.firebaseapp.com",
+  projectId: "vs-code-d4d6b",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const list = document.getElementById("conversationList");
+const myCoursesGrid = document.getElementById("myCoursesGrid");
+const searchInput = document.getElementById("searchInput");
+const filterUnreadBtn = document.getElementById("filterUnreadBtn");
+const clearSearchBtn = document.getElementById("clearSearch");
+const newChatBtn = document.getElementById("newChatBtn");
+const newChatModal = document.getElementById("newChatModal");
+const newChatUidInput = document.getElementById("newChatUid");
+const startChatBtn = document.getElementById("startChatBtn");
+
+let cachedUsers = {};
+let allConvs = [];
+let showUnreadOnly = false;
+
+// ===== Helpers =====
+function timeAgo(ts){
+  if(!ts) return "";
+  const s = (Date.now() - ts.toDate())/1000;
+  if(s < 60) return "Now";
+  if(s < 3600) return Math.floor(s/60) + "m";
+  if(s < 86400) return Math.floor(s/3600) + "h";
+  return ts.toDate().toLocaleDateString();
+}
+
+async function getUser(uid){
+  try{
+    if(cachedUsers[uid]) return cachedUsers[uid];
+    const snap = await getDoc(doc(db,"users",uid));
+    cachedUsers[uid] = snap.exists() ? snap.data() : null;
+    return cachedUsers[uid];
+  } catch(e){
+    console.error("Failed to load user:", uid, e);
+    return null;
+  }
+}
+
+// ===== Render Learned Courses =====
+async function loadLearnedCourses(uid){
+  const userSnap = await getDoc(doc(db,"users",uid));
+  if(!userSnap.exists()) return;
+
+  const learnedSkills = userSnap.data().learnedSkills || [];
+  myCoursesGrid.innerHTML = "";
+
+  for(const skillId of learnedSkills){
+    const skillSnap = await getDoc(doc(db,"skills",skillId));
+    if(!skillSnap.exists()) continue;
+
+    const skill = skillSnap.data();
+    const div = document.createElement("div");
+    div.className = "course-card";
+    div.innerHTML = `
+      <img src="${skill.fileURL || 'default-avatar.jpg'}">
+      <div class="title">${skill.title || 'Untitled Course'}</div>
+      <div class="teacher">By ${skill.posterName || 'Teacher'}</div>
+    `;
+    div.onclick = ()=>{ window.location.href = `teacherchat.html?skillId=${encodeURIComponent(skillId)}`; };
+    myCoursesGrid.appendChild(div);
+  }
+
+  if(learnedSkills.length===0){
+    myCoursesGrid.innerHTML = "<div style='padding:20px; text-align:center; color:#777;'>You haven’t learned any skills yet. Start learning now!</div>";
+  }
+}
+
+// ===== Render Conversations =====
+function renderConversations(){
+  list.innerHTML = "";
+  const term = searchInput.value.toLowerCase();
+  let filtered = [];
+
+  for(const c of allConvs){
+    const other = c.participants.find(u=>u!==auth.currentUser.uid);
+    const u = cachedUsers[other];
+    if(!u) continue;
+
+    const unread = auth.currentUser.uid === c.teacherId ? (c.unreadCountTeacher||0) : (c.unreadCountStudent||0);
+    const name = `${u.firstName||''} ${u.secondName||''}`;
+    if(showUnreadOnly && unread===0) continue;
+    if(term && !name.toLowerCase().includes(term)) continue;
+
+    const li = document.createElement("li");
+    li.className = "conversation-item";
+    li.onclick = async () => {
+      const convRef = doc(db, "conversations", c.id);
+      if(auth.currentUser.uid === c.teacherId && unread>0) await updateDoc(convRef,{ unreadCountTeacher:0 });
+      if(auth.currentUser.uid === c.studentId && unread>0) await updateDoc(convRef,{ unreadCountStudent:0 });
+
+      sessionStorage.setItem("openedConvId", c.id);
+      location.href = `teacherchat.html?convId=${c.id}&uid=${other}`;
+    };
+
+    li.innerHTML = `
+      <div class="avatar">
+        <img src="${u.photoURL || 'default-avatar.jpg'}">
+        ${u.isOnline ? '<span class="online-dot"></span>' : ''}
+      </div>
+      <div class="conversation-info">
+        <div class="name">${name}</div>
+        <div class="last-message ${unread>0?'unread':''}">${c.lastMessage || ''}</div>
+      </div>
+      <div class="meta">
+        <div class="timestamp">${timeAgo(c.lastMessageTime)}</div>
+        ${unread>0 ? `<div class="unread-badge">${unread}</div>` : ''}
+      </div>
+    `;
+    list.appendChild(li);
+    filtered.push(li);
+  }
+
+  if(filtered.length===0){
+    list.innerHTML += `<div class="empty-state">${term ? "No messages match your search." : "No messages yet."}</div>`;
+  }
+}
+
+// ===== Auth =====
+onAuthStateChanged(auth, async user=>{
+  if(!user) return location.href="login.html";
+
+  await loadLearnedCourses(user.uid);
+
+  const q = query(collection(db,"conversations"), where("participants","array-contains",user.uid));
+  onSnapshot(q, async snap=>{
+    allConvs = snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=> (b.lastMessageTime?.toMillis()||0) - (a.lastMessageTime?.toMillis()||0));
+
+    // preload users
+    const ids = new Set();
+    allConvs.forEach(c=>{
+      const other = c.participants.find(u=>u!==auth.currentUser.uid);
+      if(other) ids.add(other);
+    });
+    await Promise.all([...ids].map(id=>getUser(id)));
+
+    renderConversations();
+  });
+});
+
+// ===== Event Handlers =====
+searchInput.oninput = renderConversations;
+clearSearchBtn.onclick = ()=>{ searchInput.value=""; renderConversations(); };
+filterUnreadBtn.onclick = ()=>{ showUnreadOnly=!showUnreadOnly; renderConversations(); };
+
+// ===== New Chat =====
+newChatBtn.onclick = ()=> newChatModal.style.display="flex";
+newChatModal.onclick = e => { if(e.target===newChatModal) newChatModal.style.display="none"; };
+startChatBtn.onclick = async () => {
+  const uid = newChatUidInput.value.trim();
+  if(!uid) return alert("Enter teacher UID");
+
+  const userSnap = await getDoc(doc(db,"users",uid));
+  if(!userSnap.exists()) return alert("User not found");
+
+  const convId = [auth.currentUser.uid, uid].sort().join("_");
+  const convoRef = doc(db,"conversations",convId);
+  await setDoc(convoRef, {
+    participants: [auth.currentUser.uid, uid],
+    lastMessage: "",
+    lastMessageTime: null,
+    teacherId: uid,
+    studentId: auth.currentUser.uid,
+    unreadCountTeacher: 0,
+    unreadCountStudent: 0
+  }, { merge:true });
+
+  sessionStorage.setItem("openedConvId", convId);
+  location.href = `teacherchat.html?convId=${convId}&uid=${uid}`;
+};
+</script>
+
+</body>
+</html>

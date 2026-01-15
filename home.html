@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Microswab Home</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    /* ========= Base ========= */
+   body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #fafafa;
+  padding-bottom: 80px; /* IMPORTANT */
+  -webkit-font-smoothing: antialiased;
+}
+    /* ========= Topbar (Microswab + Search) ========= */
+    .topbar {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 12px;
+      background:#fff;
+      border-bottom:1px solid #e6e6e6;
+      position:sticky;
+      top:0;
+      z-index:1002;
+    }
+    .logo { font-family:'Brush Script MT', cursive; font-size:24px; color:#6a0dad; font-weight:bold; }
+    .search {
+  flex: 1;
+  max-width: 130px; /* 🔥 KEY FIX */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f1f1;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 8px;
+}
+    /* ========= Stories bar (inline) ========= */
+    .stories-wrapper { background: #fff; border-bottom:1px solid #e6e6e6; position:relative; z-index:1001; }
+    .stories-bar { display:flex; gap:12px; padding:12px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .stories-bar::-webkit-scrollbar{ display:none; }
+    .story { flex:0 0 auto; width:72px; text-align:center; font-size:12px; color:#333; cursor:pointer; }
+    .story .avatar-wrap { width:72px; height:72px; border-radius:50%; display:inline-block; padding:3px; box-sizing:border-box; background:transparent; }
+    .story.has-story .avatar-wrap { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); padding:3px; }
+    .story .avatar { width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; border:3px solid white; box-sizing:border-box; }
+    .story.add-story .avatar-wrap { background:transparent; padding:2px; }
+    .story .plus { position:relative; top:-12px; right:-18px; width:22px; height:22px; background:#0095f6; color:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; border:2px solid white; font-weight:700; }
+    .story .story-text { margin-top:6px; width:72px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; color:#333; }
+
+    /* ========= Feed posts (kept style) ========= */
+    .post {background:white;border-radius:12px;overflow:hidden;margin:15px auto;max-width:600px;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:0.3s;}
+    .post:hover {box-shadow:0 4px 16px rgba(0,0,0,0.15);}
+    .post-header {display:flex;align-items:center;padding:12px;}
+    .post-header img {width:50px;height:50px;border-radius:50%;object-fit:cover;margin-right:10px;}
+    .username {font-weight:bold;color:#6a0dad;cursor:pointer;font-size:16px;text-decoration:none;}
+    .follow-btn {margin-left:auto;padding:6px 14px;border-radius:20px;border:1px solid #6a0dad;background:#6a0dad;color:white;cursor:pointer;font-size:13px;transition:0.2s;}
+    .follow-btn.following {background:white;color:#6a0dad;}
+    .post-title {padding:0 12px 8px 12px;font-size:14px;font-weight:500;color:#333;}
+    .post img.main {width:100%;max-height:1000px;object-fit:cover;border-top:1px solid #eee;}
+    .post-actions {display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee;background:#fafafa;}
+    .post-actions div {display:flex;align-items:center;gap:5px;cursor:pointer;padding:6px 12px;border-radius:50px;background:white;box-shadow:0 1px 4px rgba(0,0,0,0.15);transition:0.2s;}
+    .post-actions div:hover {background:#f0f0f0;}
+    .post-actions .like span {color:black;}
+    .post-actions .like.liked span {color:#e91e63;} /* pink when liked */
+    .learn-skill {padding:10px;text-align:center;}
+    .learn-skill button {width:95%;padding:8px 0;border-radius:12px;border:none;background:#6a0dad;color:white;font-weight:bold;cursor:pointer;transition:0.2s;}
+    .learn-skill button:hover {background:#4b0082;}
+    .comment-section {padding:8px 12px 12px 12px;display:flex;flex-direction:column;gap:6px;}
+    .comment-input { width: 95%; padding: 8px 0; border-radius: 12px; border: none; font-size: 14px; outline: none; text-indent: 12px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .comment-list {margin-top:5px;max-height:200px;overflow-y:auto; display:none;}
+    .comment-item {margin-bottom:5px;font-size:13px;line-height:1.3;display:flex;align-items:flex-start;}
+    .comment-item img {width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:8px;}
+    .comment-item div {background:#f0f2f5;border-radius:12px;padding:6px 10px;flex:1;}
+    .comment-actions {font-size:12px;margin-top:4px;color:#555;display:flex;gap:10px;}
+
+    /* ========= Bottom nav ========= */
+    .bottom-nav {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  padding:8px 0;
+  box-shadow:0 -3px 6px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+.bottom-nav a {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#555;
+  font-size:11px;
+  flex:1;
+}
+.bottom-nav a span {
+  font-size:24px;
+}
+.bottom-nav a:hover,
+.bottom-nav a.active {
+  color:#6a0dad;
+}
+.plus-button {
+  font-size:28px !important;
+  color:#6a0dad;
+}
+    
+    /* ========= Story viewer (Facebook-style) ========= */
+    .story-viewer {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:#000;
+      z-index:2000;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      touch-action:none;
+    }
+    .story-viewer.show { display:flex; }
+    .story-inner { width:100%; height:100%; position:relative; }
+    .story-media { width:100%; height:100%; background-position:center; background-size:cover; display:flex; align-items:center; justify-content:center; }
+    .story-top { position:absolute; top:12px; left:12px; right:12px; display:flex; align-items:center; gap:12px; z-index:2; }
+    .story-top .user { display:flex; align-items:center; gap:8px; color:#fff; }
+    .story-top img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.6); }
+    .progresses { position:absolute; left:12px; right:12px; top:8px; display:flex; gap:6px; z-index:3; }
+    .progresses .bar { flex:1; height:3px; background:rgba(255,255,255,0.25); border-radius:3px; overflow:hidden; }
+    .progresses .bar > .fill { width:0%; height:100%; background:#fff; transition:width linear; }
+
+    /* tap regions */
+    .tap-left, .tap-right { position:absolute; top:0; bottom:0; width:40%; z-index:4; }
+    .tap-left { left:0; }
+    .tap-right { right:0; }
+
+    /* overlay close icon and caption area */
+    .close-btn { position:absolute; top:14px; right:14px; z-index:5; color:#fff; font-size:28px; cursor:pointer; }
+    .story-caption { position:absolute; bottom:28px; left:18px; right:18px; color:#fff; font-size:15px; z-index:3; text-shadow:0 2px 8px rgba(0,0,0,0.6); }
+
+    .hidden { display:none!important; }
+    @media (min-width:768px){
+      .story .avatar-wrap { width:72px; height:72px; }
+      .story .story-text { font-size:13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR: Microswab + search -->
+<div class="topbar">
+  <div class="logo">Microswab</div>
+
+  <div class="search">
+    <input id="globalSearch" type="text" placeholder="Search skills..." />
+    <span class="material-icons-outlined">search</span>
+  </div>
+
+  <!-- REELS ICON -->
+  <a href="reels.html" class="reels-btn">
+    <span class="material-icons-outlined">video_library</span>
+  </a>
+</div>
+  <!-- STORIES (bar) -->
+  <div class="stories-wrapper">
+    <div class="stories-bar" id="storiesBar">
+      <!-- Add story (keeps existing markup) -->
+      <div class="story add-story" id="addStoryBtn">
+        <div class="avatar-wrap inner">
+          <img id="storyProfilePic" class="avatar" src="default-avatar.jpg" alt="Your Story">
+        </div>
+        <div class="plus">+</div>
+        <div class="story-text">Add Story</div>
+      </div>
+      <!-- dynamic stories appended here -->
+    </div>
+  </div>
+
+  <!-- FEED -->
+  <div id="feed"></div>
+
+  <!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="home.html" class="active">
+    <span class="material-icons-outlined">home</span>
+    Home
+  </a>
+  <a href="messages.html">
+    <span class="material-icons-outlined">chat_bubble_outline</span>
+    learning
+  </a>
+  <a href="add.html">
+    <span class="material-icons plus-button">add</span>
+    Add
+  </a>
+  <a href="reels.html" class="reels-btn">
+    <span class="material-icons-outlined">video_library</span>
+    videos
+  </a>
+  <a href="profile.html">
+    <span class="material-icons-outlined">person</span>
+    Profile
+  </a>
+</div>
+
+  <!-- STORY VIEWER (Fullscreen - Facebook style) -->
+  <div id="storyViewer" class="story-viewer" aria-hidden="true">
+    <div class="story-inner">
+      <div class="progresses" id="progressContainer"></div>
+      <div class="story-top">
+        <div class="user">
+          <img id="viewerUserAvatar" src="default-avatar.jpg" alt="u">
+          <div id="viewerUserName" style="color:#fff;font-weight:600;">User</div>
+        </div>
+      </div>
+
+      <div id="storyMedia" class="story-media" role="img" aria-label="story media"></div>
+
+      <div class="tap-left" id="tapLeft"></div>
+      <div class="tap-right" id="tapRight"></div>
+
+      <div class="close-btn" id="closeStory">✕</div>
+      <div class="story-caption" id="storyCaption"></div>
+    </div>
+  </div>
+
+<script type="module">
+  // ========== Firebase imports ==========
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  // 🔐 Microswab AI (Founder) UID
+const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import {
+    getFirestore, collection, doc, getDoc, query, orderBy, onSnapshot,
+    updateDoc, arrayUnion, arrayRemove, increment, addDoc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // ========== Firebase config (unchanged) ==========
+  const firebaseConfig = {
+    apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+    authDomain:"vs-code-d4d6b.firebaseapp.com",
+    projectId:"vs-code-d4d6b",
+    storageBucket:"vs-code-d4d6b.appspot.com",
+    messagingSenderId:"1012283563694",
+    appId:"1:1012283563694:web:f25cfd82e9f762f617d73f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ========== Elements ==========
+  const feed = document.getElementById("feed");
+  const storyProfilePic = document.getElementById("storyProfilePic");
+  const addStoryBtn = document.getElementById("addStoryBtn");
+  const storiesBar = document.getElementById("storiesBar");
+  const globalSearch = document.getElementById("globalSearch");
+
+  // Story viewer elements
+  const storyViewer = document.getElementById("storyViewer");
+  const storyMedia = document.getElementById("storyMedia");
+  const progressContainer = document.getElementById("progressContainer");
+  const viewerUserAvatar = document.getElementById("viewerUserAvatar");
+  const viewerUserName = document.getElementById("viewerUserName");
+  const storyCaption = document.getElementById("storyCaption");
+  const tapLeft = document.getElementById("tapLeft");
+  const tapRight = document.getElementById("tapRight");
+  const closeStory = document.getElementById("closeStory");
+
+  // State for stories
+  let storiesData = []; // array of story objects (from firestore)
+  let currentStoryIndex = 0;
+  let viewerTimer = null;
+  const STORY_DURATION_MS = 5000; // 5s per story default
+
+  // Minimal escape helper for safe insertion
+  function escapeHtml(s){ return String(s || '').replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;', '`':'&#96;'}[c])); }
+
+  // Utility: create story DOM node
+  function renderStoryItem(story, idx) {
+    const el = document.createElement('div');
+    el.className = 'story has-story';
+    el.dataset.index = idx;
+    el.innerHTML = `
+      <div class="avatar-wrap">
+        <img class="avatar" src="${escapeHtml(story.imageURL || 'default-avatar.jpg')}" alt="${escapeHtml(story.title || 'Story')}">
+      </div>
+      <div class="story-text">${escapeHtml(story.title || (story.uploaderName || 'Story'))}</div>
+    `;
+    el.addEventListener('click', () => openStoryViewer(idx));
+    return el;
+  }
+
+  // Open the fullscreen viewer at index
+  function openStoryViewer(index){
+    if(!storiesData || storiesData.length === 0) return;
+    currentStoryIndex = index;
+    showStory();
+    storyViewer.classList.add('show');
+    storyViewer.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeStoryViewer(){
+    storyViewer.classList.remove('show');
+    storyViewer.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    stopViewerTimer();
+    clearProgress();
+  }
+
+  // Show story at currentStoryIndex
+  async function showStory(){
+    const s = storiesData[currentStoryIndex];
+    if(!s) return;
+    // set media (image OR video)
+    if(s.videoURL){
+      storyMedia.innerHTML = `<video id="viewerVideo" playsinline webkit-playsinline autoplay muted style="width:100%;height:100%;object-fit:cover;"></video>`;
+      const v = document.getElementById('viewerVideo');
+      v.src = s.videoURL;
+      try { await v.play(); } catch(e){}
+    } else {
+      storyMedia.innerHTML = '';
+      storyMedia.style.backgroundImage = `url('${escapeHtml(s.imageURL || 'default-avatar.jpg')}')`;
+    }
+    // user info
+    viewerUserAvatar.src = s.uploaderPhotoURL || 'default-avatar.jpg';
+    viewerUserName.textContent = s.uploaderName || 'User';
+    storyCaption.textContent = s.caption || '';
+    // build progresses
+    buildProgressBars(storiesData.length, currentStoryIndex);
+    startViewerTimer();
+  }
+
+  function buildProgressBars(total, activeIndex){
+    progressContainer.innerHTML = '';
+    for(let i=0;i<total;i++){
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      bar.innerHTML = `<div class="fill" style="width:${i<activeIndex ? 100 : 0}%"></div>`;
+      progressContainer.appendChild(bar);
+    }
+  }
+
+  function clearProgress(){
+    progressContainer.innerHTML = '';
+    storyMedia.style.backgroundImage = '';
+    storyMedia.innerHTML = '';
+  }
+
+  function startViewerTimer(){
+    stopViewerTimer();
+    const fills = Array.from(progressContainer.querySelectorAll('.fill'));
+    fills.forEach((f, idx) => { if(idx < currentStoryIndex) f.style.width = '100%'; else f.style.width = '0%'; });
+    const currentFill = fills[currentStoryIndex];
+    if(!currentFill){ closeStoryViewer(); return; }
+    const start = performance.now();
+    const duration = STORY_DURATION_MS;
+    function tick(now){
+      const elapsed = now - start;
+      const pct = Math.min(1, elapsed / duration);
+      currentFill.style.width = (pct * 100) + '%';
+      if(pct < 1){ viewerTimer = requestAnimationFrame(tick); } else { nextStory(); }
+    }
+    viewerTimer = requestAnimationFrame(tick);
+  }
+
+  function stopViewerTimer(){ if(viewerTimer){ cancelAnimationFrame(viewerTimer); viewerTimer = null; } }
+
+  function nextStory(){ stopViewerTimer(); const fills = Array.from(progressContainer.querySelectorAll('.fill')); if(currentStoryIndex < storiesData.length - 1){ currentStoryIndex++; if(fills[currentStoryIndex-1]) fills[currentStoryIndex - 1].style.width = '100%'; showStory(); } else { closeStoryViewer(); } }
+  function prevStory(){ stopViewerTimer(); if(currentStoryIndex > 0){ currentStoryIndex--; const fills = Array.from(progressContainer.querySelectorAll('.fill')); if(fills[currentStoryIndex]) fills[currentStoryIndex].style.width = '0%'; showStory(); } else { showStory(); } }
+
+  // Tap areas
+  tapRight.addEventListener('click', (e)=>{ e.stopPropagation(); nextStory(); });
+  tapLeft.addEventListener('click', (e)=>{ e.stopPropagation(); prevStory(); });
+
+  // close handlers
+  closeStory.addEventListener('click', closeStoryViewer);
+  storyViewer.addEventListener('click', (e)=>{ /* noop to avoid accidental close */ });
+
+  // support swipe down to close (basic)
+  let startY = null, dragging = false;
+  storyViewer.addEventListener('pointerdown', (ev)=>{ startY = ev.clientY; dragging = true; });
+  storyViewer.addEventListener('pointermove', (ev)=>{ if(!dragging) return; const delta = ev.clientY - startY; if(delta > 120){ dragging = false; closeStoryViewer(); } });
+  storyViewer.addEventListener('pointerup', ()=>{ dragging = false; startY = null; });
+
+  // ========== Firestore: STORIES & FEED logic ==========
+  onAuthStateChanged(auth, async user => {
+    if(!user) return;
+
+    // Immediately set profile pics
+    const meSnap = await getDoc(doc(db,"users",user.uid));
+    if(meSnap.exists()){
+  const photoURL = meSnap.data().photoURL || "default-avatar.jpg";
+  storyProfilePic.src = photoURL;
+}
+
+    addStoryBtn.addEventListener("click",()=> window.location.href="stories.html");
+
+    // -------- STORIES: fetch and render bar + keep local array for viewer --------
+    const storiesQuery = query(collection(db, "stories"), orderBy("createdAt","desc"));
+    onSnapshot(storiesQuery, async snapshot => {
+      // clear previous non-add items
+      storiesBar.querySelectorAll(".story:not(.add-story)").forEach(el => el.remove());
+      // preload images
+      const preloadStories = snapshot.docs.map(d => {
+        const s = d.data();
+        return new Promise(r => {
+          const i = new Image();
+          i.src = s.imageURL || '';
+          i.onload = r; i.onerror = r;
+        });
+      });
+      await Promise.all(preloadStories);
+      // build storiesData from snapshot
+      const now = new Date();
+
+storiesData = snapshot.docs
+  .map(d => {
+    const data = d.data();
+    return {
+      id: d.id,
+      imageURL: data.imageURL || '',
+      videoURL: data.videoURL || '',
+      uploaderId: data.uploaderId || data.posterUserId || '',
+      uploaderName: data.uploaderName || data.posterName || '',
+      uploaderPhotoURL: data.uploaderPhotoURL || data.posterPhotoURL || '',
+      title: data.title || '',
+      caption: data.caption || '',
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date() // <-- important
+    };
+  })
+  .filter(story => (now - story.createdAt) < 24*60*60*1000); // <-- keep stories less than 24 hours old
+      // render bar items (skip the add-story first element)
+      storiesData.forEach((s, idx) => {
+        const node = renderStoryItem(s, idx);
+        storiesBar.appendChild(node);
+      });
+    });
+
+    // -------- SKILLS FEED (with real-like, share, links) --------
+    const skillsQuery = query(collection(db,"skills"),orderBy("createdAt","desc"));
+    onSnapshot(skillsQuery,snapshot=>{
+      // optional: show skeletons or preload first few for perceived speed (kept minimal here)
+      snapshot.docs.forEach(skillDoc => {
+  const skill = skillDoc.data();
+  const skillId = skillDoc.id;
+/// 🚫 REMOVE ALL VIDEOS FROM HOME
+if (
+  skill.videoURL || 
+  (skill.fileURL && skill.fileURL.endsWith(".mp4"))
+) return;
+  const post = document.createElement("div");
+post.className = "post";
+post.id = "post-" + skillId; // Important for scrolling to this <profile.htmml"></profile>
+post.id = "post-" + skillId; // ✅ this enables linking
+  
+        // Build the post HTML (escape dynamic values)
+        post.innerHTML =
+`<div class="post-header">
+  <div class="profile-link" data-uid="${skill.posterUserId}">
+ <img src="default-avatar.jpg" alt="Profile" class="poster-avatar">
+</div>
+  <a href="#" class="username">Loading...</a>
+  <button class="follow-btn">Follow</button>
+</div>
+<div class="post-title">${escapeHtml(skill.title||"")}</div>
+${skill.fileURL ? `<img class="main" src="${escapeHtml(skill.fileURL)}" alt="skill-image">` : ""}
+<div class="post-actions">
+  <div class="like" role="button" title="Like"><span class="material-icons">thumb_up</span><span class="like-count">${skill.likes||0}</span></div>
+  <div class="comment" role="button" title="Comments"><span class="material-icons">chat_bubble_outline</span><span class="comment-count">${skill.comments||0}</span></div>
+  <div class="views" title="Views"><span class="material-icons">visibility</span><span class="views-count">${skill.views||0}</span></div>
+  <div class="action share" title="Share">
+  <i class="material-icons">share</i>
+  <span>${skill.shares || 0}</span> <!-- this will show the share count -->
+</div></div>
+<div class="comment-section">
+  <input class="comment-input" type="text" placeholder="Write a comment..." />
+  <div class="comment-list"></div>
+</div>
+<div class="learn-skill"><button>Learn Skill</button></div>`;
+
+        feed.appendChild(post);
+
+        // Set poster info (async)
+        if(skill.posterUserId){
+          getDoc(doc(db,"users",skill.posterUserId)).then(posterSnap=>{
+            if(posterSnap.exists()){
+              const poster = posterSnap.data();
+              const nameEl = post.querySelector(".username");
+              const imgEl = post.querySelector(".poster-avatar");
+              nameEl.textContent = (poster.firstName||"") + (poster.secondName? " "+poster.secondName:"");
+              imgEl.src = poster.photoURL||"default-avatar.jpg";
+              // Link to teacher's profile (uses profile.html)
+              nameEl.href = `profile.html?uid=${skill.posterUserId}`;
+imgEl.addEventListener("click", ()=> window.location.href=`profile.html?uid=${skill.posterUserId}`);            }
+          }).catch(console.error);
+        }
+
+        // LIKE button logic (one like per user)
+        const likeBtn = post.querySelector(".like");
+        const likeCountEl = post.querySelector(".like-count");
+
+        // mark liked if user already liked
+        if(Array.isArray(skill.likesArray) && skill.likesArray.includes(user.uid)){
+          likeBtn.classList.add("liked");
+        }
+
+        likeBtn.addEventListener("click", async () => {
+          // prevent repeated fast clicks UI-wise
+          if(likeBtn.classList.contains("processing")) return;
+          likeBtn.classList.add("processing");
+          try{
+            const skillRef = doc(db,"skills",skillId);
+            // Check if user already liked in the client view
+            const alreadyLiked = Array.isArray(skill.likesArray) && skill.likesArray.includes(user.uid);
+            if(alreadyLiked){
+              // user wants to unlike -> remove
+              likeBtn.classList.remove("liked");
+              const prev = parseInt(likeCountEl.textContent||"0",10);
+              likeCountEl.textContent = Math.max(0, prev-1);
+              await updateDoc(skillRef, { likes: increment(-1), likesArray: arrayRemove(user.uid) });
+            } else {
+              // like
+              likeBtn.classList.add("liked");
+              const prev = parseInt(likeCountEl.textContent||"0",10);
+              likeCountEl.textContent = prev+1;
+              await updateDoc(skillRef, { likes: increment(1), likesArray: arrayUnion(user.uid) });
+            }
+          } catch(err){
+            console.error(err);
+            // revert optimistic UI if error
+          } finally {
+            likeBtn.classList.remove("processing");
+          }
+        });
+
+        // SHARE button logic - use native share where available
+const shareBtn = post.querySelector(".share");
+const shareCountSpan = shareBtn.querySelector("span"); // make sure you have <span>0</span> inside .share
+
+shareBtn.addEventListener("click", async () => {
+  const shareUrl = `${location.origin}/profile.html?uid=${encodeURIComponent(skill.posterUserId || '')}#skill-${encodeURIComponent(skillId)}`;
+  const text = `${skill.title || 'Check this skill on Microswab'}\n\n${shareUrl}`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: skill.title || 'Microswab', text, url: shareUrl });
+    } else {
+      // fallback: copy to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Link copied to clipboard — paste it to share.');
+    }
+
+    // ✅ Increment share count in Firestore
+    const skillRef = doc(db, "skills", skillId);
+    await updateDoc(skillRef, { shares: increment(1) });
+
+    // ✅ Update share number instantly in UI
+    if (shareCountSpan) {
+      const current = parseInt(shareCountSpan.textContent || "0", 10);
+      shareCountSpan.textContent = current + 1;
+    }
+
+    // Optional: small visual feedback animation
+    shareBtn.classList.add("success");
+    setTimeout(() => shareBtn.classList.remove("success"), 600);
+
+  } catch (e) {
+    console.error("Share error", e);
+  }
+});
+
+        // Views: increment once per viewer (best-effort)
+        (async ()=>{
+          try {
+            const skillRef = doc(db,"skills",skillId);
+            if(!skill.viewsArray || !skill.viewsArray.includes(user.uid)){
+              await updateDoc(skillRef, { views: increment(1), viewsArray: arrayUnion(user.uid) });
+              const prev = parseInt(post.querySelector('.views-count').textContent||"0",10);
+              post.querySelector('.views-count').textContent = prev+1;
+            }
+          } catch(e){ console.error(e); }
+        })();
+
+        // Follow button behavior (keeps original logic)
+        const followBtn = post.querySelector(".follow-btn");
+        if(skill.posterUserId){
+          const posterRef = doc(db,"users",skill.posterUserId);
+          const meRef = doc(db,"users",user.uid);
+          getDoc(posterRef).then(posterSnap=>{
+            if(posterSnap.exists() && posterSnap.data().followers?.includes(user.uid)){
+              followBtn.classList.add("following");
+              followBtn.innerText="Following";
+            }
+          }).catch(console.error);
+
+          followBtn.addEventListener("click", async ()=>{
+            const nowFollowing = followBtn.classList.toggle("following");
+            followBtn.innerText = nowFollowing ? "Following":"Follow";
+            try{
+              if(nowFollowing){
+                await updateDoc(posterRef, { followers: arrayUnion(user.uid), followersCount: increment(1) });
+                await updateDoc(meRef, { following: arrayUnion(skill.posterUserId), followingCount: increment(1) });
+              } else {
+                await updateDoc(posterRef, { followers: arrayRemove(user.uid), followersCount: increment(-1) });
+                await updateDoc(meRef, { following: arrayRemove(skill.posterUserId), followingCount: increment(-1) });
+              }
+            } catch(e){ console.error(e); }
+          });
+        }
+
+        // Comments: show/hide list and realtime updates for comments
+        const commentBtn = post.querySelector(".comment");
+        const commentInput = post.querySelector(".comment-input");
+        const commentListEl = post.querySelector(".comment-list");
+        const commentCountEl = post.querySelector(".comment-count");
+        const commentsCol = collection(db,"skills",skillId,"comments");
+
+        commentBtn.addEventListener("click", ()=> {
+          commentListEl.style.display = commentListEl.style.display === "block" ? "none" : "block";
+        });
+
+        onSnapshot(commentsCol, snapshotComments => {
+          if(commentListEl.style.display === "none") return;
+          commentListEl.innerHTML = "";
+          commentCountEl.textContent = snapshotComments.size;
+          snapshotComments.docs.forEach(async d => {
+            const c = d.data();
+            let cName = "Unknown User", cPhoto = "default-avatar.jpg";
+            try {
+              const u = await getDoc(doc(db,"users",c.userId));
+              if(u.exists()){ const ud = u.data(); cName = (ud.firstName||"") + (ud.secondName? " "+ud.secondName:""); cPhoto = ud.photoURL || "default-avatar.jpg"; }
+            } catch(e){ console.error(e); }
+            const commentEl = document.createElement("div");
+            commentEl.className = "comment-item";
+            commentEl.innerHTML = `<img src="${escapeHtml(cPhoto)}" /><div><strong>${escapeHtml(cName)}</strong> <span>${escapeHtml(c.text)}</span><div class="comment-actions"><span class="like-comment" style="cursor:pointer;">Like</span><span class="reply-comment" style="cursor:pointer;">Reply</span></div></div>`;
+            commentListEl.appendChild(commentEl);
+          });
+        });
+
+        commentInput.addEventListener("keypress", async e => {
+          if(e.key === "Enter" && commentInput.value.trim() !== ""){
+            try {
+              await addDoc(collection(db,"skills",skillId,"comments"), {
+                text: commentInput.value.trim(),
+                userId: user.uid,
+                createdAt: new Date(),
+                likesArray: []
+              });
+              await updateDoc(doc(db,"skills",skillId), { comments: increment(1) });
+              commentInput.value = "";
+            } catch(err){ console.error(err); }
+          }
+        });
+        // 🔹 After rendering each skill post
+        
+ post.querySelector(".learn-skill button").addEventListener("click", async ()=>{
+    if(!skillId || !auth.currentUser) return;
+
+    const userRef = doc(db, "users", auth.currentUser.uid);
+
+    // Save skillId to user's learnedSkills array
+    await updateDoc(userRef, {
+        learnedSkills: arrayUnion(skillId)
+    });
+
+    // Redirect to the skill page
+    window.location.href = `teacherchat.html?skillId=${encodeURIComponent(skillId)}`;
+});
+
+      });
+    });
+  });
+</script>
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

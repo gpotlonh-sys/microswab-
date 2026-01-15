@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Learn Skill — Microswab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+.header img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+.user-info .name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #000;
+}
+
+/* ===== COURSE CONTENT ===== */
+.container {
+  max-width: 720px;
+  margin: 90px auto 60px;
+  padding: 0 16px;
+}
+.lesson-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.lesson-progress {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+.lesson-box {
+  background: #fff;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  font-size: 16px;
+  line-height: 1.8;
+  word-wrap: break-word;
+  white-space: pre-wrap; /* <-- preserves exact line breaks and spacing */
+}
+.next-btn {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px;
+  background: #1877f2;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.next-btn:hover { background: #0f5bd8; }
+
+footer {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  padding: 18px;
+}
+/* ===== Microswab AI Button ===== */
+#microswab-ai-btn {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #6a0dad;
+  color: white;
+  border-radius: 22px;
+  font-size: 13px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+#microswab-ai-btn span.material-icons-outlined {
+  font-size: 18px;
+}
+
+#microswab-ai-btn:hover {
+  background: #5a00c9;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img id="teacherPic" src="default-avatar.jpg" alt="Teacher">
+  <div class="user-info">
+    <div id="teacherName" class="name">Loading Teacher...</div>
+  </div>
+</div>
+<!-- Microswab AI Button -->
+<div id="microswab-ai-btn">
+  <span class="material-icons-outlined">smart_toy</span>
+  <span class="ai-text">Ask Microswab AI</span>
+</div>
+<!-- COURSE CONTENT -->
+<div class="container">
+  <div class="lesson-title" id="lessonTitle"></div>
+  <div class="lesson-progress" id="lessonProgress"></div>
+  <div class="lesson-box" id="lessonContent"></div>
+  <button class="next-btn" id="nextBtn">Finish Course 🎉</button>
+</div>
+
+<footer>Learn fast • Teach real skills • Microswab</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+document.getElementById("microswab-ai-btn").onclick = () => {
+  // Option 1: redirect to AI page
+  window.location.href = "https://microswab-ai--gepejaff.replit.app/";
+
+  // Option 2 (later): open AI modal
+  // openMicroswabAIModal();
+};
+const firebaseConfig = {
+  apiKey: "AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+  authDomain: "vs-code-d4d6b.firebaseapp.com",
+  projectId: "vs-code-d4d6b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ===== ELEMENTS ===== */
+const teacherPic = document.getElementById("teacherPic");
+const teacherName = document.getElementById("teacherName");
+const lessonTitle = document.getElementById("lessonTitle");
+const lessonProgress = document.getElementById("lessonProgress");
+const lessonContent = document.getElementById("lessonContent");
+const nextBtn = document.getElementById("nextBtn");
+
+/* ===== STATE ===== */
+const params = new URLSearchParams(window.location.search);
+const skillId = params.get("skillId");
+
+/* ===== LOAD COURSE ===== */
+onAuthStateChanged(auth, async (user)=>{
+  if(!user) return location.href="login.html";
+  if(!skillId) {
+    lessonContent.innerHTML="<p>No course selected.</p>";
+    nextBtn.style.display="none";
+    return;
+  }
+
+  try {
+    const skillSnap = await getDoc(doc(db,"skills",skillId));
+    if(!skillSnap.exists()){
+      lessonContent.innerHTML="<p>Course not found.</p>";
+      nextBtn.style.display="none";
+      return;
+    }
+    const skill = skillSnap.data();
+
+    // Teacher info
+    const teacherSnap = await getDoc(doc(db,"users",skill.posterUserId));
+    if(teacherSnap.exists()){
+      const t = teacherSnap.data();
+      teacherPic.src = t.photoURL || "default-avatar.jpg";
+      teacherName.textContent = `${t.firstName || ""} ${t.secondName || ""}`;
+    }
+
+    lessonTitle.textContent = skill.title;
+
+    if(!skill.fullCourse){
+      lessonContent.innerHTML="<p>The teacher has not added the full course yet.</p>";
+      nextBtn.style.display="none";
+      return;
+    }
+
+    // Show the teacher's text exactly as typed
+    lessonContent.textContent = skill.fullCourse;
+    nextBtn.style.display = "block";
+
+  } catch(err){
+    console.error(err);
+    lessonContent.innerHTML="<p>Failed to load course. Refresh the page.</p>";
+    nextBtn.style.display="none";
+  }
+});
+
+/* ===== NEXT BUTTON ===== */
+nextBtn.onclick = ()=>{
+  alert("🎉 You have completed this course!");
+  nextBtn.style.display="none";
+};
+</script>
+
+</body>
+</html>

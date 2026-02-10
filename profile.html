@@ -7,45 +7,147 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
 <style>
   body { margin:0; font-family:'Inter','Arial',sans-serif; background:#fefefe; color:#1c1c1c; padding-bottom:70px; }
-  .topbar { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#fff; border-bottom:1px solid #eaeaea; position:sticky; top:0; z-index:1000; }
-  .topbar .logo { font-family:'Poppins',sans-serif; font-size:22px; font-weight:700; color:#6a0dad; }
-  .topbar .search { flex:1; margin-left:10px; display:flex; align-items:center; background:#f3f3f3; padding:4px 10px; border-radius:25px; position:relative; }
-  .topbar .search input { border:none; outline:none; background:transparent; font-size:14px; flex:1; }
-  .topbar .search span { font-size:20px; color:#888; cursor:pointer; }
-  .search-results { position:absolute; top:38px; left:0; right:0; background:#fff; border:1px solid #ddd; max-height:200px; overflow-y:auto; display:none; z-index:1001; }
-  .search-result { padding:8px 12px; border-bottom:1px solid #eee; cursor:pointer; display:flex; align-items:center; gap:10px; }
-  .search-result img { width:35px; height:35px; border-radius:50%; object-fit:cover; }
+  :root {
+    --primary-color: #6a0dad;
+    --bg-light: #fff;
+    --bg-input: #f3f3f3;
+    --border-light: #eaeaea;
+    --text-muted: #888;
+    --radius-pill: 25px;
+  }
 
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+  }
+
+  /* ===== Topbar ===== */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border-light);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .topbar .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  /* ===== Search Box ===== */
+  .topbar .search {
+    flex: 1;
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    background: var(--bg-input);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    position: relative;
+    transition: box-shadow 0.2s;
+  }
+
+  .topbar .search:focus-within {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .topbar .search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 6px 0;
+  }
+
+  .topbar .search span {
+    font-size: 18px;
+    color: var(--text-muted);
+    cursor: pointer;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ===== Search Results ===== */
+  .search-results {
+    position: absolute;
+    top: 46px;
+    left: 0;
+    right: 0;
+    background: var(--bg-light);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1001;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .search-result {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background 0.15s;
+  }
+
+  .search-result:last-child {
+    border-bottom: none;
+  }
+
+  .search-result:hover {
+    background: #f9f9f9;
+  }
+
+  .search-result img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* ===== Mobile Friendly Adjustments ===== */
+  @media (max-width: 480px) {
+    .topbar {
+      padding: 10px 12px;
+    }
+    .topbar .logo {
+      font-size: 18px;
+    }
+    .topbar .search input {
+      font-size: 13px;
+    }
+    .search-result {
+      padding: 8px 12px;
+      gap: 10px;
+    }
+    .search-result img {
+      width: 35px;
+      height: 35px;
+    }
+  }
   .profile-header { background:#fff; padding:14px 16px; border-bottom:1px solid #eaeaea; display:flex; flex-direction:column; }
   .profile-top { display:flex; align-items:center; gap:16px; }
   .avatar-container { position:relative; width:100px; height:100px; flex-shrink:0; cursor:pointer; }
   .avatar-container img.avatar { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid #6a0dad; transition:transform 0.2s; }
   .avatar-container img.avatar:hover { transform:scale(1.05); }
-  .avatar-container .add-icon {
-  position:absolute;
-  bottom:0;
-  right:0;
-  background:#6a0dad;
-  color:#fff;
-  font-size:16px;
-  width:22px;
-  height:22px;
-  display:none; /* 👈 hidden by default */
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  border:2px solid #fff;
-  transition:transform 0.2s ease;
-}
+  .avatar-container .add-icon { position:absolute; bottom:0; right:0; background:#6a0dad; color:#fff; font-size:16px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%; border:2px solid #fff; transition:transform 0.2s ease; }
   .avatar-container:hover .add-icon { transform:scale(1.2); }
-  .avatar-container .add-icon {
-  pointer-events: auto; /* allow clicks */
-  display: none; /* hidden by default */
-}
-
-.avatar-container:hover .add-icon {
-  transform: none; /* don't scale if hidden */
-}
 
   .profile-stats-inline { display:flex; gap:20px; flex:1; justify-content:flex-start; margin-left:16px; }
   .profile-stats-inline .stat { text-align:center; }
@@ -60,6 +162,8 @@
   .follow-btn { background:#6a0dad; color:#fff; border:1px solid #6a0dad; }
   .follow-btn.following { background:#fff; color:#6a0dad; border:1px solid #6a0dad; }
   .follow-btn:hover { opacity:0.85; }
+  .message-btn { background:#fff; color:#6a0dad; border:1px solid #d1c4e9; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  .message-btn:hover { background:#f7f7f7; }
   .edit-btn { background:#6a0dad; color:#fff; border:1px solid #6a0dad; }
   .edit-btn:hover { background:#fff; color:#6a0dad; }
 
@@ -108,50 +212,208 @@
   align-items: center;
   gap: 3px;
 }
+.post-date {
+  font-size: 14px;
+  color: #888;
+}
+/* ===== FACEBOOK-STYLE POSTS ===== */
+.post {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 15px auto;
+  max-width: 600px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+.post:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
 
-  /* ======================= POSTS GRID ======================= */
-  .user-posts { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; padding:8px; }
+.post-header {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+}
+.post-header img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+.username {
+  font-weight: bold;
+  color: #050505;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
+}
+.follow-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #1877f2;
+  background: #1877f2;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+.follow-btn.following {
+  background: white;
+  color: #1877f2;
+}
 
-  .post { border:1px solid #eee; border-radius:12px; overflow:hidden; background:#fff; display:flex; flex-direction:column; gap:6px; transition: transform 0.2s, box-shadow 0.2s; }
-  .post:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.post-title {
+  padding: 0 12px 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #050505;
+}
 
-  .post-header { display:flex; align-items:center; padding:6px; gap:8px; }
-  .poster-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; cursor:pointer; border:1px solid #ddd; }
-  .post-header .username { font-weight:600; color:#1c1c1c; text-decoration:none; }
-  .post-header .follow-btn { margin-left:auto; padding:4px 10px; font-size:12px; border-radius:16px; border:1px solid #6a0dad; background:#6a0dad; color:#fff; cursor:pointer; transition:all 0.2s; }
-  .post-header .follow-btn.following { background:#fff; color:#6a0dad; }
-  .post-header .follow-btn:hover { opacity:0.85; }
+.post img.main {
+  width: 100%;
+  max-height: 1000px;
+  object-fit: cover;
+  border-top: 1px solid #eee;
+}
 
-  .post-title { font-weight:600; padding:0 6px; font-size:14px; line-height:1.4; color:#1c1c1c; }
-  .post img.main { width:100%; object-fit:cover; aspect-ratio:1/1; border-radius:8px; }
+.post-actions {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+  padding: 6px 0;
+}
+.post-actions div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.post-actions div:hover {
+  background: #f0f2f5;
+}
+.post-actions .like span,
+.post-actions .comment span,
+.post-actions .share span {
+  font-size: 18px;
+  vertical-align: middle;
+  color: #606770; /* Facebook grey */
+}
+.post-actions .like.liked span {
+  color: #1877f2; /* Facebook blue when liked */
+}
 
-  .post-actions { display:flex; justify-content:space-between; padding:4px 6px; font-size:14px; border-top:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0; background:#fafafa; }
-  .post-actions div { display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none; padding:4px; border-radius:50%; background:#fff; }
-  .post-actions div span.material-icons { font-size:18px; color:#555; }
-  .post-actions div span.like-count,
-  .post-actions div span.comment-count,
-  .post-actions div span.views-count { font-size:13px; color:#333; }
+.learn-skill {
+  padding: 10px;
+  text-align: center;
+}
+.learn-skill button {
+  width: 95%;
+  padding: 8px 0;
+  border-radius: 12px;
+  border: none;
+  background: #1877f2;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.learn-skill button:hover {
+  background: #145dbf;
+}
 
-  .post-actions .like.liked span.material-icons { color:orange; }
-
-  .learn-skill { padding:6px; }
-  .learn-skill button { width:100%; padding:8px 0; background:#6a0dad; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.2s; }
-  .learn-skill button:hover { opacity:0.9; }
-
-  .comment-section { padding:6px; display:none; flex-direction:column; gap:6px; }
-  .comment-input { width:100%; padding:8px; border:1px solid #ccc; border-radius:8px; outline:none; font-size:13px; }
-  .comment-list { display:flex; flex-direction:column; gap:4px; }
-  .comment-item { display:flex; align-items:center; gap:6px; font-size:13px; color:#1c1c1c; }
-  .comment-item img { width:28px; height:28px; border-radius:50%; object-fit:cover; }
-
-  .bottom-nav { position:fixed; bottom:0; width:100%; background:#fff; display:flex; justify-content:space-between; box-shadow:0 -3px 10px rgba(0,0,0,0.08); z-index:1000; }
-  .bottom-nav a { flex:1; text-decoration:none; color:#555; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4px 0; font-size:10px; }
-  .bottom-nav a span { font-size:20px; }
-  .plus-button { font-size:26px !important; color:#6a0dad; }
-</style>
+.comment-section {
+  padding: 8px 12px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.comment-input {
+  width: 95%;
+  padding: 8px 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  text-indent: 12px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+.comment-list {
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+}
+.comment-item {
+  margin-bottom: 5px;
+  font-size: 13px;
+  line-height: 1.3;
+  display: flex;
+  align-items: flex-start;
+}
+.comment-item img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+.comment-item div {
+  background: #f0f2f5;
+  border-radius: 12px;
+  padding: 6px 10px;
+  flex: 1;
+}
+.comment-actions {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #555;
+  display: flex;
+  gap: 10px;
+}
+    /* ========= Bottom nav ========= */
+    .bottom-nav {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  padding:8px 0;
+  box-shadow:0 -3px 6px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+.bottom-nav a {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#555;
+  font-size:11px;
+  flex:1;
+}
+.bottom-nav a span {
+  font-size:24px;
+}
+.bottom-nav a:hover,
+.bottom-nav a.active {
+  color:#6a0dad;
+}
+.plus-button {
+  font-size:28px !important;
+  color:#6a0dad;
+}
+  </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="logo">Microswab</div>
   <div class="search">
@@ -178,12 +440,11 @@
     <p class="bio" id="bio">Loading bio...</p>
     <div class="profile-buttons">
       <button class="follow-btn" id="followBtn">Follow</button>
+      <button class="message-btn" id="messageBtn">Message</button>
       <button class="edit-btn" onclick="window.location.href='profile-setup.html'">Edit</button>
     </div>
     <div class="profile-dashboard">
       <div class="dashboard-tab active" data-tab="posts"><span class="material-icons-outlined">grid_on</span></div>
-      <div class="dashboard-tab" data-tab="videos"><span class="material-icons-outlined">smart_display</span></div>
-      <div class="dashboard-tab" data-tab="tags"><span class="material-icons-outlined">person_pin</span></div>
     </div>
   </div>
 
@@ -192,12 +453,9 @@
 
 <div class="bottom-nav">
   <a href="home.html"><span class="material-icons-outlined">home</span>Home</a>
-  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>learning</a>
+  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Messages</a>
   <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>
-<a href="reels.html" class="reels-btn">
-    <span class="material-icons-outlined">video_library</span>
-    videos
-  </a>
+  <a href="tokens.html"><span class="material-icons-outlined">diamond</span>Tokens</a>
   <a href="profile.html"><span class="material-icons-outlined">person</span>Profile</a>
 </div>
 
@@ -205,6 +463,65 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+const quizBtn = document.getElementById("quizBtn");
+const quizPayModal = document.getElementById("quizPayModal");
+const payQuizBtn = document.getElementById("payQuizBtn");
+
+const QUIZ_COST = 15;
+const QUIZ_ACCESS_TIME = 25 * 60 * 60 * 1000; // 25 hours
+
+quizBtn.onclick = async () => {
+  const user = auth.currentUser;
+  if (!user) return alert("Please log in again");
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) return alert("User record not found");
+
+  const data = snap.data();
+  const now = Date.now();
+
+  // ✅ Check if quiz already unlocked
+  if (data.quizUnlockedAt && now - data.quizUnlockedAt < QUIZ_ACCESS_TIME) {
+    window.location.href = "quiz.html";
+    return;
+  }
+
+  // ❌ Need to pay
+  quizPayModal.style.display = "flex";
+};
+
+payQuizBtn.onclick = async () => {
+  const user = auth.currentUser;
+  if (!user) return alert("Please log in again");
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) return alert("User record not found");
+
+  const data = snap.data();
+  const tokens = data.tokens || 0;
+
+  if (tokens < QUIZ_COST) {
+    alert("❌ Sorry, your token balance is insufficient.");
+    return;
+  }
+
+  await updateDoc(userRef, {
+    tokens: tokens - QUIZ_COST,
+    quizUnlockedAt: Date.now()
+  });
+
+  alert("🎉 Payment successful! Quiz unlocked");
+  window.location.href = "quiz.html";
+};
+
+// Close modal when clicking outside
+quizPayModal.onclick = e => {
+  if (e.target === quizPayModal) quizPayModal.style.display = "none";
+};
 // ====== STEP 1: Fix old posts without likesArray ======
 async function fixOldLikes() {
   const skillsSnap = await getDocs(collection(db, "skills"));
@@ -226,7 +543,6 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 import {
   getFirestore,
   doc,
-  setDoc,
   getDoc,
   updateDoc,
   deleteDoc,
@@ -239,17 +555,37 @@ import {
   increment,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+function formatPostDate(timestamp) {
+  if (!timestamp || !timestamp.toDate) return "";
+
+  const date = timestamp.toDate();
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+  if (seconds < 60) return "Just now";
+  if (seconds < 3600) return Math.floor(seconds / 60) + " minutes ago";
+  if (seconds < 86400) return Math.floor(seconds / 3600) + " hours ago";
+  if (seconds < 172800) return "Yesterday";
+  if (seconds < 604800) return Math.floor(seconds / 86400) + " days ago";
+
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
 const firebaseConfig = {
   apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
   authDomain:"vs-code-d4d6b.firebaseapp.com",
   projectId:"vs-code-d4d6b",
   storageBucket:"vs-code-d4d6b.appspot.com",
+  messagingSenderId:"1012283563694",
   appId:"1:1012283563694:web:f25cfd82e9f762f617d73f"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 const profilePic = document.getElementById("profilePic");
 const fileInput = document.getElementById("fileInput");
 const usernameEl = document.getElementById("username");
@@ -257,6 +593,7 @@ const bioEl = document.getElementById("bio");
 const postsCountEl = document.getElementById("postsCount");
 const followersCountEl = document.getElementById("followersCount");
 const followingCountEl = document.getElementById("followingCount");
+const messageBtn = document.getElementById("messageBtn");
 const followBtn = document.getElementById("followBtn");
 const postsGrid = document.getElementById("postsGrid");
 
@@ -268,19 +605,13 @@ onAuthStateChanged(auth, async (user) => {
 profileUserId = urlUid || user.uid;  // if no uid, use logged-in user
 
   const userRef = doc(db, "users", profileUserId);
- const addIcon = document.getElementById("addIcon");
+  const addIcon = document.getElementById("addIcon");
+const avatarContainer = document.getElementById("avatarContainer");
 
-// Always hide by default
-addIcon.style.display = "none";
-
-// Show ONLY if the logged-in user is the profile owner
-if(auth.currentUser.uid === profileUserId){
-    addIcon.style.display = "flex"; // show
-    addIcon.addEventListener("click", () => {
-        fileInput.click();
-    });
-} else {
-  addIcon.style.display = "none"; // 👈 HIDE for others
+// Show the plus icon ONLY if viewing your own profile
+if (profileUserId !== auth.currentUser.uid) {
+  addIcon.style.display = "none";   // hide for other users
+  avatarContainer.onclick = null;    // remove click for non-owners
 }
 
   // ===== Real-time profile info =====
@@ -291,28 +622,45 @@ onSnapshot(userRef, snap=>{
   bioEl.textContent = data.bio || "No bio yet.";
   profilePic.src = data.photoURL || "default-avatar.jpg";
 
-  function formatFollowers(count, isOfficialProfile) {
-  if (isOfficialProfile) return "13.7K";
-  if (count >= 1000) return (count / 1000).toFixed(1) + "K";
-  return count;
+  // ===== OFFICIAL + TEACHERS FOLLOWERS OVERRIDE =====
+const officialProfileId = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
+
+// Unique followers per teacher (stable & realistic)
+const teacherFollowersMap = {
+  "1v68ERboYlbJwVgswQQJnvnqlnS2": "9.8K",
+  "3jzoJ6Hi5xUx5a9sOuwSiL1F5bd2": "11.2K",
+  "7tD7jCjcOcho5xRI5hhLrNTqe3H3": "8.7K",
+  "DDjNC0wCuwe5QCRgwhECEfnYl723": "12.4K",
+  "Q8lqsIYnkAQWU9wjdcpfW0kCTs32": "10.1K",
+  "Uxvvv4BOhQcwDcBdeVDnOMXpxxF3": "7.9K",
+  "XDiMore8SyVYldXLvt4xm15YePG2": "14.3K",
+  "ZrAxMFD1qgSMmsZlAkrGfSEPq5q2": "9.4K",
+  "gb81ucyy49UsJAFdGTswVz34wHe2": "6.8K",
+  "r2zcu43GDUenL62CglQUdl0PIxt1": "11.7K"
+};
+
+let followersDisplayValue;
+
+if (profileUserId === officialProfileId) {
+  followersDisplayValue = "13.7K";
+} else if (teacherFollowersMap[profileUserId]) {
+  followersDisplayValue = teacherFollowersMap[profileUserId];
+} else {
+  followersDisplayValue = data.followers?.length || 0;
 }
 
-// Inside the onSnapshot where you update follower count:
-const isOfficialProfile = profileUserId === "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
-followersCountEl.textContent = formatFollowers(
-  data.followers?.length || 0,
-  isOfficialProfile
-);
-  followingCountEl.textContent = data.following?.length || 0;
-
+followersCountEl.textContent = followersDisplayValue;
+followingCountEl.textContent = data.following?.length || 0;
   // ===== BUTTONS VISIBILITY BASED ON PROFILE =====
   if(auth.currentUser.uid === profileUserId){
     // Viewing own profile
     followBtn.style.display = "none";
+    messageBtn.style.display = "none";
     document.querySelector(".edit-btn").style.display = "inline-block";
   } else {
     // Viewing another user's profile
-    followBtn.style.display = "inline-block"
+    followBtn.style.display = "inline-block";
+    messageBtn.style.display = "inline-block";
     document.querySelector(".edit-btn").style.display = "none";
   }
 
@@ -327,89 +675,106 @@ followersCountEl.textContent = formatFollowers(
 });
 
   // ===== Real-time user posts =====
-  const postsQuery = query(collection(db,"skills"), where("posterUserId","==",profileUserId));
-  onSnapshot(postsQuery, snapshot=>{
-    postsGrid.innerHTML = "";
-    postsCountEl.textContent = snapshot.docs.length;
+const postsQuery = query(collection(db, "skills"), where("posterUserId", "==", profileUserId));
+onSnapshot(postsQuery, snapshot => {
+  postsGrid.innerHTML = "";
+  postsCountEl.textContent = snapshot.docs.length;
 
-    snapshot.docs.forEach(async skillDoc=>{
-      const skill = skillDoc.data();
-      const skillId = skillDoc.id;
+  // ✅ Show message if no posts
+  if (snapshot.docs.length === 0) {
+    const emptyMsg = document.createElement("div");
+    emptyMsg.style.padding = "20px";
+    emptyMsg.style.textAlign = "center";
+    emptyMsg.style.color = "#777";
+    emptyMsg.style.fontSize = "15px";
+    emptyMsg.textContent = "No skills posted yet. Start sharing your first skill!";
+    postsGrid.appendChild(emptyMsg);
+    return; // exit early
+  }
 
-      const post = document.createElement("div");
-      post.className = "post";
-      post.id = "post-" + skillId;
+  snapshot.docs.forEach(async skillDoc => {
+    const skill = skillDoc.data();
+    const skillId = skillDoc.id;
 
+    const post = document.createElement("div");
+    post.className = "post";
+    post.id = "post-" + skillId;
       post.innerHTML = `
-        <div class="post-header">
-  <img src="default-avatar.jpg" alt="Profile" class="poster-avatar">
-  <a href="#" class="username">Loading...</a>
-  <button class="follow-btn">Follow</button>
-${skill.posterUserId === auth.currentUser.uid 
-    ? `<span class="material-icons delete-menu" style="cursor:pointer;">more_vert</span>` 
-    : ""}
-</div>
-        <div class="post-title">${skill.title || ""}</div>
-       ${skill.postType === "video" && skill.videoURL
-  ? `
-    <div class="video-wrapper" style="position:relative; cursor:pointer;">
-  <video 
-    class="main" 
-    src="${skill.videoURL}"        <!-- Add the actual video URL here -->
-    muted 
-    playsinline 
-    preload="metadata"             <!-- Load metadata to show first frame -->
-    style="width:100%; border-radius:8px; object-fit:cover;"
-  ></video>
-
-  <!-- Play button in the center -->
-  <span class="material-icons" style="
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    font-size:48px;
-    color:white;
-    text-shadow: 0 0 6px rgba(0,0,0,0.6);
-  ">play_circle_filled</span>
-
-  <!-- Views at bottom-left -->
-  <div style="
-    position:absolute;
-    bottom:8px;
-    left:8px;
-    background:rgba(0,0,0,0.4);
-    color:#fff;
-    padding:2px 6px;
-    border-radius:12px;
-    font-size:12px;
-    display:flex;
-    align-items:center;
-    gap:2px;
-  ">
-    <span class="material-icons" style="font-size:14px;">visibility</span>
-    <span>${skill.views || 0}</span>
+  <div class="post-header">
+    <img src="default-avatar.jpg" alt="Profile" class="poster-avatar">
+    <a href="#" class="username">Loading...</a>
+    <!-- DATE GOES HERE -->
+    <span class="post-date">${formatPostDate(skill.createdAt)}</span>
+    <button class="follow-btn">Follow</button>
+    ${skill.posterUserId === auth.currentUser.uid 
+        ? `<span class="material-icons delete-menu" style="cursor:pointer;">more_vert</span>` 
+        : ""}
   </div>
-</div>
-  `
-  : skill.fileURL
-    ? `<img class="main" src="${skill.fileURL}" alt="skill-image">`
-    : ""
+
+  <div class="post-title">${skill.title || ""}</div>
+
+  ${skill.postType === "video" && skill.videoURL
+    ? `
+    <div class="video-wrapper" style="position:relative; cursor:pointer;">
+      <video 
+        class="main" 
+        src="${skill.videoURL}"        
+        muted 
+        playsinline 
+        preload="metadata"             
+        style="width:100%; border-radius:8px; object-fit:cover;"
+      ></video>
+
+      <span class="material-icons" style="
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        font-size:48px;
+        color:white;
+        text-shadow: 0 0 6px rgba(0,0,0,0.6);
+      ">play_circle_filled</span>
+
+      <div style="
+        position:absolute;
+        bottom:8px;
+        left:8px;
+        background:rgba(0,0,0,0.4);
+        color:#fff;
+        padding:2px 6px;
+        border-radius:12px;
+        font-size:12px;
+        display:flex;
+        align-items:center;
+        gap:2px;
+      ">
+        <span class="material-icons" style="font-size:14px;">visibility</span>
+        <span>${skill.views || 0}</span>
+      </div>
+    </div>
+    `
+    : skill.fileURL
+      ? `<img class="main" src="${skill.fileURL}" alt="skill-image">`
+      : ""
 }
-        <div class="post-actions">
-  <div class="like"><span class="material-icons">thumb_up</span><span class="like-count">${skill.likes || 0}</span></div>
+
+<div class="post-actions">
+  <div class="like"><span class="material-icons">thumb_up</span><span class="like-count">${skill.likes||0}</span></div>
   <div class="comment"><span class="material-icons">chat_bubble_outline</span><span class="comment-count">${skill.comments?.length || 0}</span></div>
-  <div class="views"><span class="material-icons">visibility</span><span class="views-count">${skill.views || 0}</span></div>
-  <div class="share"><span class="material-icons">share</span><span class="share-count">${skill.shares || 0}</span></div>
+  <div class="views"><span class="material-icons">visibility</span><span class="views-count">${skill.views||0}</span></div>
+  <div class="share"><span class="material-icons">share</span></div>
 </div>
-        <div class="learn-skill"><button>Learn Skill</button></div>
-        <div class="comment-section">
-          <input class="comment-input" type="text" placeholder="Write a comment..." />
-          <div class="comment-list"></div>
-        </div>
-      `;
+
+${skill.postType !== "video" 
+    ? `<div class="learn-skill"><button>Learn Skill</button></div>` 
+    : ""}
+
+<div class="comment-section">
+  <input class="comment-input" type="text" placeholder="Write a comment..." />
+  <div class="comment-list"></div>
+</div>
+`;
       postsGrid.appendChild(post);
-      
       // 🎬 When clicking a video in profile, go to reels.html showing that video
 const videoWrapper = post.querySelector(".video-wrapper");
 if (videoWrapper) {
@@ -537,6 +902,49 @@ likeBtn.addEventListener("click", async () => {
     await updateDoc(skillRef, { likes: increment(1), likesArray: arrayUnion(profileUserId) });
   }
 });
+// --- SHARE button ---
+const shareBtn = post.querySelector(".share");
+let shareCountSpan = shareBtn.querySelector("span.count");
+
+// If you don't have a <span class="count"></span> inside .share, create one
+if(!shareCountSpan){
+  shareCountSpan = document.createElement("span");
+  shareCountSpan.className = "count";
+  shareCountSpan.style.marginLeft = "4px";
+  shareBtn.appendChild(shareCountSpan);
+}
+
+// Real-time share count
+const skillRef = doc(db, "skills", skillId);
+onSnapshot(skillRef, snap => {
+  if(!snap.exists()) return;
+  const data = snap.data();
+  const shares = typeof data.shares === "number" ? data.shares : 0;
+  shareCountSpan.textContent = shares;
+});
+
+// Share logic
+shareBtn.addEventListener("click", async () => {
+  const shareUrl = `https://microswab.netlify.app`; // Always share main site
+  const text = `🔥 Check out this skill on Microswab! Learn and earn rewards.\nJoin now 👇`;
+
+  try {
+    if(navigator.share){
+      // Native share for mobile
+      await navigator.share({ title: skill.title || "Microswab", text, url: shareUrl });
+    } else {
+      // Fallback: copy link to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard — paste it anywhere to share.");
+    }
+
+    // Increment share count in Firestore
+    await updateDoc(skillRef, { shares: increment(1) });
+
+  } catch(e){
+    console.error("Share error:", e);
+  }
+});
 
       // --- Comments section ---
       const commentBtn = post.querySelector(".comment");
@@ -587,19 +995,10 @@ likeBtn.addEventListener("click", async () => {
       });
 
       // --- Learn Skill button ---
-     post.querySelector(".learn-skill button").addEventListener("click", async ()=>{
-    if(!skillId || !auth.currentUser) return;
-
-    const userRef = doc(db, "users", auth.currentUser.uid);
-
-    // Save skillId to user's learnedSkills array
-    await updateDoc(userRef, {
-        learnedSkills: arrayUnion(skillId)
-    });
-
-    // Redirect to the skill page
-    window.location.href = `teacherchat.html?skillId=${encodeURIComponent(skillId)}`;
-});
+      post.querySelector(".learn-skill button").addEventListener("click", ()=>{
+        if(!skill.posterUserId){ alert("No teacher assigned!"); return; }
+        window.location.href=`teacherchat.html?uid=${encodeURIComponent(skill.posterUserId)}`;
+      });
 
       // --- Views increment ---
       (async()=>{
@@ -627,46 +1026,75 @@ likeBtn.addEventListener("click", async () => {
     }
   });
 
+  messageBtn.addEventListener("click", ()=> window.location.href=`tech.html?uid=${encodeURIComponent(profileUserId)}`);
 
-  fileInput.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "microswab-profile"); // 👈 YOUR PRESET
-
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/dcpa8046h/image/upload",
-      {
-        method: "POST",
-        body: formData
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Cloudinary upload failed");
-    }
-
-    const data = await response.json();
-    console.log("UPLOAD SUCCESS:", data);
-
-    // Update UI immediately
-    profilePic.src = data.secure_url;
-
-    // Save to Firestore
-    await updateDoc(doc(db, "users", auth.currentUser.uid), {
-      photoURL: data.secure_url
-    });
-
-  } catch (err) {
-    console.error("UPLOAD ERROR:", err);
-    alert("Upload failed. Check console.");
-  }
-});
+  fileInput.addEventListener("change", e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e=> profilePic.src = e.target.result;
+    reader.readAsDataURL(file);
+  });
 
 });
+</script>
+<div id="quizButtonContainer" style="
+    position:fixed;
+    bottom:80px; /* slightly above Messenger Plus button */
+    right:20px;
+    z-index:1000;
+">
+    <button id="quizBtn" style="
+        background:#0084ff;
+        color:white;
+        border:none;
+        padding:14px 18px;
+        border-radius:50px;
+        font-size:18px;
+        font-weight:bold;
+        box-shadow:0 4px 8px rgba(0,0,0,0.2);
+        cursor:pointer;
+    ">
+        Quiz 🎯
+    </button>
+</div>
+<!-- Quiz Payment Modal -->
+<div id="quizPayModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:2000;
+  justify-content:center;
+  align-items:center;
+">
+  <div style="
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    width:90%;
+    max-width:360px;
+    text-align:center;
+  ">
+    <h3>🎯 Microswab Quiz Access</h3>
+    <p style="font-size:14px; color:#555; margin-top:6px;">
+      To access Microswab quizzes, you need to pay <b>15 tokens</b>.
+    </p>
+
+    <button id="payQuizBtn" style="
+      margin-top:14px;
+      background:#0084ff;
+      color:white;
+      border:none;
+      padding:10px 18px;
+      border-radius:22px;
+      font-size:16px;
+      cursor:pointer;
+    ">
+      Pay 15 Tokens
+    </button>
+  </div>
+</div>
 </script>
 </body>
 </html>

@@ -45,15 +45,42 @@ video {
   .skill-title.clamped{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis}
   .see-more{font-size:13px;color:#bbb;margin-top:6px;cursor:pointer}
 
-  /* right actions column */
-  .actions{position:absolute;right:12px;bottom:92px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:110}
-  .action{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;user-select:none}
-  .action i{font-size:28px;color:#fff;transition:transform .12s,color .18s}
-  .action span{font-size:12px;color:#fff;font-weight:700}
-  .action.like.liked i{color:#8e44ad} /* purple when liked */
-  .action.dislike.liked i{color:#e74c3c}
-  .action.share.success i{transform:scale(1.1)}
+/* Right actions column - YouTube Shorts / professional style */
+.actions {
+  position: absolute;
+  right: 12px;
+  bottom: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;          /* more space between icons */
+  align-items: center;
+  z-index: 110;
+}
 
+.actions .action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.actions .action i {
+  font-size: 36px;        /* bigger icon like YouTube Shorts */
+  color: #fff;
+  transition: transform 0.12s, color 0.18s;
+}
+
+.actions .action span {
+  font-size: 13px;        /* bold counter */
+  font-weight: 700;
+  color: #fff;
+}
+
+.actions .action.like.liked i { color: #0960d1; text-shadow: 0 0 3px rgba(24,119,242,0.8); } /* blue like */
+.actions .action.dislike.liked i { color: #e74c3c; text-shadow: 0 0 3px rgba(231,76,60,0.8); }
+.actions .action.share.success i { transform: scale(1.15); }
   /* comment row + modal */
   .comment-row{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:10px;z-index:130}
   .comment-row img{width:34px;height:34px;border-radius:50%;object-fit:cover}
@@ -459,25 +486,36 @@ el.querySelectorAll('.poster-link').forEach(link => {
     closeComments.onclick = ()=> commentsModal.classList.remove('active');
 
     // share -> native share or copy; increment on success (best-effort)
-    shareBtn.onclick = async (ev)=>{
-      ev.stopPropagation();
-      try{
-        const snap = await getDoc(docRef);
-        if(!snap.exists()) return;
-        const data = snap.data();
-        const url = data.videoURL || window.location.href;
-        if(navigator.share){
-          await navigator.share({ title: data.title || 'Microswab video', text:'Check this skill on Microswab', url });
-          await updateDoc(docRef, { shares: increment(1) }).catch(()=>{});
-        } else {
-          const copied = prompt('Copy this link to share', url);
-          if(copied !== null) await updateDoc(docRef, { shares: increment(1) }).catch(()=>{});
-        }
-        // small visual feedback
-        shareBtn.classList.add('success');
-        setTimeout(()=>shareBtn.classList.remove('success'), 600);
-      }catch(e){ console.error('share error', e); }
-    };
+    // SHARE -> always share Microswab homepage
+shareBtn.onclick = async (ev)=>{
+  ev.stopPropagation();
+
+  const shareUrl = "https://microswab.netlify.app";
+  const shareText = "Learn and teach skills on Microswab 🚀";
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "Microswab",
+        text: shareText,
+        url: shareUrl
+      });
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Microswab link copied. Share it anywhere!");
+    }
+
+    // ✅ increment shares count
+    await updateDoc(docRef, { shares: increment(1) }).catch(()=>{});
+
+    // visual feedback
+    shareBtn.classList.add("success");
+    setTimeout(() => shareBtn.classList.remove("success"), 600);
+
+  } catch (e) {
+    console.error("share error", e);
+  }
+};
 
     // Follow -> update poster followers & current user's following
     followBtn.onclick = async (ev)=>{

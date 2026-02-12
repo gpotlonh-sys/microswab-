@@ -389,8 +389,12 @@
 
   <!-- REELS ICON -->
   <a href="reels.html" id="videoBtn" style="position:relative;">
-  <span class="material-icons-outlined">video_library</span>
-
+  <span class="material-icons-outlined">video_library</span>    <div class="nav">
+    <a href="#" id="topSignupBtn" class="signup-btn">Sign Up</a>
+  </div>  <div class="token-badge" id="tokenBadge" style="display:none;">
+  <span class="material-icons-outlined" style="font-size:18px;">diamond</span>
+  <span id="homeTokenBalance">0</span>
+</div>
   <span id="videoDot"
     style="
       position:absolute;
@@ -406,6 +410,15 @@
 </a>
 </a>
 </div>
+<!-- Skill Categories -->
+<div class="category-bar">
+  <button class="category-btn active" data-category="all">All</button>
+  <button class="category-btn" data-category="Entrepreneur">Entrepreneur</button>
+  <button class="category-btn" data-category="freelancing">Freelancing</button>
+  <button class="category-btn" data-category="marketing">Marketing</button>
+  <button class="category-btn" data-category="ai">AI</button>
+  <button class="category-btn" data-category="design">Design</button>
+</div>
   <!-- STORIES (bar) -->
   <div class="stories-wrapper">
     <div class="stories-bar" id="storiesBar">
@@ -414,9 +427,10 @@
         <div class="avatar-wrap inner">
           <img id="storyProfilePic" class="avatar" src="default-avatar.jpg" alt="Your Story">
         </div>
-        <div class="plus">+</div>
+        <div class="plus">+</div> 
         <div class="story-text">Add Story</div>
       </div>
+       
       <!-- dynamic stories appended here -->
     </div>
   </div>
@@ -660,6 +674,62 @@
   transform: translate(-50%, -50%);
   font-size: 42px;
   color: rgba(255,255,255,0.85);
+}
+/* CATEGORY BAR */
+.category-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px;
+  background: #fff;
+  position: sticky;
+  top: 60px;
+  z-index: 100;
+}
+
+.category-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  background: #f1f1f1;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+
+.category-btn:hover {
+  background: #ddd;
+}
+
+.category-btn.active {
+  background: #000;
+  color: #fff;
+}
+.signup-btn {
+  background: #4CAF50;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.signup-btn:hover {
+  background: #45a049;
+}
+.token-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #b19bdd, #a98dbb);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
 }
 </style>
 
@@ -924,6 +994,24 @@ const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
   // ========== Firestore: STORIES & FEED logic ==========
   onAuthStateChanged(auth, async user => {
     if(!user) return;
+    // ===== TOKEN BADGE LOGIC =====
+const tokenBadge = document.getElementById("tokenBadge");
+const homeTokenBalance = document.getElementById("homeTokenBalance");
+
+const userRef = doc(db, "users", user.uid);
+
+onSnapshot(userRef, (docSnap) => {
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    homeTokenBalance.textContent = data.tokens || 0;
+    tokenBadge.style.display = "flex";
+  }
+});
+
+// Click → open tokens page
+tokenBadge.addEventListener("click", () => {
+  window.location.href = "tokens.html";
+});
 
     // Immediately set profile pics
     const meSnap = await getDoc(doc(db,"users",user.uid));
@@ -1446,7 +1534,59 @@ document.querySelectorAll("button").forEach(btn => {
 // When user clicks Sign Up
 signupBtn.addEventListener("click", function() {
   localStorage.setItem("microswabSignedUp", "true");
-  window.location.href = "index.html";
+  window.location.href = "home.html";
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  const categoryButtons = document.querySelectorAll(".category-btn");
+  const searchInput = document.getElementById("globalSearch");
+
+  categoryButtons.forEach(button => {
+    button.addEventListener("click", function() {
+
+      const category = this.getAttribute("data-category");
+
+      if (category === "all") {
+        searchInput.value = "";
+      } else {
+        searchInput.value = category;
+      }
+
+      // Trigger input event manually
+      searchInput.dispatchEvent(new Event("input"));
+
+      // Active style toggle
+      categoryButtons.forEach(btn => btn.classList.remove("active"));
+      this.classList.add("active");
+
+    });
+  });
+
+});
+</script>
+<script>
+// Get the button
+const topSignupBtn = document.getElementById("topSignupBtn");
+
+// Check if user has signed up before
+const hasSignedUp = localStorage.getItem("microswabSignedUp");
+
+// Show button only if user hasn't signed up
+if (!hasSignedUp) {
+  topSignupBtn.style.display = "inline-block";
+} else {
+  topSignupBtn.style.display = "none";
+}
+
+// When user clicks the button
+topSignupBtn.addEventListener("click", function(e) {
+  e.preventDefault();
+  // Mark as signed up (simulate signup for demo)
+  localStorage.setItem("microswabSignedUp", "true");
+  // Redirect to home.html
+  window.location.href = "home.html";
 });
 </script>
 </body>

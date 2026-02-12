@@ -180,14 +180,12 @@ body {
 </div>  <div class="buttons-container">  
   <button id="buyTokens">Buy Tokens</button>  
   <button id="earnTokens">Earn Tokens</button>  
-  <button id="redeemTokens">Redeem Tokens</button>  
-  <button id="sendTokens">Send Tokens</button>  
-  <button id="viewOffers">View Offers</button>  
+  <button id="sendTokens">Send Tokens</button>   
 </div>  <div class="history-section">  
   <h3>Token History</h3>  
   <div class="history-item"><span class="desc">Joined Microswab</span><span class="amount">+30</span></div>  
 </div>  <div class="bottom-nav">  
-  <a href="home.html"><span class="material-icons-outlined">home</span>Home</a>  
+  <a href="index.html"><span class="material-icons-outlined">home</span>Home</a>  
   <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Messages</a>  
   <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>  
   <a href="tokens.html" class="active"><span class="material-icons-outlined">diamond</span>Tokens</a>  
@@ -407,8 +405,6 @@ if((data.teachingProgress || 0) >= 100){
 
 // Button placeholders  
 document.getElementById("buyTokens").addEventListener("click", ()=> showOverlay("Buy tokens coming soon..."));  
-document.getElementById("redeemTokens").addEventListener("click", ()=> showOverlay("Redeem tokens coming soon..."));  
-document.getElementById("viewOffers").addEventListener("click", ()=> showOverlay("View offers coming soon..."));  
 document.getElementById("sendTokens").addEventListener("click", ()=> showOverlay("Send tokens coming soon..."));  
 
 // ===== KEEP ALL EXISTING EARN TOKENS LOGIC UNCHANGED =====

@@ -77,6 +77,36 @@ video {
   font-weight: 700;
   color: #fff;
 }
+/* ===== DESKTOP / TABLET FIX ===== */
+@media (min-width: 768px) {
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+  }
+
+  .reel-wrapper {
+    width: 420px;          /* mobile size */
+    height: 90vh;
+    max-height: 800px;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  }
+
+  .reel {
+    height: 100%;
+  }
+
+  .reel video {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+}
 
 .actions .action.like.liked i { color: #0960d1; text-shadow: 0 0 3px rgba(24,119,242,0.8); } /* blue like */
 .actions .action.dislike.liked i { color: #e74c3c; text-shadow: 0 0 3px rgba(231,76,60,0.8); }

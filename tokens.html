@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>  <html lang="en">  
 <head>  
 <meta charset="UTF-8">  
@@ -156,7 +157,7 @@ body {
   <span class="material-icons icon">diamond</span>  
 </div> 
 <div class="motivation-message" id="motivationMessage">
-  Keep learning and teaching on Microswab! Earn tokens for every skill you master or share. Learners: reach max progress to unlock monetization. Teachers: hit 5,000 tokens to start turning your skills into real rewards. Keep growing and earning your efforts today pay off tomorrow!”
+  “Keep learning and teaching on Microswab! Earn tokens for every skill you master or share. Learners and teachers: reach 100% progress to unlock certificates and monetization. Teachers: hit 5,000 tokens to start turning your skills into real rewards.”
 </div>
 <!-- Daily Reward -->
 <!-- Daily Reward -->
@@ -181,10 +182,12 @@ body {
   <button id="buyTokens">Buy Tokens</button>  
   <button id="earnTokens">Earn Tokens</button>  
   <button id="sendTokens">Send Tokens</button>   
-</div>  <div class="history-section">  
-  <h3>Token History</h3>  
-  <div class="history-item"><span class="desc">Joined Microswab</span><span class="amount">+30</span></div>  
-</div>  <div class="bottom-nav">  
+</div> 
+ <div class="history-section">
+  <h3 id="surpriseHistoryTitle">🎁 Surprise History (0)</h3>
+  <div id="surpriseHistoryList">Claim surprises daily on Microswab. Hit 100 to unlock a life-changing reward. Don’t miss your next surprise.”</div>
+</div>
+  <div class="bottom-nav">  
   <a href="index.html"><span class="material-icons-outlined">home</span>Home</a>  
   <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Messages</a>  
   <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>  
@@ -337,18 +340,18 @@ auth.onAuthStateChanged(async user => {
 
   // Create user document if it doesn't exist  
   if (!snap.exists()) {  
-    await setDoc(userRef, {  
-      tokens: 0,  
-      aiPaidUntil: 0,  
-      createdAt: Date.now(),
-      learningProgress: 0,
-      teachingProgress: 0,
-      skillsLearned: 0,
-      skillsTaught: 0,
-      learningCompleted: false,
-      teachingCompleted: false
-    });  
-  }  
+  await setDoc(userRef, {  
+    tokens: 50,  // <-- give new users 50 tokens
+    aiPaidUntil: 0,  
+    createdAt: Date.now(),
+    learningProgress: 0,
+    teachingProgress: 0,
+    skillsLearned: 0,
+    skillsTaught: 0,
+    learningCompleted: false,
+    teachingCompleted: false
+  });  
+} 
   loadTokens();  
 });  
 
@@ -497,6 +500,47 @@ document.getElementById("earnTokens").addEventListener("click", async ()=>{
     document.getElementById("earnTokens").click();  
   }  
 });  
+</script>
+<script>
+/* ================= SURPRISE HISTORY (TOKENS PAGE) ================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const list = document.getElementById("surpriseHistoryList");
+  const title = document.getElementById("surpriseHistoryTitle");
+
+  if (!list || !title) return;
+
+  const history = JSON.parse(localStorage.getItem("ms_surprise_history") || "[]");
+
+  // ✅ UPDATE COUNT
+  title.innerText = `🎁 Surprise History (${history.length})`;
+
+  if (history.length === 0) {
+    list.innerHTML = `
+      <div class="history-item">
+        <span class="desc">No surprises claimed yet</span>
+        <span class="amount">—</span>
+      </div>
+    `;
+    return;
+  }
+
+  // Show newest first
+  history.slice().reverse().forEach(item => {
+    const date = new Date(item.time).toLocaleDateString();
+
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerHTML = `
+      <span class="desc">${item.reward}</span>
+      <span class="amount">${date}</span>
+    `;
+
+    list.appendChild(div);
+  });
+
+});
 </script>
  </body>  
 </html>

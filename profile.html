@@ -411,6 +411,26 @@
   font-size:28px !important;
   color:#6a0dad;
 }
+.token-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #f8b50a !important; /* force override */
+}
+
+.token-badge span,
+.token-badge i,
+.token-badge .material-icons,
+.token-badge .material-icons-outlined {
+  color: #ec0d0d !important;
+}
+
+.token-icon{
+  font-size: 20px;
+}
   </style>
 </head>
 <body>
@@ -437,6 +457,12 @@
       </div>
     </div>
     <h2 class="username" id="username">User</h2>
+
+<!-- ✅ ADD THIS -->
+<div class="token-badge" id="teacherTokenBadge">
+  <span class="material-icons token-icon">diamond</span>
+  <span id="teacherTokenBalance">0</span>
+</div>
     <p class="bio" id="bio">Loading bio...</p>
     <div class="profile-buttons">
       <button class="follow-btn" id="followBtn">Follow</button>
@@ -452,8 +478,8 @@
 </div>
 
 <div class="bottom-nav">
-  <a href="home.html"><span class="material-icons-outlined">home</span>Home</a>
-  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Messages</a>
+  <a href="index.html"><span class="material-icons-outlined">home</span>Home</a>
+  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Learning</a>
   <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>
   <a href="tokens.html"><span class="material-icons-outlined">diamond</span>Tokens</a>
   <a href="profile.html"><span class="material-icons-outlined">person</span>Profile</a>
@@ -597,6 +623,7 @@ const messageBtn = document.getElementById("messageBtn");
 const followBtn = document.getElementById("followBtn");
 const postsGrid = document.getElementById("postsGrid");
 
+
 let profileUserId = "";
 
 onAuthStateChanged(auth, async (user) => {
@@ -618,6 +645,11 @@ if (profileUserId !== auth.currentUser.uid) {
 onSnapshot(userRef, snap=>{
   if(!snap.exists()) return;
   const data = snap.data();
+  const tokenEl = document.getElementById("teacherTokenBalance");
+const tokenBadge = document.getElementById("teacherTokenBadge");
+
+tokenEl.textContent = data.tokens ?? 0;
+tokenBadge.style.display = "flex";
   usernameEl.textContent = (data.firstName||"User")+" "+(data.secondName||"");
   bioEl.textContent = data.bio || "No bio yet.";
   profilePic.src = data.photoURL || "default-avatar.jpg";
@@ -995,10 +1027,17 @@ shareBtn.addEventListener("click", async () => {
       });
 
       // --- Learn Skill button ---
-      post.querySelector(".learn-skill button").addEventListener("click", ()=>{
-        if(!skill.posterUserId){ alert("No teacher assigned!"); return; }
-        window.location.href=`teacherchat.html?uid=${encodeURIComponent(skill.posterUserId)}`;
-      });
+const learnBtn = post.querySelector(".learn-skill button");
+if (learnBtn) {
+  learnBtn.addEventListener("click", () => {
+    if (!skill.posterUserId) { 
+      alert("No teacher assigned!"); 
+      return; 
+    }
+    // Pass both teacher UID and skill ID in the URL
+    window.location.href = `teacherchat.html?uid=${encodeURIComponent(skill.posterUserId)}&skillId=${encodeURIComponent(skillDoc.id)}`;
+  });
+}
 
       // --- Views increment ---
       (async()=>{

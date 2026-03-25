@@ -131,7 +131,7 @@ header button {
 <body>
 
 <header>
-  <button onclick="window.location.href='home.html'">Back</button>
+  <button onclick="window.location.href='index.html'">Back</button>
   <h1>Add Story</h1>
   <div></div>
 </header>
@@ -158,7 +158,7 @@ header button {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
@@ -173,7 +173,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// CLOUDINARY DETAILS
 const CLOUD_NAME = "dcpa8046h";
 const UPLOAD_PRESET = "microswab-profile";
 
@@ -200,7 +199,7 @@ storyInput.addEventListener("change", (e) => {
   }
 });
 
-// Post story
+// Post story with teacher name & photo
 onAuthStateChanged(auth, (user) => {
   if (!user) return;
 
@@ -218,29 +217,32 @@ onAuthStateChanged(auth, (user) => {
       formData.append("file", selectedFile);
       formData.append("upload_preset", UPLOAD_PRESET);
 
-      const cloudinaryURL =
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-      const cloudinaryRes = await fetch(cloudinaryURL, {
+      const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
         method: "POST",
         body: formData
       });
-
       const uploaded = await cloudinaryRes.json();
       const imageURL = uploaded.secure_url;
+
+      // Get teacher profile info
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const profileData = userDoc.exists() ? userDoc.data() : {};
+      const uploaderName = profileData.name || profileData.displayName || "Teacher";
+      const uploaderPhotoURL = profileData.photoURL || "default-avatar.jpg";
 
       // Save story to Firestore
       await addDoc(collection(db, "stories"), {
         userId: user.uid,
+        uploaderName,
+        uploaderPhotoURL,
         imageURL,
         title: storyTitle.value,
         createdAt: serverTimestamp()
       });
 
       postingOverlay.style.display = "none";
-
       alert("Story posted!");
-      window.location.href = "home.html";
+      window.location.href = "index.html";
 
     } catch (err) {
       console.error(err);

@@ -259,18 +259,94 @@ body, html {
 </head>
 
 <body>
+  <!-- ===== LEADERBOARD MODAL ===== -->
+<div id="leaderboardModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:300;
+  justify-content:center;
+  align-items:center;
+">
+  <div style="
+    background:#fff;
+    width:90%;
+    max-width:420px;
+    border-radius:16px;
+    padding:20px;
+    max-height:80vh;
+    overflow-y:auto;
+  ">
+    <h3 style="margin:0 0 12px;text-align:center;">🏆 Top Learners</h3>
+    <div id="leaderboardList"></div>
+    <button id="closeLeaderboard" style="
+      margin-top:14px;
+      width:100%;
+      padding:10px;
+      border:none;
+      border-radius:10px;
+      background:#0084ff;
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+    ">Close</button>
+  </div>
+</div>
 
 <div class="header">
   Courses
   <div style="display:flex; gap:8px; align-items:center;">
+    <button id="leaderboardBtn">🏆 Leaderboard</button>
     <button id="filterUnreadBtn">Unread</button>
-    <button id="shareBtn">invite Friends</button>
+    <button id="shareBtn">Invite Friends</button>
   </div>
 </div>
 
 <div class="search-bar">
   <input id="searchInput" placeholder="Search teachers..." />
   <button id="clearSearch">Clear</button>
+</div>
+
+<!-- ✅ COUNTDOWN (CORRECT PLACE) -->
+<div id="nextStreakBox" style="
+  display:none;
+  margin:8px auto;
+  padding:4px 10px;
+  background:#111827;
+  color:#fff;
+  border-radius:6px;
+  font-size:12px;
+  text-align:center;
+  width:fit-content;
+">
+  ⏳ Next streak in <span id="nextStreakTime">--</span>
+</div>
+
+<div id="missedStreakBox" style="
+  display:none;
+  margin:10px auto;
+  padding:10px 14px;
+  background:#7f1d1d;
+  color:#fff;
+  border-radius:10px;
+  font-size:13px;
+  text-align:center;
+  width:fit-content;
+">
+  💔 Sorry, you missed your today streak.<br>
+  Please don’t miss the next one.
+
+  <br><br>
+  <button id="missedOkBtn" style="
+    padding:6px 14px;
+    border:none;
+    border-radius:6px;
+    background:#fff;
+    color:#7f1d1d;
+    font-weight:600;
+    cursor:pointer;
+  ">OK</button>
 </div>
 <!-- ===== DAILY STREAK ===== -->
 <div id="streakCard" style="display:none;">
@@ -291,7 +367,7 @@ body, html {
 <button class="new-chat-btn" id="newChatBtn">AI</button>
 
 <div class="bottom-nav">
-  <a href="home.html" class="active">
+  <a href="index.html" class="active">
     <span class="material-icons-outlined">home</span>
     Home
   </a>
@@ -357,12 +433,13 @@ const newChatModal = document.getElementById("newChatModal");
 const payAiBtn = document.getElementById("payAiBtn");
 const streakCard = document.getElementById("streakCard");
 const claimStreakBtn = document.getElementById("claimStreakBtn");
+const missedOkBtn = document.getElementById("missedOkBtn");
 
 const AI_COST = 50;
 const STREAK_MILESTONES = {3:10,7:25,14:50,30:100};
 const DAILY_REWARD = 5;
 const STREAK_SAVE_COST = 10;
-const ONE_DAY = 1*60*60*1000;
+const ONE_DAY = 60*1000;
 
 let cachedUsers = {};
 let allConvs = [];
@@ -476,6 +553,38 @@ onAuthStateChanged(auth, async user=>{
   const data = snap.data();
   let streak = data.streak||0;
   let lastActive = data.lastActive||0;
+  let missedStreak = false;
+
+  const nextStreakBox = document.getElementById("nextStreakBox");
+const nextStreakTime = document.getElementById("nextStreakTime");
+const missedStreakBox = document.getElementById("missedStreakBox");
+const missedOkBtn = document.getElementById("missedOkBtn");
+
+function updateNextStreakCountdown() {
+  if (!lastClaim) return;
+
+  const now = Date.now();
+  const diff = now - lastClaim;
+
+  // Show countdown ONLY after claim
+  if (diff < ONE_DAY_MS) {
+    nextStreakBox.style.display = "block";
+
+    const timeLeft = ONE_DAY_MS - diff;
+
+    const hrs = Math.floor(timeLeft / (1000*60*60));
+    const mins = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
+    const secs = Math.floor((timeLeft % (1000*60)) / 1000);
+
+    nextStreakTime.innerText = `${hrs}h ${mins}m ${secs}s`;
+  } else {
+  nextStreakBox.style.display = "none";
+  // ❌ DO NOT touch missedStreakBox here
+}
+}
+
+// Run every second
+setInterval(updateNextStreakCountdown, 1000);
   let tokens = data.tokens||0;
   const now = Date.now();
 
@@ -483,63 +592,117 @@ onAuthStateChanged(auth, async user=>{
   // Handle streak reset or save
 if (lastActive && now - lastActive > ONE_DAY * 2 && !data.missedStreakNotified) {
 
-  // 🔔 PUSH MISSED STREAK NOTIFICATION
-  await pushNotification(user.uid, "🔥 You missed today’s streak!");
-  await updateDoc(userRef, { missedStreakNotified: true });
+  // 🔔 Notify user
+  await pushNotification(user.uid, "💔 You missed your streak!");
 
-  if (tokens >= STREAK_SAVE_COST &&
-      confirm("⚠️ You missed a day!\nPay 10 tokens to save your streak?")) {
-    tokens -= STREAK_SAVE_COST;
-  } else {
-    streak = 0;
-  }
+  // ❌ No saving — always reset
+  streak = 0;
+
+  await updateDoc(userRef, {
+    missedStreakNotified: true,
+    streak: 0
+  });
 }
 
-  // ===== DAILY STREAK (FINAL, FIXED) =====
-const lastClaim = data.lastStreakClaimTime || 0;
+// ===== DAILY STREAK (UPDATED WITH 3% GROWTH) =====
+const ONE_DAY_MS = 60 * 1000; // 1 "day" = 60 seconds for testing
+const STREAK_REWARDS = [
+  5, 10, 13, 16, 20, 24, 28, 32, 38, 43,
+  48, 53, 58, 63, 68, 73, 78, 83, 88, 93
+];
 
-// Hide by default
+let lastClaim = data.lastStreakClaimTime || 0;
+// Detect missed day BEFORE resetting
+const nowTime = Date.now();
+const diffDaysCheck = Math.floor((nowTime - lastClaim) / ONE_DAY_MS);
+
+if (diffDaysCheck > 1) {
+  missedStreak = true;
+  missedStreakBox.style.display = "block";
+  streakCard.style.display = "none";
+  nextStreakBox.style.display = "none";
+}
 streakCard.style.display = "none";
 
-// Show ONLY if 24 hours passed
-if (now - lastClaim >= ONE_DAY) {
-  streakCard.style.display = "flex";
-  if (streak > 0) {
-  streakCard.style.background =
-    "linear-gradient(135deg, #ff6a00, #ee0979)";
+function updateStreakCard() {
+  const now = Date.now();
+  const diff = now - lastClaim;
+  const diffDays = Math.floor(diff / ONE_DAY_MS);
+
+  // Missed a day? Reset streak
+
+  // Show streak card only if a day has passed
+  // 🚫 If user missed streak, DO NOTHING until they click OK
+if (missedStreak) return;
+
+// Normal flow
+if (diff >= ONE_DAY_MS) {
+    streakCard.style.display = "flex";
+    streakCard.style.background =
+  "linear-gradient(135deg, #ff6a00, #ee0979)";
+
+    document.getElementById("streakText").innerHTML =
+      streak === 0
+        ? `🔥 Start your learning streak today.<br><b>Claim +${STREAK_REWARDS[0]} tokens</b>`
+        : `⚠️ Day <b>${streak + 1}</b> streak active.<br>
+           You will <b>LOSE your ${streak}-day streak</b> if you don’t claim today.`;
+  }
+
+  // Countdown timer
+  const timeLeft = ONE_DAY_MS - (diff % ONE_DAY_MS);
+  const hrs = Math.floor(timeLeft / (1000*60*60));
+  const mins = Math.floor((timeLeft % (1000*60*60)) / (1000*60));
+  const secs = Math.floor((timeLeft % (1000*60)) / 1000);
+
+    `Next streak in: ${hrs}h ${mins}m ${secs}s`;
 }
 
-  const hoursLeft = Math.max(
-  0,
-  Math.floor((ONE_DAY - (now - lastClaim)) / (60 * 60 * 1000))
-);
+// Run countdown every second
+setInterval(updateStreakCard, 1000);
 
-document.getElementById("streakText").innerHTML =
-  streak === 0
-    ? `🔥 Start your learning streak today.<br><b>Claim +${DAILY_REWARD} tokens</b> before midnight.`
-    : `⚠️ Day <b>${streak + 1}</b> streak active.<br>
-       You will <b>LOSE your ${streak}-day streak</b> if you don’t claim today.`;
-  claimStreakBtn.onclick = async () => {
-    claimStreakBtn.disabled = true;
+missedOkBtn.onclick = async () => {
+  missedStreakBox.style.display = "none";
 
-    streak += 1;
-    let reward = DAILY_REWARD;
-    if (STREAK_MILESTONES[streak]) reward += STREAK_MILESTONES[streak];
+  // ✅ UNBLOCK SYSTEM
+  missedStreak = false;
 
-    await updateDoc(userRef, {
-  tokens: tokens + reward,
-  streak: streak,
-  lastStreakClaimTime: now,
-  lastActive: now,
-  missedStreakNotified: false
-});
+  // NOW reset AFTER user acknowledges
+  streak = 0;
 
-    alert(`🔥 Streak Day ${streak}! You earned +${reward} tokens`);
+  await updateDoc(userRef, {
+    streak: 0,
+    missedStreakNotified: false
+  });
 
-    // 🔥 HIDE COMPLETELY after claim
-    streakCard.style.display = "none";
-  };
-}
+  updateStreakCard();
+};
+// Claim streak button
+claimStreakBtn.onclick = async () => {
+  claimStreakBtn.disabled = true;
+
+  const now = Date.now(); // ✅ FIRST
+  lastClaim = now;        // ✅ THEN
+
+  updateNextStreakCountdown();
+  missedStreakBox.style.display = "none";
+
+  streak += 1; // today’s streak
+  if (streak > 20) streak = 20; // max 20 days
+
+  // Reward based on STREAK_REWARDS with 3% growth after day 20
+  let reward = STREAK_REWARDS[streak - 1] || Math.floor(STREAK_REWARDS[STREAK_REWARDS.length - 1] * Math.pow(1.03, streak - 20));
+
+  await updateDoc(userRef, {
+    tokens: tokens + reward,
+    streak: streak,
+    lastStreakClaimTime: now,
+    lastActive: now
+  });
+
+  alert(`🔥 Streak Day ${streak}! You earned +${reward} tokens`);
+  lastClaim = now; // reset countdown
+  streakCard.style.display = "none";
+};
 
 // ===== PLUS BUTTON HOVER & CLICK ANIMATION =====
 newChatBtn.style.transition = "transform 0.2s, box-shadow 0.2s";
@@ -637,7 +800,82 @@ shareBtn.onclick = async () => {
     console.error("Error sharing:", err);
   }
 };
+// ===== DEMO LEADERBOARD SYSTEM =====
+const leaderboardBtn = document.getElementById("leaderboardBtn");
+const leaderboardModal = document.getElementById("leaderboardModal");
+const leaderboardList = document.getElementById("leaderboardList");
+const closeLeaderboard = document.getElementById("closeLeaderboard");
 
+const LEADERBOARD_KEY = "microswab_demo_leaderboard";
+const LEADERBOARD_TIME_KEY = "microswab_demo_leaderboard_time";
+const LEADERBOARD_REFRESH = 24 * 60 * 60 * 1000; // 24 hours
+
+const demoNames = [
+  "Alex Carter", "Maya Lopez", "Daniel Kim", "Sophia Brown",
+  "Ethan Wright", "Aisha Bello", "Liam Johnson",
+  "Noah Smith", "Grace Lee", "Chris Morgan"
+];
+
+function generateDemoLeaderboard() {
+  const shuffled = demoNames.sort(() => 0.5 - Math.random()).slice(0, 6);
+  return shuffled.map((name, index) => ({
+    name,
+    tokens: Math.floor(Math.random() * 500) + 100,
+    avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`,
+    rank: index + 1
+  }));
+}
+
+function loadLeaderboard() {
+  const lastTime = localStorage.getItem(LEADERBOARD_TIME_KEY);
+  let data = localStorage.getItem(LEADERBOARD_KEY);
+
+  if (!data || !lastTime || Date.now() - lastTime > LEADERBOARD_REFRESH) {
+    const freshData = generateDemoLeaderboard();
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(freshData));
+    localStorage.setItem(LEADERBOARD_TIME_KEY, Date.now());
+    data = JSON.stringify(freshData);
+  }
+
+  const leaderboard = JSON.parse(data);
+  leaderboardList.innerHTML = "";
+
+  leaderboard.forEach(user => {
+    const div = document.createElement("div");
+    div.style.cssText = `
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px;
+      border-bottom:1px solid #eee;
+    `;
+    div.innerHTML = `
+      <div style="font-weight:700;">#${user.rank}</div>
+      <img src="${user.avatar}" style="width:44px;height:44px;border-radius:50%;">
+      <div style="flex:1;">
+        <div style="font-weight:600;">${user.name}</div>
+        <div style="font-size:13px;color:#555;">${user.tokens} tokens</div>
+      </div>
+    `;
+    leaderboardList.appendChild(div);
+  });
+}
+
+// ===== Leaderboard Events =====
+leaderboardBtn.onclick = () => {
+  loadLeaderboard();
+  leaderboardModal.style.display = "flex";
+};
+
+closeLeaderboard.onclick = () => {
+  leaderboardModal.style.display = "none";
+};
+
+leaderboardModal.onclick = e => {
+  if (e.target === leaderboardModal) {
+    leaderboardModal.style.display = "none";
+  }
+};
 </script>
 
 </body>

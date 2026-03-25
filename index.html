@@ -95,15 +95,15 @@
   padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid #1877f2;
-  background: #1877f2;
-  color: white;
+  background: #fefeff;
+  color: rgb(131, 142, 240);
   cursor: pointer;
   font-size: 13px;
   transition: 0.2s;
 }
 .follow-btn.following {
   background: white;
-  color: #1877f2;
+  color: #2882f7;
 }
 
 .post-title {
@@ -219,35 +219,11 @@
   display: flex;
   gap: 10px;
 }
-    /* ========= Bottom nav ========= */
-    .bottom-nav {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:white;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  padding:8px 0;
-  box-shadow:0 -3px 6px rgba(0,0,0,0.1);
-  z-index:1000;
-}
-.bottom-nav a {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-decoration:none;
-  color:#555;
-  font-size:11px;
-  flex:1;
-}
-.bottom-nav a span {
-  font-size:24px;
-}
-.bottom-nav a:hover,
-.bottom-nav a.active {
-  color:#6a0dad;
-}
+    .bottom-nav { position:fixed; bottom:0; width:100%; background:white; display:flex; justify-content:space-around; align-items:center; padding:8px 0; box-shadow:0 -3px 6px rgba(0,0,0,0.1); z-index:1000; }  
+.bottom-nav a { display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#555; font-size:11px; flex:1; }  
+.bottom-nav a span { font-size:24px; }  
+.bottom-nav a:hover { color:#6a0dad; }  
+.bottom-nav a.active { color:#6a0dad; } 
 .plus-button {
   font-size:28px !important;
   color:#6a0dad;
@@ -350,12 +326,18 @@
   font-weight: 600;
 }
 </style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
 </head>
 <body>
 
   <!-- TOPBAR: Microswab + search -->
 <!-- TOPBAR -->
-         <div class="logo">Microswab</div>
+         <div class="logo">Microswab</div> <!-- SIGN UP BUTTON -->
+  <a href="signup.html" id="topSignupBtn" class="signup-btn">
+    Sign Up
+  </a>
+
   <div class="topbar">
     <div class="groups-icon" onclick="location.href='group.html'"> 
   <span></span>
@@ -386,15 +368,18 @@
         ">
   </span>
 </div>
-
   <!-- REELS ICON -->
   <a href="reels.html" id="videoBtn" style="position:relative;">
-  <span class="material-icons-outlined">video_library</span>    <div class="nav">
-    <a href="#" id="topSignupBtn" class="signup-btn">Sign Up</a>
-  </div>  <div class="token-badge" id="tokenBadge" style="display:none;">
-  <span class="material-icons-outlined" style="font-size:18px;">diamond</span>
-  <span id="homeTokenBalance">0</span>
-</div>
+  <span class="material-icons-outlined">video_library</span>
+   <span id="videoDot" class="video-dot"></span>
+  </a>
+ 
+  <!-- TOKEN BADGE (Hidden by default) -->
+  <div class="token-badge" id="tokenBadge">
+    <span class="material-icons-outlined token-icon">diamond</span>
+    <span id="homeTokenBalance">0</span>
+  </div>
+
   <span id="videoDot"
     style="
       position:absolute;
@@ -416,8 +401,12 @@
   <button class="category-btn" data-category="Entrepreneur">Entrepreneur</button>
   <button class="category-btn" data-category="freelancing">Freelancing</button>
   <button class="category-btn" data-category="marketing">Marketing</button>
-  <button class="category-btn" data-category="ai">AI</button>
   <button class="category-btn" data-category="design">Design</button>
+   <button class="category-btn" data-category="Apps ">Apps</button>
+   <button class="category-btn" data-category="Investor ">Investor </button>
+   <button class="category-btn" data-category="Data Analysis">Data Analysis</button>
+</div>
+
 </div>
   <!-- STORIES (bar) -->
   <div class="stories-wrapper">
@@ -430,7 +419,13 @@
         <div class="plus">+</div> 
         <div class="story-text">Add Story</div>
       </div>
-       
+      <!-- 10-second signup prompt for new users -->
+<div id="signupPrompt" class="signup-prompt" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;z-index:999;">
+  <div class="signup-prompt-content" style="background:#fff;padding:30px;border-radius:15px;text-align:center;max-width:300px;">
+    <h1 style="font-size:18px;font-weight:bold;margin-bottom:20px;">🚀 To continue using Microswab, you need to sign up!</h1>
+    <button id="promptSignupBtn" style="padding:10px 20px;font-size:16px;font-weight:bold;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;">Sign Up</button>
+  </div>
+</div>
       <!-- dynamic stories appended here -->
     </div>
   </div>
@@ -441,7 +436,7 @@
   <h2>Welcome to Microswab 👋</h2>
   <p>
     Microswab is a skill-sharing platform where real people teach real skills.
-    Learn directly from creators, professionals, and everyday experts — one skill at a time.
+    Learn directly from creators, and professionals, reach 100% progress to unlock certificate, earn tokens for every skills you learn or teach 
   </p>
 
   <!-- Demo Stats -->
@@ -471,11 +466,41 @@
 </div>
 
   
-  <!-- Daily Challenge Section -->
-<div id="dailyChallenge" class="challenge-card">
-  <h3>🔥 Daily Challenge</h3>
-  <p>Pick at least one skill today and start learning. microswab will be proud of ur efforts</p>
-  <button id="startChallengeBtn">Start Challenge</button>
+  <!-- 🎁 Microswab Surprise System -->
+<div id="surpriseCard" class="surprise-card" style="display:none;">
+  <div class="surprise-close" id="closeSurprise">✕</div>
+  <h3 id="surpriseTitle">🎁 Surprise Incoming</h3>
+  <p id="surpriseText">
+    Hey 👋 Microswab has something special for you.<br>
+    Don’t miss it!
+  </p>
+  <div class="surprise-timer" id="surpriseTimer">18h 00m 00s</div>
+  <button id="surpriseActionBtn">Claim Surprise</button>
+</div>
+
+<!-- ⏳ Sticky Countdown (after close) -->
+<!-- 🎁 Microswab Surprise System -->
+<div id="surpriseCard" class="challenge-card" style="display:none;">
+  <h3 id="surpriseTitle">🎁 Microswab Surprise</h3>
+  <p id="surpriseMessage">
+    Microswab has something special for you.
+  </p>
+  <button id="surpriseActionBtn">Okay</button>
+</div>
+
+<!-- ⏳ Surprise Countdown Bar -->
+<div id="surpriseCountdownBar" style="
+  display:none;
+  margin: 12px 16px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg,#1e293b,#020617);
+  color:#fff;
+  border-radius:14px;
+  font-weight:700;
+  text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,0.35);
+">
+  🎁 Next surprise in <span id="surpriseCountdownText">--</span>
 </div>
 <!-- ===== REELS PREVIEW (Instagram-style) ===== -->
 <div class="reels-preview">
@@ -484,60 +509,94 @@
 </div>
 
 <style>
-  /* Challenge Card Styling */
-  .challenge-card {
-    background: linear-gradient(135deg, #0f172a, #020617);
-    color: #fff;
-    border-radius: 20px;
-    margin: 20px 16px;
-    padding: 22px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
-  }
+  /* ================= PROFESSIONAL SURPRISE SYSTEM ================= */
 
-  .challenge-card.hide {
-    opacity: 0;
-    transform: scale(0.95);
-    pointer-events: none;
-    height: 0;
-    padding: 0;
-    margin: 0;
-  }
+/* ================= PROFESSIONAL SURPRISE SYSTEM — MOBILE-FRIENDLY ================= */
 
-  .challenge-card h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
+#surpriseCard {
+  display: none; 
+  background-color: #1f2937; 
+  color: #f8fafc; 
+  border-radius: 12px;
+  padding: 14px 12px; /* reduced padding */
+  margin: 13px 10px;
+  border-left: 4px solid #22c55e; 
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  font-family: 'Inter', sans-serif;
+  max-width: 300px; /* smaller width for mobile */
+  margin-left: auto;
+  margin-right: auto; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px; /* reduced gap */
+  text-align: center;
+}
 
-  .challenge-card p {
-    font-size: 14px;
-    color: #cbd5f5;
-    margin-bottom: 16px;
-    text-align: center;
-    line-height: 1.5;
-  }
+#surpriseCard h3 {
+  font-size: 18px; /* slightly smaller title */
+  font-weight: 700;
+  margin: 0; 
+}
 
-  .challenge-card button {
-    width: 100%;
-    padding: 14px 0;
-    border: none;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #020617;
-    box-shadow: 0 14px 40px rgba(34,197,94,0.35);
-    transition: transform 0.15s ease;
-  }
+#surpriseCard p {
+  font-size: 14px; /* slightly smaller text */
+  line-height: 1.5;
+  color: #e5e7eb;
+  margin: 0; 
+}
 
-  .challenge-card button:active {
-    transform: scale(0.97);
-  }
+#surpriseActionBtn {
+  padding: 12px 0; /* smaller button */
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: #22c55e;
+  color: #f8fafc;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#surpriseActionBtn:hover {
+  background-color: #16a34a;
+  transform: scale(1.02);
+}
+
+#surpriseActionBtn:active {
+  transform: scale(0.97);
+}
+
+/* ⏳ Surprise Countdown Bar (Mobile Compact Inline, Small Height) */
+#surpriseCountdownBar {
+  display: flex;               /* inline with Microswab */
+  align-items: center;         /* vertical alignment */
+  justify-content: center;     /* center text inside box */
+  
+  background-color: #111827;
+  color: #f8fafc;
+
+  padding: 1px 10px;           /* tiny vertical padding, more horizontal */
+  margin: 0;
+  border-radius: 4px;
+
+  font-size: 11px;             /* small text */
+  font-weight: 600;
+  text-align: center;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  font-family: 'Inter', sans-serif;
+
+  max-width: 200px;            /* allow text to fit without wrapping */
+  line-height: 1;              /* very tight height */
+}
+
+#surpriseCountdownText {
+  font-weight: 700;
+  font-size: 11px;             
+  color: #22c55e;
+  margin-left: 4px;            /* spacing from "Next surprise in" */
+}
   .post-user-meta {
   display: flex;
   flex-direction: column;
@@ -622,31 +681,33 @@
   color: #555;
   margin-left: 6px;
 }
-/* ===== Reels Preview ===== */
+/* ===== Reels Preview (Mobile Compact) ===== */
+
 .reels-preview {
-  margin: 10px 12px;
+  margin: 8px 10px;
 }
 
 .reels-preview h3 {
-  font-size: 16px;
-  margin-bottom: 8px;
+  font-size: 14px;       /* smaller heading */
+  margin-bottom: 6px;
 }
 
 .reels-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;              /* tighter spacing */
   overflow-x: auto;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
 
 .reel-card {
-  min-width: 140px;
-  height: 220px;
-  border-radius: 14px;
+  min-width: 110px;      /* ↓ smaller width */
+  height: 180px;         /* ↓ proportional height */
+  border-radius: 12px;   /* slightly tighter */
   background: #000;
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  flex-shrink: 0;        /* prevents squish */
 }
 
 .reel-card video,
@@ -661,10 +722,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 8px;
+  padding: 6px;          /* ↓ smaller padding */
   background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
   color: #fff;
-  font-size: 12px;
+  font-size: 11px;       /* ↓ smaller text */
 }
 
 .reel-play {
@@ -672,8 +733,17 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 42px;
+  font-size: 34px;       /* ↓ smaller play icon */
   color: rgba(255,255,255,0.85);
+}
+/* Hide horizontal scrollbar but keep scroll working */
+.reels-row {
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/Edge */
+}
+
+.reels-row::-webkit-scrollbar {
+  display: none;                  /* Chrome, Safari */
 }
 /* CATEGORY BAR */
 .category-bar {
@@ -682,9 +752,15 @@
   gap: 10px;
   padding: 10px;
   background: #fff;
-  position: sticky;
-  top: 60px;
-  z-index: 100;
+  position: relative; /* changed from sticky */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .category-btn {
@@ -707,30 +783,32 @@
   color: #fff;
 }
 .signup-btn {
-  background: #4CAF50;
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 6px;
+  background: #1877f2;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
   text-decoration: none;
-  font-weight: 500;
-  transition: 0.3s;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.signup-btn:hover {
-  background: #45a049;
-}
 .token-badge {
-  display: flex;
+  display: none; /* hidden by default */
   align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, #b19bdd, #a98dbb);
-  color: white;
-  padding: 6px 10px;
+  gap: 3px;
+  background: rgba(99, 67, 67, 0.1);
+  padding: 5px 10px;
   border-radius: 20px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
 }
+
+.token-icon {
+  font-size: 15px;
+}
+
+
 </style>
 
 <script>
@@ -763,32 +841,23 @@
 </script>
 
   <!-- FEED -->
-  <div id="feed"></div>
+  <div id="feedLoading" style="text-align:center; padding:20px; font-weight:600; color:#555;">
+  Loading feed...
+</div>
+
+<div id="feed"></div>
   <div id="noResults" style="display:none; text-align:center; padding:20px; font-size:18px; color:#555;">
   No results found for your search. 
 </div>
 
   <!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <a href="home.html" class="active">
-    <span class="material-icons-outlined">home</span>
-    Home
-  </a>
-  <a href="messages.html">
-    <span class="material-icons-outlined">chat_bubble_outline</span>
-    learning
-  </a>
-  <a href="add.html">
-    <span class="material-icons plus-button">add</span>
-    Add
-  </a>
-   <a href="tokens.html" class="active"><span class="material-icons-outlined">diamond</span>Tokens</a>  
-  <a href="profile.html">
-    <span class="material-icons-outlined">person</span>
-    Profile
-  </a>
+<div class="bottom-nav">  
+  <a href="index.html"><span class="material-icons-outlined">home</span>Home</a>  
+  <a href="messages.html"><span class="material-icons-outlined">chat_bubble_outline</span>Learning</a>  
+  <a href="add.html"><span class="material-icons plus-button">add</span>Add</a>  
+  <a href="tokens.html" class="active"><span class="material-icons-outlined">diamond</span>Tokens</a>  
+  <a href="profile.html"><span class="material-icons-outlined">person</span>Profile</a>  
 </div>
-
   <!-- STORY VIEWER (Fullscreen - Facebook style) -->
   <div id="storyViewer" class="story-viewer" aria-hidden="true">
     <div class="story-inner">
@@ -877,23 +946,24 @@ const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
   let viewerTimer = null;
   const STORY_DURATION_MS = 5000; // 5s per story default
 
+
   // Minimal escape helper for safe insertion
   function escapeHtml(s){ return String(s || '').replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;', '`':'&#96;'}[c])); }
 
   // Utility: create story DOM node
   function renderStoryItem(story, idx) {
-    const el = document.createElement('div');
-    el.className = 'story has-story';
-    el.dataset.index = idx;
-    el.innerHTML = `
-      <div class="avatar-wrap">
-        <img class="avatar" src="${escapeHtml(story.imageURL || 'default-avatar.jpg')}" alt="${escapeHtml(story.title || 'Story')}">
-      </div>
-      <div class="story-text">${escapeHtml(story.title || (story.uploaderName || 'Story'))}</div>
-    `;
-    el.addEventListener('click', () => openStoryViewer(idx));
-    return el;
-  }
+  const el = document.createElement('div');
+  el.className = 'story has-story';
+  el.dataset.index = idx;
+  el.innerHTML = `
+    <div class="avatar-wrap">
+      <img class="avatar" src="${escapeHtml(story.imageURL || 'default-avatar.jpg')}" alt="${escapeHtml(story.title || 'Story')}">
+    </div>
+    <div class="story-text">${escapeHtml(story.title) || 'New Story'}</div>
+  `;
+  el.addEventListener('click', () => openStoryViewer(idx));
+  return el;
+}
 
   // Open the fullscreen viewer at index
   function openStoryViewer(index){
@@ -1173,23 +1243,27 @@ storiesData = snapshot.docs
 
     // -------- SKILLS FEED (with real-like, share, links) --------
     const skillsQuery = query(collection(db,"skills"),orderBy("createdAt","desc"));
-    onSnapshot(skillsQuery,snapshot=>{
-      // optional: show skeletons or preload first few for perceived speed (kept minimal here)
-      snapshot.docs.forEach(skillDoc => {
-  const skill = skillDoc.data();
-  const skillId = skillDoc.id;
-  /// 🚫 REMOVE ALL VIDEOS FROM HOME
-if (
-  skill.videoURL || 
-  (skill.fileURL && skill.fileURL.endsWith(".mp4"))
-) return;
-  const post = document.createElement("div");
-post.className = "post";
-post.id = "post-" + skillId; // Important for scrolling to this <profile.htmml"></profile>
-post.id = "post-" + skillId; // ✅ this enables linking
 
-        // Build the post HTML (escape dynamic values)
-        post.innerHTML =
+onSnapshot(skillsQuery, snapshot => {
+  feed.innerHTML = ""; // ✅ prevents duplicates
+  feedLoading.style.display = "none";
+
+  snapshot.docs.forEach(skillDoc => {
+    const skill = skillDoc.data();
+    const skillId = skillDoc.id;
+    const isChallengePost = skill.isChallenge === true;
+
+    /// 🚫 REMOVE ALL VIDEOS FROM HOME
+    if (
+      skill.videoURL || 
+      (skill.fileURL && skill.fileURL.endsWith(".mp4"))
+    ) return;
+
+    const post = document.createElement("div");
+    post.className = "post";
+    post.id = "post-" + skillId;
+
+    post.innerHTML =
 `<div class="post-header">
   <div class="profile-link" data-uid="${skill.posterUserId}">
     <img src="default-avatar.jpg" alt="Profile" class="poster-avatar">
@@ -1209,103 +1283,127 @@ ${skill.fileURL ? `<img class="main" src="${escapeHtml(skill.fileURL)}" alt="ski
   <div class="comment" role="button" title="Comments"><span class="material-icons">chat_bubble_outline</span><span class="comment-count">${skill.comments||0}</span></div>
   <div class="views" title="Views"><span class="material-icons">visibility</span><span class="views-count">${skill.views||0}</span></div>
   <div class="action share" title="Share">
-  <i class="material-icons">share</i>
-  <span>${skill.shares || 0}</span> <!-- this will show the share count -->
-</div></div>
+    <i class="material-icons">share</i>
+    <span>${skill.shares || 0}</span>
+  </div>
+</div>
 <div class="comment-section" style="display:none;">
   <input class="comment-input" type="text" placeholder="Write a comment..." />
   <div class="comment-list"></div>
 </div>
-<div class="learn-skill"><button>Learn Skill</button></div>`;
+<div class="learn-skill">
+  <button class="learn-btn">
+    ${isChallengePost ? "Join Challenge" : "Learn Skill"}
+  </button>
+</div>`;
 
-        feed.appendChild(post);
+    feed.appendChild(post);
 
-        // Set poster info (async)
-        if(skill.posterUserId){
-          getDoc(doc(db,"users",skill.posterUserId)).then(posterSnap=>{
-            if(posterSnap.exists()){
-              const poster = posterSnap.data();
-              const nameEl = post.querySelector(".username");
-              const imgEl = post.querySelector(".poster-avatar");
-              nameEl.textContent = (poster.firstName||"") + (poster.secondName? " "+poster.secondName:"");
-              imgEl.src = poster.photoURL||"default-avatar.jpg";
-              // Link to teacher's profile (uses profile.html)
-              nameEl.href = `profile.html?uid=${skill.posterUserId}`;
-imgEl.addEventListener("click", ()=> window.location.href=`profile.html?uid=${skill.posterUserId}`);            }
-          }).catch(console.error);
+    const learnBtn = post.querySelector(".learn-btn");
+
+    learnBtn.addEventListener("click", () => {
+      if (isChallengePost) {
+        window.location.href = `challenge.html?challengeId=${skillId}`;
+      } else {
+        window.location.href = `teacherchat.html?uid=${skill.posterUserId}&skillId=${skillId}`;
+      }
+    });
+
+    // Set poster info
+    if(skill.posterUserId){
+      getDoc(doc(db,"users",skill.posterUserId)).then(posterSnap=>{
+        if(posterSnap.exists()){
+          const poster = posterSnap.data();
+          const nameEl = post.querySelector(".username");
+          const imgEl = post.querySelector(".poster-avatar");
+          nameEl.textContent = (poster.firstName||"") + (poster.secondName ? " " + poster.secondName : "");
+          imgEl.src = poster.photoURL || "default-avatar.jpg";
+          nameEl.href = `profile.html?uid=${skill.posterUserId}`;
+          imgEl.addEventListener("click", ()=> window.location.href=`profile.html?uid=${skill.posterUserId}`);
         }
+      }).catch(console.error);
+    }
 
-        // LIKE button logic (one like per user)
-        const likeBtn = post.querySelector(".like");
-        const likeCountEl = post.querySelector(".like-count");
+    // LIKE button logic
+    const likeBtn = post.querySelector(".like");
+    const likeCountEl = post.querySelector(".like-count");
 
-        // mark liked if user already liked
-        if(Array.isArray(skill.likesArray) && skill.likesArray.includes(user.uid)){
+    if(Array.isArray(skill.likesArray) && skill.likesArray.includes(user.uid)){
+      likeBtn.classList.add("liked");
+    }
+
+    likeBtn.addEventListener("click", async () => {
+      if(likeBtn.classList.contains("processing")) return;
+      likeBtn.classList.add("processing");
+
+      try {
+        const skillRef = doc(db,"skills",skillId);
+        const alreadyLiked = Array.isArray(skill.likesArray) && skill.likesArray.includes(user.uid);
+
+        if(alreadyLiked){
+          likeBtn.classList.remove("liked");
+          const prev = parseInt(likeCountEl.textContent||"0",10);
+          likeCountEl.textContent = Math.max(0, prev - 1);
+          await updateDoc(skillRef, { 
+            likes: increment(-1), 
+            likesArray: arrayRemove(user.uid) 
+          });
+        } else {
           likeBtn.classList.add("liked");
+          const prev = parseInt(likeCountEl.textContent||"0",10);
+          likeCountEl.textContent = prev + 1;
+          await updateDoc(skillRef, { 
+            likes: increment(1), 
+            likesArray: arrayUnion(user.uid) 
+          });
         }
+      } catch(err){
+        console.error(err);
+      } finally {
+        likeBtn.classList.remove("processing");
+      }
+    });
 
-        likeBtn.addEventListener("click", async () => {
-          // prevent repeated fast clicks UI-wise
-          if(likeBtn.classList.contains("processing")) return;
-          likeBtn.classList.add("processing");
-          try{
-            const skillRef = doc(db,"skills",skillId);
-            // Check if user already liked in the client view
-            const alreadyLiked = Array.isArray(skill.likesArray) && skill.likesArray.includes(user.uid);
-            if(alreadyLiked){
-              // user wants to unlike -> remove
-              likeBtn.classList.remove("liked");
-              const prev = parseInt(likeCountEl.textContent||"0",10);
-              likeCountEl.textContent = Math.max(0, prev-1);
-              await updateDoc(skillRef, { likes: increment(-1), likesArray: arrayRemove(user.uid) });
-            } else {
-              // like
-              likeBtn.classList.add("liked");
-              const prev = parseInt(likeCountEl.textContent||"0",10);
-              likeCountEl.textContent = prev+1;
-              await updateDoc(skillRef, { likes: increment(1), likesArray: arrayUnion(user.uid) });
-            }
-          } catch(err){
-            console.error(err);
-            // revert optimistic UI if error
-          } finally {
-            likeBtn.classList.remove("processing");
-          }
-        });
 
         // SHARE button logic - use native share where available
 const shareBtn = post.querySelector(".share");
 const shareCountSpan = shareBtn.querySelector("span"); // make sure you have <span>0</span> inside .share
 
 shareBtn.addEventListener("click", async () => {
- const shareUrl = "https://microswab.netlify.app";
-  const text = `🔥 Learn real skills and earn rewards on Microswab.\nJoin now 👇`;
+
+  const shareUrl = "https://microswab.netlify.app";
+
+  const text = `🔥 "${skill.title}" is trending on Microswab!
+
+Learn real skills, earn tokens 💰
+Join now 👇`;
+
   try {
     if (navigator.share) {
-      await navigator.share({ title: skill.title || 'Microswab', text, url: shareUrl });
+      await navigator.share({
+        title: skill.title || 'Microswab',
+        text,
+        url: shareUrl
+      });
     } else {
-      // fallback: copy to clipboard
       await navigator.clipboard.writeText(shareUrl);
-      alert('Link copied to clipboard — paste it to share.');
+      alert("🚀 Link copied! Share with friends.");
     }
 
-    // ✅ Increment share count in Firestore
+    // update database
     const skillRef = doc(db, "skills", skillId);
     await updateDoc(skillRef, { shares: increment(1) });
 
-    // ✅ Update share number instantly in UI
+    // update UI
     if (shareCountSpan) {
       const current = parseInt(shareCountSpan.textContent || "0", 10);
       shareCountSpan.textContent = current + 1;
     }
 
-    // Optional: small visual feedback animation
-    shareBtn.classList.add("success");
-    setTimeout(() => shareBtn.classList.remove("success"), 600);
-
   } catch (e) {
     console.error("Share error", e);
   }
+
 });
 
         // Views: increment once per viewer (best-effort)
@@ -1468,7 +1566,20 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("microswabWelcomeClosed", "true");
     // Optionally mark onboarding done
     localStorage.setItem("microswab_onboarding_done", "true");
-    if (dailyChallenge) dailyChallenge.style.display = "block"; // show daily challenge
+    window.closeWelcome = function() {
+  if (microswabWelcome) microswabWelcome.style.display = "none";
+
+  localStorage.setItem("microswabWelcomeClosed", "true");
+  localStorage.setItem("microswab_onboarding_done", "true");
+
+  // 🔥 START SURPRISE INSTEAD OF DAILY CHALLENGE
+  const surpriseCard = document.getElementById("surpriseCard");
+  if (surpriseCard) {
+    setTimeout(() => {
+      surpriseCard.style.display = "flex";
+    }, 7000); // 7 seconds after closing welcome
+  }
+};
   };
 });
 </script>
@@ -1515,29 +1626,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </style>
 
 <script>
-const modal = document.getElementById("signupModal");
-const signupBtn = document.getElementById("signupBtn");
-
-// Function to check signup
-function checkSignup(e) {
-  if (!localStorage.getItem("microswabSignedUp")) {
-    e.preventDefault();
-    modal.style.display = "flex";
-  }
-}
-
-// Attach to ALL buttons
-document.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", checkSignup);
-});
-
-// When user clicks Sign Up
-signupBtn.addEventListener("click", function() {
-  localStorage.setItem("microswabSignedUp", "true");
-  window.location.href = "home.html";
-});
-</script>
-<script>
 document.addEventListener("DOMContentLoaded", function() {
 
   const categoryButtons = document.querySelectorAll(".category-btn");
@@ -1567,27 +1655,270 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 <script>
-// Get the button
-const topSignupBtn = document.getElementById("topSignupBtn");
-
-// Check if user has signed up before
-const hasSignedUp = localStorage.getItem("microswabSignedUp");
-
-// Show button only if user hasn't signed up
-if (!hasSignedUp) {
-  topSignupBtn.style.display = "inline-block";
-} else {
-  topSignupBtn.style.display = "none";
+// Helper to check if user is signed up
+// Helper
+function isLoggedIn() {
+  return localStorage.getItem("microswabSignedUp") === "true";
 }
 
-// When user clicks the button
-topSignupBtn.addEventListener("click", function(e) {
-  e.preventDefault();
-  // Mark as signed up (simulate signup for demo)
+// Elements
+const topSignupBtn = document.getElementById("topSignupBtn");
+const tokenBadge = document.getElementById("tokenBadge");
+const signupPrompt = document.getElementById("signupPrompt");
+const promptSignupBtn = document.getElementById("promptSignupBtn");
+
+// Show/hide top signup button & token badge
+if (isLoggedIn()) {
+  topSignupBtn.style.display = "none";
+  tokenBadge.style.display = "flex";
+} else {
+  topSignupBtn.style.display = "inline-block";
+  tokenBadge.style.display = "none";
+}
+
+// Top signup click
+topSignupBtn.addEventListener("click", () => {
   localStorage.setItem("microswabSignedUp", "true");
-  // Redirect to home.html
+  topSignupBtn.style.display = "none";
+  tokenBadge.style.display = "flex";
+  window.location.href = "home.html";
+});
+
+// 10s signup prompt for new users
+if (!isLoggedIn()) {
+  setTimeout(() => {
+    signupPrompt.style.display = "flex";
+  }, 10000);
+}
+
+// Prompt signup button click
+promptSignupBtn.addEventListener("click", () => {
+  localStorage.setItem("microswabSignedUp", "true");
+  signupPrompt.style.display = "none";
+  topSignupBtn.style.display = "none";
+  tokenBadge.style.display = "flex";
   window.location.href = "home.html";
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (!localStorage.getItem("microswabWelcomeClosed")) {
+  return;
+}
+
+  /* ================= CONFIG ================= */
+  const SURPRISE_DELAY = 15 * 60 * 60 * 1000; // 15 hours
+  const FIRST_POP_DELAY = 25000; // 25 seconds
+  /* ================= CLOSE / CANCEL SURPRISE ================= */
+const closeBtn = document.getElementById("closeSurprise");
+
+// HARD BLOCK: if user cancelled before
+const hideUntil = Number(localStorage.getItem("ms_hide_until"));
+if (hideUntil && Date.now() < hideUntil) {
+  card.style.display = "none";
+  return; // ⛔ stop surprise completely
+}
+
+if (closeBtn) {
+  closeBtn.addEventListener("click", () => {
+    const EIGHTEEN_HOURS = 15 * 60 * 60 * 1000;
+
+    // hide instantly
+    card.style.display = "none";
+
+    // block future popups
+    localStorage.setItem(
+      "ms_hide_until",
+      Date.now() + EIGHTEEN_HOURS
+    );
+
+    // show countdown bar instead
+    showCountdown();
+  });
+}
+
+  /* ================= ELEMENTS ================= */
+  const card = document.getElementById("surpriseCard");
+  const titleEl = document.getElementById("surpriseTitle");
+  const msgEl = document.getElementById("surpriseMessage");
+  const btn = document.getElementById("surpriseActionBtn");
+  const bar = document.getElementById("surpriseCountdownBar");
+  const timeEl = document.getElementById("surpriseCountdownText");
+
+  if (!card || !btn || !bar) return; // safety
+
+  /* ================= STORAGE ================= */
+  const get = k => JSON.parse(localStorage.getItem(k));
+  const set = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+
+  let cycleStart = get("ms_cycle_start"); // timestamp
+  let step = get("ms_reward_step") || 0;
+  let claimed = get("ms_claimed") || false;
+
+  /* ================= DATA ================= */
+  const introMessages = [
+    "Microswab rewards consistency. Come back to earn real rewards.",
+    "Daily effort deserves rewards. Your first surprise is loading.",
+    "Small habits build big wins. Your surprise is coming."
+  ];
+
+  const readyMessages = [
+    "You showed discipline. That matters.",
+    "Consistency like this gets rewarded.",
+    "You came back. That’s rare.",
+    "Momentum unlocked. Claim it."
+  ];
+
+  const missedMessages = [
+    "Oh no… you missed your surprise 😔",
+    "You forgot today’s reward.",
+    "Consistency slipped — don’t let it happen again.",
+    "You were close. Another surprise is coming."
+  ];
+
+  const rewards = [
+    { label: "👑 3 Gold Crowns", type: "crowns", value: 3 },
+    { label: "💎 3 Diamonds", type: "diamonds", value: 3 },
+    { label: "🥈 3 Silver Coins", type: "silver", value: 3 },
+  ];
+
+  const random = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  /* ================= UI ================= */
+  function showCard(title, msg, btnText, onClick){
+    titleEl.textContent = title;
+    msgEl.textContent = msg;
+    btn.textContent = btnText;
+    card.style.display = "flex";
+    btn.onclick = onClick;
+  }
+
+  function hideCard(){
+    card.style.display = "none";
+  }
+
+  function showCountdown(){
+    bar.style.display = "block";
+    updateCountdown();
+    if (window.msCountdown) clearInterval(window.msCountdown);
+    window.msCountdown = setInterval(updateCountdown, 1000);
+  }
+
+  function updateCountdown(){
+    if (!cycleStart) return;
+    const left = cycleStart + SURPRISE_DELAY - Date.now();
+    if (left <= 0){
+      bar.style.display = "none";
+      clearInterval(window.msCountdown);
+      return;
+    }
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    const s = Math.floor((left % 60000) / 1000);
+    timeEl.textContent = `${h}h ${m}m ${s}s`;
+  }
+
+  /* ================= CORE LOGIC ================= */
+
+  // 🌱 FIRST TIME USER
+  if (!cycleStart){
+    setTimeout(() => {
+      showCard(
+        "🎁 Daily Surprises",
+        random(introMessages) + " Come back in 18 hours.",
+        "Okay",
+        () => {
+          hideCard();
+          cycleStart = Date.now();
+          claimed = false;
+          set("ms_cycle_start", cycleStart);
+          set("ms_claimed", false);
+          showCountdown();
+        }
+      );
+    }, FIRST_POP_DELAY);
+    return;
+  }
+
+  const elapsed = Date.now() - cycleStart;
+
+  // 😔 MISSED (18h passed + not claimed + user returned later)
+  if (elapsed >= SURPRISE_DELAY * 2 && !claimed){
+    showCard(
+      "😔 Missed Surprise",
+      random(missedMessages) + " Next one is coming in 18 hours.",
+      "Got it",
+      () => {
+        hideCard();
+        cycleStart = Date.now();
+        claimed = false;
+        set("ms_cycle_start", cycleStart);
+        set("ms_claimed", false);
+        showCountdown();
+      }
+    );
+    return;
+  }
+
+  // 🎁 READY TO CLAIM
+  if (elapsed >= SURPRISE_DELAY && !claimed){
+    const reward = rewards[step % rewards.length];
+
+    showCard(
+      "🎁 Surprise Ready",
+      random(readyMessages),
+      "Claim Now",
+      async () => {
+        alert(`🎉 Congratulations!\nYou earned ${reward.label}`);
+
+        // 🔥 REAL TOKENS CREDIT
+        if (reward.type === "tokens" && window.db && auth?.currentUser){
+          await updateDoc(
+            doc(db,"users",auth.currentUser.uid),
+            { tokens: increment(reward.value) }
+          );
+        }
+
+        const history = get("ms_surprise_history") || [];
+        history.push({ reward: reward.label, time: Date.now() });
+        set("ms_surprise_history", history);
+
+        claimed = true;
+        step++;
+        set("ms_claimed", true);
+        set("ms_reward_step", step);
+
+        hideCard();
+        cycleStart = Date.now();
+        set("ms_cycle_start", cycleStart);
+        set("ms_claimed", false);
+        showCountdown();
+      }
+    );
+    return;
+  }
+
+  // ⏳ WAITING
+  showCountdown();
+
+});
+</script>
+<script src="https://cdn.siteline.ai/sdk.js" data-api-key="secret_key_f532433ce8784211b2c38d8740da1145"></script>
 </body>
+<!-- IMAGE FULLSCREEN VIEW -->
+<div id="imageViewer" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+">
+  <img id="imageViewerImg" style="
+    max-width:95%;
+    max-height:90%;
+    border-radius:12px;
+  ">
+</div>
 </html>

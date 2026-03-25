@@ -114,7 +114,7 @@
     <div class="recipient-name" id="learnerName">Loading…</div>
 
     <p class="achievement">
-        This certificate celebrates Kelly James for completing a skill on Microswab! Your dedication, curiosity, and courage to explore new knowledge have been inspiring. Every lesson you completed shows your commitment to grow, learn, and master your skills. Keep shining, keep improving, and remember that your hard work is not only unlocking new abilities but also shaping a brighter future. Share your achievement and inspire others—learning together makes Microswab stronger!
+      This certificate celebrates <span id="dynamicName">Loading...</span> for completing... a skill on Microswab! Your dedication, curiosity, and courage to explore new knowledge have been inspiring. Every lesson you completed shows your commitment to grow, learn, and master your skills. Keep shining, keep improving, and remember that your hard work is not only unlocking new abilities but also shaping a brighter future. Share your achievement and inspire others—learning together makes Microswab stronger!
           </p>
 
     <div class="tokens-earned">You have earned <strong id="tokensEarned">100 tokens</strong> 🎉</div>
@@ -127,7 +127,17 @@
       <span class="star">⭐</span>
     </div>
 
-    <a href="home.html" class="btn-home">🏠 Back to Microswab</a>
+    <div style="margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+  
+  <button onclick="shareCertificate()" class="btn-home">
+    📤 Share Certificate
+  </button>
+
+  <button onclick="handleBack()" class="btn-home">
+    🏠 Back to Microswab
+  </button>
+
+</div>
 
     <div class="footer">
       Keep learning, keep growing. Your skills are your future.  
@@ -135,37 +145,149 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
-      authDomain:"vs-code-d4d6b.firebaseapp.com",
-      projectId:"vs-code-d4d6b"
-    };
+const firebaseConfig = {
+  apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+  authDomain:"vs-code-d4d6b.firebaseapp.com",
+  projectId:"vs-code-d4d6b"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    const learnerNameElem = document.getElementById("learnerName");
-    const learnerNameElem2 = document.getElementById("learnerName2");
-    const tokensElem = document.getElementById("tokensEarned");
+const learnerNameElem = document.getElementById("learnerName");
+const tokensElem = document.getElementById("tokensEarned");
+const dynamicName = document.getElementById("dynamicName");
+if(dynamicName) dynamicName.textContent = learnerNameElem.textContent;
+// GET URL DATA
+function getData(){
+  const params = new URLSearchParams(window.location.search);
+  return {
+    name: params.get("name"),
+    tokens: params.get("tokens")
+  };
+}
 
-    onAuthStateChanged(auth, async user => {
-      if(!user) return location.href = "login.html";
+const data = getData();
 
-      const userRef = doc(db, "users", user.uid);
-      const snap = await getDoc(userRef);
-      if(snap.exists()){
-        const data = snap.data();
-        learnerNameElem.textContent = `${data.firstName || ""} ${data.secondName || ""}`.trim();
-        learnerNameElem2.textContent = learnerNameElem.textContent;
-        tokensElem.textContent = `+${data.tokens || 0} tokens`;
-      }
+// ✅ ALWAYS SET NAME FIRST FROM LINK
+if(data.name){
+  const decodedName = decodeURIComponent(data.name);
+  learnerNameElem.textContent = decodedName;
+  if(dynamicName) dynamicName.textContent = decodedName;
+
+  localStorage.setItem("microswabUserName", decodedName);
+} else {
+  learnerNameElem.textContent = "Microswab Learner";
+  if(dynamicName) dynamicName.textContent = "this learner";
+}
+
+// ✅ SET TOKENS FROM LINK
+if(data.tokens){
+  tokensElem.textContent = data.tokens + " tokens";
+}
+
+// ✅ SECOND: IF USER IS LOGGED IN, OVERRIDE WITH REAL DATA
+onAuthStateChanged(auth, async user => {
+  if(user){
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if(snap.exists()){
+      const u = snap.data();
+      const fullName = `${u.firstName || ""} ${u.secondName || ""}`.trim();
+
+      learnerNameElem.textContent = fullName;
+      if(dynamicName) dynamicName.textContent = fullName;
+
+      tokensElem.textContent = `${u.tokens || 0} tokens`;
+
+      localStorage.setItem("microswabUserName", fullName);
+    }
+  }
+});
+
+// SHARE FUNCTION
+window.shareCertificate = function(){
+  const url = window.location.href;
+
+  if(navigator.share){
+    navigator.share({
+      title: "My Microswab Certificate 🎓",
+      text: "I just completed a skill on Microswab!",
+      url: url
     });
-  </script>
+  } else {
+    navigator.clipboard.writeText(url);
+    alert("Certificate link copied!");
+  }
+};
+
+// CHECK OWNER
+function isOwner(){
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("name");
+  const myName = localStorage.getItem("microswabUserName");
+
+  return myName && name && decodeURIComponent(name) === myName;
+}
+
+// BACK BUTTON
+window.handleBack = function(){
+  if(isOwner()){
+    window.location.href = "home.html";
+  } else {
+    document.getElementById("signupPopup").style.display = "flex";
+  }
+};
+
+// GO HOME
+window.goHome = function(){
+  window.location.href = "home.html";
+};
+</script>
 </body>
+<div id="signupPopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+z-index:999;
+">
+
+  <div style="
+  background:#fff;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  width:90%;
+  max-width:320px;
+  ">
+
+    <h3>Join Microswab 🚀</h3>
+    <p>Create an account to start learning and earning skills!</p>
+
+    <button onclick="goHome()" style="
+    background:#6a0dad;
+    color:#fff;
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    ">
+      Sign Up
+    </button>
+
+  </div>
+</div>
 </html>

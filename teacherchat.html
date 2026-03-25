@@ -8,23 +8,264 @@
 
 <style>
 * { box-sizing: border-box; }
-body { margin:0; font-family: Inter, sans-serif; background:#f0f2f5; }
+body{
+margin:0;
+font-family: Inter, sans-serif;
+background:#f7f6f3;
+}
 .header { background:#fff; padding:12px 16px; display:flex; align-items:center; border-bottom:1px solid #ddd; position:fixed; inset:0 0 auto 0; z-index:1000; }
 .header img { width:50px; height:50px; border-radius:50%; margin-right:12px; }
 .name { font-size:17px; font-weight:700; }
 .container { max-width:720px; margin:90px auto 60px; padding:0 16px; }
 .lesson-title { font-size:22px; font-weight:700; }
 .lesson-progress { font-size:13px; color:#64748b; margin-bottom:14px; }
-.lesson-box { background:#fff; padding:22px; border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.05); line-height:1.8; white-space:pre-wrap; }
+.lesson-box { background:#fcfafa; padding:22px; border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.05); line-height:1.8; white-space:pre-wrap; }
 .lesson-box.locked { filter:blur(5px); pointer-events:none; }
 .next-btn { width:100%; margin-top:22px; padding:14px; background:#1877f2; color:#fff; border:none; border-radius:12px; font-weight:600; }
-#microswab-ai-btn { position:fixed; top:14px; right:14px; display:flex; gap:6px; padding:8px 12px; background:#6a0dad; color:#fff; border-radius:22px; font-size:13px; cursor:pointer; z-index:9999; }
+#topButtons{
+position:fixed;
+top:14px;
+right:14px;
+display:flex;
+gap:8px;
+z-index:9999;
+}
+
+#shareCourseBtn{
+display:flex;
+align-items:center;
+gap:6px;
+padding:8px 12px;
+border:none;
+border-radius:20px;
+background:#10b981;
+color:#fff;
+font-size:13px;
+cursor:pointer;
+}
+
+#microswab-ai-btn{
+display:flex;
+align-items:center;
+gap:6px;
+padding:8px 12px;
+border:none;
+border-radius:20px;
+background:#6a0dad;
+color:#fff;
+font-size:13px;
+cursor:pointer;
+}
 .payment-overlay, .reward-overlay { position:fixed; inset:0; background:rgba(2,6,23,.7); display:none; align-items:center; justify-content:center; z-index:99999; }
 .payment-box, .reward-box { background:#fff; width:90%; max-width:360px; padding:26px; border-radius:18px; text-align:center; }
 .pay-btn, .reward-ok-btn { width:100%; padding:14px; border:none; border-radius:14px; background:linear-gradient(135deg,#6a0dad,#8a2be2); color:#fff; font-weight:700; margin-top:10px; }
 .error { background:#fee2e2; color:#991b1b; padding:10px; border-radius:10px; font-size:13px; display:none; margin-bottom:10px; }
 .success { color:#16a34a; font-weight:700; display:none; margin-top:10px; }
 footer { text-align:center; font-size:13px; color:#64748b; padding:18px; }
+/* ===============================
+   QUIZ — CENTER FLOATING DARK CARD
+=================================*/
+
+.quiz-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 5000;
+}
+
+.quiz-card {
+  width: 90%;
+  max-width: 380px;
+  background: #0f172a;
+  border-radius: 18px;
+  padding: 20px 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  color: #ffffff;
+  animation: popIn .25s ease;
+}
+
+.quiz-question {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.quiz-option:hover {
+  background: #6a0dad;
+  border-color: #6a0dad;
+}
+
+.quiz-option.correct {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+
+.quiz-option.wrong {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.option-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #6a0dad;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quiz-feedback {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 16px;
+}
+
+@keyframes popIn {
+  from { opacity:0; transform:scale(.9); }
+  to { opacity:1; transform:scale(1); }
+}
+.course-comments{
+margin-top:20px;
+background:#fff;
+padding:16px;
+border-radius:12px;
+box-shadow:0 4px 14px rgba(0,0,0,0.05);
+}
+
+.comment-bar{
+display:flex;
+align-items:center;
+gap:8px;
+cursor:pointer;
+font-weight:600;
+color:#475569;
+}
+
+.comment-btn{
+font-size:22px;
+}
+
+.comment-input{
+width:100%;
+margin-top:10px;
+padding:10px;
+border-radius:10px;
+border:1px solid #ddd;
+outline:none;
+}
+
+.comment-list{
+margin-top:12px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.comment-item{
+display:flex;
+gap:10px;
+font-size:14px;
+}
+
+.comment-item img{
+width:32px;
+height:32px;
+border-radius:50%;
+}
+.course-actions{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:#ffffff;
+display:flex;
+justify-content:space-around;
+align-items:center;
+padding:12px 0;
+border-top:1px solid #e2e8f0;
+box-shadow:0 -4px 20px rgba(0,0,0,0.08);
+z-index:2000;
+}
+
+.course-actions .action{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:3px;
+font-size:12px;
+cursor:pointer;
+color:#64748b;
+font-weight:500;
+}
+.course-actions .action:active{
+transform:scale(0.92);
+transition:0.15s;
+}
+
+.course-actions .material-icons-outlined{
+font-size:24px;
+}
+
+.like-action.liked{
+color:#1877f2;
+}
+
+.like-action.liked .material-icons-outlined{
+font-family:'Material Icons';
+}
+
+.container{
+max-width:720px;
+margin:90px auto 120px;
+padding:0 16px;
+}
+.name{
+font-size:17px;
+font-weight:700;
+color:#000;
+text-decoration:none;
+cursor:pointer;
+}
+
+.name:visited{
+color:#000;
+}
+
+.name:hover{
+color:#000;
+text-decoration:none;
+}
 </style>
 </head>
 
@@ -32,20 +273,74 @@ footer { text-align:center; font-size:13px; color:#64748b; padding:18px; }
 
 <div class="header">
   <img id="teacherPic" src="default-avatar.jpg">
-  <div class="name" id="teacherName">Loading…</div>
+  <div>
+    <a href="#" class="name" id="teacherName">Loading…</a>
+    <div id="postDate" style="font-size:12px; color:#64748b; margin-top:2px;">Loading…</div>
+  </div>
 </div>
 
-<div id="microswab-ai-btn">
-  <span class="material-icons-outlined">smart_toy</span>
-  Ask Microswab AI
+<div id="topButtons">
+
+<button id="shareCourseBtn">
+<span class="material-icons-outlined">share</span>
+Share
+</button>
+
+<button id="microswab-ai-btn">
+<span class="material-icons-outlined">smart_toy</span>
+Ask AI
+</button>
+
 </div>
 
 <div class="container">
   <div class="lesson-title" id="lessonTitle"></div>
-  <div class="lesson-progress">Learning in progress</div>
+
+  <!-- Skill Image -->
+ <img id="skillImage" style="
+width:100%;
+height:auto;
+max-height:240px;
+object-fit:contain;
+border-radius:12px;
+margin:10px 0;
+display:none;
+background:#f1f5f9;
+">
+
+  <div class="lesson-progress" id="lessonProgress"></div>
   <div class="lesson-box" id="lessonContent"></div>
-  <button class="next-btn" id="nextBtn" style="display:none;">Finish Course 🎉</button>
+
+  <button class="next-btn" id="nextBtn" style="display:none;">Next</button>
 </div>
+<!-- Comments Section -->
+<div class="course-comments">
+
+  <div class="comment-section" style="display:none;">
+    <input class="comment-input" placeholder="Write a comment..." />
+    <div class="comment-list"></div>
+  </div>
+</div>
+
+<div class="course-actions">
+
+<div class="action like-action" id="likeBtn">
+<span class="material-icons-outlined">thumb_up</span>
+<span id="likeCount">0</span>
+</div>
+
+<div class="action comment-action" id="commentBtn">
+<span class="material-icons-outlined">chat_bubble_outline</span>
+<span class="comment-count">0</span>
+</div>
+
+<div class="action view-action">
+<span class="material-icons-outlined">visibility</span>
+<span id="viewsCount">0</span>
+</div>
+
+</div>
+
 
 <!-- Payment Modal -->
 <div class="payment-overlay" id="paymentOverlay">
@@ -73,11 +368,19 @@ footer { text-align:center; font-size:13px; color:#64748b; padding:18px; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, updateDoc,
-  increment, addDoc, collection, serverTimestamp, setDoc, getDocs
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  increment,
+  addDoc,
+  collection,
+  serverTimestamp,
+  setDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 document.getElementById("microswab-ai-btn").onclick = () => {
-  // Option 1: redirect to AI page
   window.location.href = "https://ai-engineer-bot--AZA000900.replit.app";
 };
 
@@ -86,7 +389,6 @@ const app = initializeApp({
   authDomain:"vs-code-d4d6b.firebaseapp.com",
   projectId:"vs-code-d4d6b"
 });
-
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -95,42 +397,227 @@ const REWARD = 10;
 const skillId = new URLSearchParams(location.search).get("skillId");
 
 const lessonBox = document.getElementById("lessonContent");
+const lessonTitle = document.getElementById("lessonTitle");
+const lessonProgress = document.getElementById("lessonProgress");
 const overlay = document.getElementById("paymentOverlay");
 const payBtn = document.getElementById("payBtn");
 const errorBox = document.getElementById("paymentError");
 const successBox = document.getElementById("paymentSuccess");
 const nextBtn = document.getElementById("nextBtn");
-
 const rewardOverlay = document.getElementById("rewardOverlay");
 const rewardOkBtn = document.getElementById("rewardOkBtn");
+const teacherPic = document.getElementById("teacherPic");
+const teacherName = document.getElementById("teacherName");
+
+let sessions = [];
+let currentSessionIndex = 0;
+let showingQuiz = false;
+let currentUser = null;
+function setupComments(skillId){
+
+const commentBtn = document.getElementById("commentBtn");
+const commentInput = document.querySelector(".comment-input");
+const commentListEl = document.querySelector(".comment-list");
+
+if(!commentInput || !commentListEl) return;
+const commentCountEl = document.querySelector(".comment-count");
+const commentSection = document.querySelector(".comment-section");
+
+const commentsCol = collection(db,"skills",skillId,"comments");
+
+commentBtn.addEventListener("click", () => {
+
+const isOpen = commentSection.style.display === "block";
+
+commentSection.style.display = isOpen ? "none" : "block";
+
+if(!isOpen){
+commentInput.focus();
+}
+
+});
+
+onSnapshot(commentsCol, async snapshot => {
+
+commentListEl.innerHTML = "";
+commentCountEl.textContent = snapshot.size;
+
+for(const d of snapshot.docs){
+
+const c = d.data();
+
+let name = "User";
+let photo = "default-avatar.jpg";
+
+try{
+
+const u = await getDoc(doc(db,"users",c.userId));
+
+if(u.exists()){
+const ud = u.data();
+name = (ud.firstName||"") + " " + (ud.secondName||"");
+photo = ud.photoURL || "default-avatar.jpg";
+}
+
+}catch(e){}
+
+const el = document.createElement("div");
+
+el.className="comment-item";
+
+el.innerHTML = `
+<img src="${photo}">
+<div>
+<strong>${name}</strong> ${c.text}
+</div>
+`;
+
+commentListEl.appendChild(el);
+
+}
+
+});
+
+commentInput.addEventListener("keypress", async e => {
+
+if(e.key === "Enter" && commentInput.value.trim() !== ""){
+
+await addDoc(collection(db,"skills",skillId,"comments"),{
+text: commentInput.value.trim(),
+userId: currentUser.uid,
+createdAt: serverTimestamp(),
+likesArray: []
+});
+
+await updateDoc(doc(db,"skills",skillId),{
+comments: increment(1)
+});
+
+commentInput.value = "";
+
+}
+
+});
+
+}
 
 onAuthStateChanged(auth, async user => {
-  if (!user) return location.href="login.html";
+  if(!user){
+  showPreviewMode();
+  return;
+}
+  currentUser = user;
 
   const skillSnap = await getDoc(doc(db,"skills",skillId));
-  if (!skillSnap.exists()) return alert("Skill not found");
+  if(!skillSnap.exists()) return alert("Skill not found");
   const skill = skillSnap.data();
+  const skillRef = doc(db,"skills",skillId);
+  // Show course image
+const skillImage = document.getElementById("skillImage");
 
-  lessonBox.textContent = skill.fullCourse;
+if(skill.fileURL){
+  skillImage.src = skill.fileURL;
+  skillImage.style.display = "block";
+}
+
+// increase view count
+await updateDoc(skillRef,{
+views: increment(1)
+});
+
+document.getElementById("viewsCount").textContent =
+(skill.views || 0) + 1;
+  // ===== LOAD COUNTS =====
+
+document.getElementById("likeCount").textContent = skill.likes || 0;
+document.getElementById("viewsCount").textContent = (skill.views || 0) + 1;
+  setupComments(skillId);
+
+  sessions = skill.sessions || [];
+  if(sessions.length > 3) sessions = sessions.slice(0,3); // max 3 sessions
   lessonTitle.textContent = skill.title;
 
   const teacherSnap = await getDoc(doc(db,"users",skill.posterUserId));
-  if (teacherSnap.exists()) {
-    const t = teacherSnap.data();
-    teacherName.textContent = `${t.firstName||""} ${t.secondName||""}`.trim();
-    teacherPic.src = t.photoURL || "default-avatar.jpg";
-  }
+if(teacherSnap.exists()){
+
+  const t = teacherSnap.data();
+
+  teacherName.textContent =
+    (t.firstName || "") + (t.secondName ? " " + t.secondName : "");
+
+  teacherPic.src = t.photoURL || "default-avatar.jpg";
+
+  // same linking system as homepage
+  teacherName.href = `profile.html?uid=${skill.posterUserId}`;
+
+  teacherPic.addEventListener("click", () => {
+    window.location.href = `profile.html?uid=${skill.posterUserId}`;
+  });
+
+}
+// Show course post date
+const postDateEl = document.getElementById("postDate");
+if(skill.createdAt){
+  const date = skill.createdAt.toDate
+  ? skill.createdAt.toDate()
+  : new Date(skill.createdAt);
+  postDateEl.textContent = `Posted on ${date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  })}`;
+} else {
+  postDateEl.textContent = "";
+}
+const likeBtn = document.getElementById("likeBtn");
+const likeCount = document.getElementById("likeCount");
+
+let likesArray = skill.likesArray || [];
+
+if(likesArray.includes(user.uid)){
+likeBtn.classList.add("liked");
+}
+
+likeBtn.onclick = async () => {
+
+const skillRef = doc(db,"skills",skillId);
+
+if(likesArray.includes(user.uid)){
+
+likesArray = likesArray.filter(id => id !== user.uid);
+
+await updateDoc(skillRef,{
+likes: increment(-1),
+likesArray: likesArray
+});
+
+likeBtn.classList.remove("liked");
+likeCount.textContent = parseInt(likeCount.textContent) - 1;
+
+}else{
+
+likesArray.push(user.uid);
+
+await updateDoc(skillRef,{
+likes: increment(1),
+likesArray: likesArray
+});
+
+likeBtn.classList.add("liked");
+likeCount.textContent = parseInt(likeCount.textContent) + 1;
+
+}
+
+};
 
   const userRef = doc(db,"users",user.uid);
-
-  // Check if learner already completed this course
   const completionSnap = await getDoc(doc(db,"users",user.uid,"completedCourses",skillId));
   const alreadyCompleted = completionSnap.exists();
 
-  if (user.uid === skill.posterUserId) {
-    unlock(); // Teacher sees everything unlocked
+  if(user.uid === skill.posterUserId){
+    unlock();
   } else {
-    if (alreadyCompleted) {
+    if(alreadyCompleted){
       unlock();
       nextBtn.style.display = "none";
     } else {
@@ -145,7 +632,7 @@ onAuthStateChanged(auth, async user => {
           const userSnap = await getDoc(userRef);
           const teacherRef = doc(db,"users",skill.posterUserId);
 
-          if ((userSnap.data().tokens || 0) < PAYMENT) {
+          if((userSnap.data().tokens||0) < PAYMENT){
             errorBox.textContent = "Not enough tokens.";
             errorBox.style.display = "block";
             payBtn.disabled = false;
@@ -153,8 +640,8 @@ onAuthStateChanged(auth, async user => {
             return;
           }
 
-          await updateDoc(userRef,{ tokens: increment(-PAYMENT) });
-          await updateDoc(teacherRef,{ tokens: increment(PAYMENT) });
+          await updateDoc(userRef,{tokens: increment(-PAYMENT)});
+          await updateDoc(teacherRef,{tokens: increment(PAYMENT)});
 
           await addDoc(collection(db,"users",user.uid,"notifications"),{
             message:`✅ You sent ${PAYMENT} tokens to the teacher`,
@@ -169,66 +656,380 @@ onAuthStateChanged(auth, async user => {
 
           successBox.style.display = "block";
           payBtn.style.display = "none";
-          setTimeout(unlock, 1000);
-        } catch(err) {
+          setTimeout(unlock,1000);
+
+        } catch(err){
           console.error(err);
-          errorBox.textContent = "Payment failed. Please try again.";
-          errorBox.style.display = "block";
-          payBtn.disabled = false;
-          payBtn.textContent = `Pay ${PAYMENT} Tokens`;
+          errorBox.textContent="Payment failed. Please try again.";
+          errorBox.style.display="block";
+          payBtn.disabled=false;
+          payBtn.textContent=`Pay ${PAYMENT} Tokens`;
         }
       };
     }
   }
 });
 
-nextBtn.onclick = () => { rewardOverlay.style.display = "flex"; };
-
-rewardOkBtn.onclick = async () => {
-  rewardOverlay.style.display = "none";
-
-  const user = auth.currentUser;
-  if (!user) return;
-  const userRef = doc(db,"users",user.uid);
-
-  // Reward tokens to learner
-  await updateDoc(userRef, { tokens: increment(REWARD) });
-
-  // Record course completion for learner
-  await setDoc(doc(db,"users",user.uid,"completedCourses",skillId), {
-    completedAt: serverTimestamp()
-  });
-
-  // Increment learner's learning progress by 5%, capped at 100%
-  const userSnap = await getDoc(userRef);
-  const currentProgress = userSnap.data().learningProgress || 0;
-  const newProgress = Math.min(currentProgress + 5, 100);
-  await updateDoc(userRef, { learningProgress: newProgress });
-
-  // ✅ Increment teacher's teaching progress by 5% per learner
-  const skillSnap = await getDoc(doc(db,"skills",skillId));
-  if (skillSnap.exists()) {
-    const teacherId = skillSnap.data().posterUserId;
-    const teacherRef = doc(db,"users",teacherId);
-
-    // Get current teacher progress
-    const teacherSnap = await getDoc(teacherRef);
-    const currentTeacherProgress = teacherSnap.data().teachingProgress || 0;
-
-    // Increase by 5%, capped at 100%
-    const newTeacherProgress = Math.min(currentTeacherProgress + 5, 100);
-    await updateDoc(teacherRef, { teachingProgress: newTeacherProgress });
-  }
-
-  nextBtn.style.display = "none";
-  alert(`✅ You received ${REWARD} tokens! Your learning progress is now ${newProgress}%. Teacher's progress is updated.`);
-};
-
 function unlock(){
   overlay.style.display = "none";
   lessonBox.classList.remove("locked");
   nextBtn.style.display = "block";
+  currentSessionIndex = 0;
+  renderSession();
+}
+
+function renderSession(){
+  showingQuiz = false;
+
+  if(currentSessionIndex >= sessions.length){
+    showCompletion();
+    return;
+  }
+
+  const session = sessions[currentSessionIndex];
+
+  // Clear old content
+  lessonBox.innerHTML = "";
+
+  // 1️⃣ Add text content
+  const textDiv = document.createElement("div");
+  textDiv.style.whiteSpace = "pre-wrap";
+  textDiv.style.marginBottom = "16px";
+  textDiv.textContent = session.content;
+  lessonBox.appendChild(textDiv);
+
+  // 2️⃣ Add images (if any exist)
+  if(session.images && session.images.length > 0){
+    const imageContainer = document.createElement("div");
+    imageContainer.style.display = "flex";
+    imageContainer.style.flexWrap = "wrap";
+    imageContainer.style.gap = "10px";
+    imageContainer.style.marginTop = "10px";
+
+   session.images.forEach(url => {
+  const img = document.createElement("img");
+  img.src = url;
+  img.style.width = "100%";
+  img.style.maxWidth = "220px";
+  img.style.borderRadius = "10px";
+  img.style.objectFit = "cover";
+  img.style.cursor = "pointer";
+
+  img.onclick = () => {
+    const viewer = document.getElementById("imageViewer");
+    const viewerImg = document.getElementById("imageViewerImg");
+    viewerImg.src = url;
+    viewer.style.display = "flex";
+  };
+
+  imageContainer.appendChild(img);
+});
+
+    lessonBox.appendChild(imageContainer);
+  }
+
+  lessonProgress.textContent = `Session ${currentSessionIndex+1} of ${sessions.length}`;
+
+  nextBtn.textContent =
+    currentSessionIndex === sessions.length-1
+      ? "Take Final Quiz 🎯"
+      : "Next Session ➡️";
+}
+
+function renderQuiz(){
+  showingQuiz = true;
+
+  const quiz = sessions[currentSessionIndex].quiz;
+  const overlay = document.getElementById("quizOverlay");
+  const card = document.getElementById("quizCard");
+
+  overlay.style.display = "flex";
+
+  card.innerHTML = `
+      <div class="quiz-question">
+        🎯 ${quiz.question}
+      </div>
+
+      <div class="quiz-options">
+        ${quiz.options.slice(0,3).map((opt,i)=>`
+          <button class="quiz-option" data-index="${i}">
+            <div class="option-number">${i+1}</div>
+            <div>${opt}</div>
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="quiz-feedback" id="quizFeedback"></div>
+  `;
+
+  const options = card.querySelectorAll(".quiz-option");
+  const feedback = document.getElementById("quizFeedback");
+
+  options.forEach(btn=>{
+    btn.onclick = ()=>{
+      const selected = parseInt(btn.dataset.index);
+      options.forEach(o=>o.disabled = true);
+
+      if(selected === quiz.correctIndex){
+
+        btn.classList.add("correct");
+        feedback.textContent = "✅ Correct";
+
+        setTimeout(()=>{
+          overlay.style.display = "none";
+          currentSessionIndex++;
+          renderSession();
+        },900);
+
+      } else {
+
+        btn.classList.add("wrong");
+        options[quiz.correctIndex].classList.add("correct");
+        feedback.textContent = "❌ Incorrect";
+
+        setTimeout(()=>{
+          overlay.style.display = "none";
+          renderSession();
+        },1500);
+      }
+    };
+  });
+}
+
+function showCompletion(){
+  lessonBox.innerHTML = `<h2>🎉 Course Completed!</h2><p>You have successfully completed all sessions.</p>`;
+  nextBtn.style.display = "block";
+  nextBtn.textContent = "Finish Course 🎉";
+}
+
+nextBtn.onclick = ()=>{
+  if(!showingQuiz) renderQuiz();
+  else rewardOverlay.style.display="flex";
+};
+
+rewardOkBtn.onclick = async ()=>{
+
+  // 1️⃣ Hide modal instantly
+  rewardOverlay.style.display = "none";
+
+  // 2️⃣ Hide Finish Course button instantly
+  nextBtn.style.display = "none";
+
+  // 3️⃣ Disable OK button to prevent double click
+  rewardOkBtn.disabled = true;
+
+  try {
+
+    const userRef = doc(db,"users",currentUser.uid);
+
+    // 4️⃣ Give tokens
+    await updateDoc(userRef,{tokens: increment(REWARD)});
+
+    // 5️⃣ Mark as completed
+    await setDoc(
+      doc(db,"users",currentUser.uid,"completedCourses",skillId),
+      {completedAt: serverTimestamp()}
+    );
+
+    // 6️⃣ Update learning progress
+    const userSnap = await getDoc(userRef);
+    const newProgress = Math.min(
+      (userSnap.data().learningProgress || 0) + 5,
+      100
+    );
+
+    await updateDoc(userRef,{learningProgress:newProgress});
+
+    // 7️⃣ Update teacher progress
+    const skillSnap = await getDoc(doc(db,"skills",skillId));
+    if(skillSnap.exists()){
+      const teacherId = skillSnap.data().posterUserId;
+      const teacherRef = doc(db,"users",teacherId);
+
+      const teacherSnap = await getDoc(teacherRef);
+      const newTeacherProgress = Math.min(
+        (teacherSnap.data().teachingProgress || 0) + 5,
+        100
+      );
+
+      await updateDoc(teacherRef,{teachingProgress:newTeacherProgress});
+    }
+
+    // 8️⃣ Show message immediately
+    alert(`✅ You received ${REWARD} tokens!
+Your learning progress is now ${newProgress}%.
+Teacher's progress updated.`);
+
+  } catch(err){
+    console.error("Reward error:", err);
+    alert("⚠️ Something went wrong. Please refresh.");
+  }
+};
+
+// ============================
+// SHARE COURSE
+// ============================
+
+const shareBtn = document.getElementById("shareCourseBtn");
+
+shareBtn.onclick = async () => {
+
+  const shareUrl = window.location.origin + "/teacherchat.html?skillId=" + skillId;
+
+  const shareData = {
+    title: "🔥 Learn a skill on Microswab",
+    text: "I just found this powerful skill. You can learn it FREE 👇",
+    url: shareUrl
+  };
+
+  if(navigator.share){
+    try{
+      await navigator.share(shareData);
+    }catch(e){}
+  }else{
+    navigator.clipboard.writeText(shareUrl);
+    alert("🔥 Link copied! Send it to friends and earn rewards.");
+  }
+
+await updateDoc(doc(db,"skills",skillId),{
+shares: increment(1)
+});
+
+};
+
+const imageViewer = document.getElementById("imageViewer");
+
+if (imageViewer) {
+  imageViewer.addEventListener("click", () => {
+    imageViewer.style.display = "none";
+  });
+}
+// ============================
+// PREVIEW MODE FOR INVITED USERS
+// ============================
+
+async function showPreviewMode(){
+document.querySelector(".course-comments").style.display = "none";
+
+const skillSnap = await getDoc(doc(db,"skills",skillId));
+if(!skillSnap.exists()) return;
+
+const skill = skillSnap.data();
+// Load teacher info for preview users
+const teacherSnap = await getDoc(doc(db,"users",skill.posterUserId));
+
+if(teacherSnap.exists()){
+  const t = teacherSnap.data();
+
+  teacherName.textContent =
+    (t.firstName || "") + (t.secondName ? " " + t.secondName : "");
+
+  teacherPic.src = t.photoURL || "default-avatar.jpg";
+
+  teacherName.href = `profile.html?uid=${skill.posterUserId}`;
+
+  teacherPic.onclick = () => {
+    window.location.href = `profile.html?uid=${skill.posterUserId}`;
+  };
+}
+
+// Show date
+const postDateEl = document.getElementById("postDate");
+if(skill.createdAt){
+  const date = skill.createdAt.toDate
+  ? skill.createdAt.toDate()
+  : new Date(skill.createdAt);
+  postDateEl.textContent = "Posted on " + date.toDateString();
+}
+const skillImage = document.getElementById("skillImage");
+
+if(skill.fileURL){
+  skillImage.src = skill.fileURL;
+  skillImage.style.display = "block";
+}
+  lessonTitle.textContent = skill.title;
+
+  sessions = skill.sessions || [];
+  if(sessions.length > 3) sessions = sessions.slice(0,3);
+
+  currentSessionIndex = 0;
+  renderPreviewSession();
+
+}
+
+function renderPreviewSession(){
+
+  if(currentSessionIndex >= sessions.length){
+    
+    lessonBox.innerHTML = `
+      <h2>🎉 Course Completed!</h2>
+      <p>Create a free Microswab account to keep learning skills like this.</p>
+    `;
+
+    nextBtn.style.display = "block";
+    nextBtn.textContent = "Sign Up on Microswab";
+
+    nextBtn.onclick = ()=>{
+      window.location.href = "home.html";
+    };
+
+    return;
+  }
+
+  const session = sessions[currentSessionIndex];
+
+  lessonBox.innerHTML = "";
+
+  const textDiv = document.createElement("div");
+  textDiv.textContent = session.content;
+  textDiv.style.whiteSpace = "pre-wrap";
+  lessonBox.appendChild(textDiv);
+
+  if(session.images){
+    session.images.slice(0,3).forEach(url=>{
+      const img = document.createElement("img");
+      img.src = url;
+      img.style.width = "100%";
+      img.style.marginTop = "10px";
+      img.style.borderRadius = "10px";
+      lessonBox.appendChild(img);
+    });
+  }
+
+  lessonProgress.textContent = `Session ${currentSessionIndex+1} of ${sessions.length}`;
+
+  nextBtn.style.display = "block";
+  nextBtn.textContent = "Next";
+
+  nextBtn.onclick = ()=>{
+    currentSessionIndex++;
+    renderPreviewSession();
+  };
+
 }
 </script>
+<!-- QUIZ OVERLAY -->
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-card" id="quizCard"></div>
+</div>
+<!-- FULLSCREEN IMAGE VIEWER -->
+<div id="imageViewer" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.98);
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+">
+
+  <img id="imageViewerImg" style="
+    max-width:95%;
+    max-height:95%;
+    border-radius:12px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.8);
+  ">
+
+</div>
 </body>
 </html>

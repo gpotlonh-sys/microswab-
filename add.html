@@ -184,9 +184,12 @@
   }
 
   textarea {
-    resize: none;
-    min-height: 100px;
-  }
+  resize: vertical;
+  min-height: 180px;
+  line-height: 1.6;
+  font-size: 15px;
+  padding: 14px;
+}
 
   /* ===== Action Button ===== */
   .finish-btn {
@@ -254,6 +257,34 @@
     height: 18px;
     animation: spin 1s linear infinite;
   }
+  .lesson-images {
+  margin: 10px 0 18px;
+}
+
+.add-image-btn {
+  background: #111;
+  border: 1px dashed #333;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 13px;
+  color: #00ff88;
+  cursor: pointer;
+}
+
+.image-preview-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.image-preview-row img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 
   @keyframes spin {
     to {
@@ -284,7 +315,7 @@
     <input type="file" id="imageInput" accept="image/*" hidden>
     <img id="previewImage" alt="preview image">
   </div>
-  <label class="video-upload-btn"><span>Post Video 🎥</span>
+  <label class="video-upload-btn"><span>Post short Video 🎥</span>
     <input type="file" id="videoInput" accept="video/*" hidden>
   </label>
   <video id="previewVideo" controls muted playsinline></video>
@@ -300,16 +331,81 @@
     <textarea id="skillBio" placeholder="Short description about the skill..."></textarea>
   </div>
   <div class="input-box" id="courseBox" style="display:none;">
-  <label>Write Full Course</label>
-  <textarea
-    id="courseText"
-    placeholder="Write your full course here...
-• Use short paragraphs
-• Leave space between ideas
-• Use simple words
-• Highlight important points"
-    style="height:180px; line-height:1.6;"
-  ></textarea>
+
+  <label>lesson 1 (Max 550 words)</label>
+  <textarea id="session1Text"></textarea>
+  <div class="lesson-images" id="session1Images">
+  <div class="add-image-btn" onclick="triggerImageUpload(1)">
+    ➕ Add Example Image (Max 3)
+  </div>
+  <div class="image-preview-row" id="session1Preview"></div>
+  <input type="file" accept="image/*" hidden id="session1ImageInput" multiple>
+</div>
+
+  <label>Session 1 Quiz Question</label>
+  <input type="text" id="session1Question" placeholder="Enter quiz question">
+
+  <input type="text" id="session1Option1" placeholder="Option 1">
+  <input type="text" id="session1Option2" placeholder="Option 2">
+  <input type="text" id="session1Option3" placeholder="Option 3">
+
+  <label>Correct Answer</label>
+  <select id="session1Correct">
+    <option value="0">Option 1</option>
+    <option value="1">Option 2</option>
+    <option value="2">Option 3</option>
+  </select>
+
+  <hr style="margin:20px 0; border-color:#333;">
+
+  <label>Session 2 (Max 550 words)</label>
+ <textarea id="session2Text"></textarea>
+ <div class="lesson-images" id="session2Images">
+  <div class="add-image-btn" onclick="triggerImageUpload(2)">
+    ➕ Add Example Image (Max 3)
+  </div>
+  <div class="image-preview-row" id="session2Preview"></div>
+  <input type="file" accept="image/*" hidden id="session2ImageInput" multiple>
+</div>
+  <label>Session 2 Quiz Question</label>
+  <input type="text" id="session2Question" placeholder="Enter quiz question">
+
+  <input type="text" id="session2Option1" placeholder="Option 1">
+  <input type="text" id="session2Option2" placeholder="Option 2">
+  <input type="text" id="session2Option3" placeholder="Option 3">
+
+  <label>Correct Answer</label>
+  <select id="session2Correct">
+    <option value="0">Option 1</option>
+    <option value="1">Option 2</option>
+    <option value="2">Option 3</option>
+  </select>
+
+  <hr style="margin:20px 0; border-color:#333;">
+
+  <label>Session 3 (Max 550 words)</label>
+  <textarea id="session3Text"></textarea>
+<div class="lesson-images" id="session3Images">
+  <div class="add-image-btn" onclick="triggerImageUpload(3)">
+    ➕ Add Example Image (Max 3)
+  </div>
+  <div class="image-preview-row" id="session3Preview"></div>
+  <input type="file" accept="image/*" hidden id="session3ImageInput" multiple>
+</div>
+  <label>Session 3 Quiz Question</label>
+  <input type="text" id="session3Question" placeholder="Enter quiz question">
+
+  <input type="text" id="session3Option1" placeholder="Option 1">
+  <input type="text" id="session3Option2" placeholder="Option 2">
+  <input type="text" id="session3Option3" placeholder="Option 3">
+
+  <label>Correct Answer</label>
+  <select id="session3Correct">
+    <option value="0">Option 1</option>
+    <option value="1">Option 2</option>
+    <option value="2">Option 3</option>
+  </select>
+
 </div>
   <div class="input-box">
     <label>Privacy</label>
@@ -329,9 +425,9 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
   authDomain: "vs-code-d4d6b.firebaseapp.com",
@@ -343,10 +439,83 @@ const firebaseConfig = {
 
 const cloudName = "dcpa8046h";
 const uploadPreset = "microswab-profile";
+const sessionImages = {
+  1: [],
+  2: [],
+  3: []
+};
+
+window.triggerImageUpload = function(sessionNumber) {
+  document.getElementById(`session${sessionNumber}ImageInput`).click();
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+[1,2,3].forEach(num => {
+  const input = document.getElementById(`session${num}ImageInput`);
+  const preview = document.getElementById(`session${num}Preview`);
+
+  if (!input) return;
+
+  input.addEventListener("change", () => {
+    const files = Array.from(input.files);
+
+    if (sessionImages[num].length + files.length > 3) {
+      alert("Maximum 3 images allowed per session.");
+      return;
+    }
+
+    files.forEach(file => {
+      sessionImages[num].push(file);
+
+      const wrapper = document.createElement("div");
+wrapper.style.position = "relative";
+wrapper.style.display = "inline-block";
+wrapper.style.margin = "5px";
+
+// Image
+const img = document.createElement("img");
+img.src = URL.createObjectURL(file);
+img.style.width = "90px";
+img.style.height = "90px";
+img.style.objectFit = "cover";
+img.style.borderRadius = "10px";
+
+// Cancel button
+const cancelBtn = document.createElement("div");
+cancelBtn.textContent = "✕";
+cancelBtn.style.position = "absolute";
+cancelBtn.style.top = "4px";
+cancelBtn.style.right = "6px";
+cancelBtn.style.background = "rgba(0,0,0,0.6)";
+cancelBtn.style.color = "#fff";
+cancelBtn.style.fontSize = "12px";
+cancelBtn.style.padding = "2px 6px";
+cancelBtn.style.borderRadius = "50%";
+cancelBtn.style.cursor = "pointer";
+
+// Remove logic
+cancelBtn.onclick = () => {
+  // Remove from array
+  const index = sessionImages[num].indexOf(file);
+  if (index > -1) {
+    sessionImages[num].splice(index, 1);
+  }
+
+  // Remove from UI
+  wrapper.remove();
+};
+
+wrapper.appendChild(img);
+wrapper.appendChild(cancelBtn);
+preview.appendChild(wrapper);
+    });
+
+    input.value = "";
+  });
+});
 
 const nextBtn = document.getElementById("nextBtn");
 const imageInput = document.getElementById("imageInput");
@@ -416,15 +585,193 @@ async function getUserProfile(userId){
     return { displayName: currentUser.email, photoURL: "https://via.placeholder.com/100" };
   }
 }
+async function compressImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      img.src = e.target.result;
+    };
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      // Resize logic (max width 800px)
+      const MAX_WIDTH = 800;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > MAX_WIDTH) {
+        height = height * (MAX_WIDTH / width);
+        width = MAX_WIDTH;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Compress to 70% quality
+      canvas.toBlob(
+        (blob) => {
+          resolve(new File([blob], file.name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        0.7
+      );
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
 
 // Upload skill
 uploadBtn.addEventListener("click", async () => {
+  /* ===== IMAGE PREVIEW + LIMIT LOGIC ===== */
   const title = document.getElementById("skillTitle").value.trim();
   const bio = document.getElementById("skillBio").value.trim();
-  const courseText = fileType === "image" ? document.getElementById("courseText").value.trim() : "";
+  let sessions = [];
+
+if (fileType === "image") {
+
+  async function buildSession(
+  textId, qId, o1, o2, o3, correctId, sessionNumber
+) {
+  async function uploadSessionImages(imagesArray) {
+  const uploadedURLs = [];
+
+  for (let file of imagesArray) {
+    try {
+      const compressedFile = await compressImage(file);
+
+      const form = new FormData();
+      form.append("file", compressedFile);
+      form.append("upload_preset", uploadPreset);
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+        { method: "POST", body: form }
+      );
+
+      const data = await res.json();
+
+      // ✅ IMPORTANT: check if upload worked
+      if (!data.secure_url) {
+        console.error("Cloudinary upload failed:", data);
+        continue; // skip broken image instead of killing everything
+      }
+
+      uploadedURLs.push(data.secure_url);
+
+    } catch (err) {
+      console.error("Image upload error:", err);
+      // ❌ DO NOT break everything
+      continue;
+    }
+  }
+
+  return uploadedURLs;
+}
+  const content = document.getElementById(textId).value.trim();
+  const question = document.getElementById(qId).value.trim();
+  const option1 = document.getElementById(o1).value.trim();
+  const option2 = document.getElementById(o2).value.trim();
+  const option3 = document.getElementById(o3).value.trim();
+  const correctIndex = parseInt(document.getElementById(correctId).value);
+
+  // ✅ Only Session 1 is REQUIRED
+if (sessionNumber === 1) {
+  if (!content || !question || !option1 || !option2 || !option3) {
+    alert("Session 1 is required.");
+    throw new Error("Session 1 incomplete");
+  }
+}
+
+// ✅ Session 2 & 3 are OPTIONAL
+if (sessionNumber !== 1) {
+  if (!content && !question) {
+    return null; // skip empty session
+  }
+
+  // If teacher started writing → force completion
+  if (!content || !question || !option1 || !option2 || !option3) {
+    alert("If you start Session " + sessionNumber + ", complete it fully.");
+    throw new Error("Incomplete optional session");
+  }
+}
+
+  const uploadedImageURLs = await uploadSessionImages(sessionImages[sessionNumber]);
+
+  return {
+    content,
+    images: uploadedImageURLs,
+    quiz: {
+      question,
+      options: [option1, option2, option3],
+      correctIndex
+    }
+  };
+}
+
+  
+
+let s1, s2, s3;
+
+try {
+  s1 = await buildSession(
+    "session1Text",
+    "session1Question",
+    "session1Option1",
+    "session1Option2",
+    "session1Option3",
+    "session1Correct",
+    1
+  );
+
+  s2 = await buildSession(
+    "session2Text",
+    "session2Question",
+    "session2Option1",
+    "session2Option2",
+    "session2Option3",
+    "session2Correct",
+    2
+  );
+
+  s3 = await buildSession(
+    "session3Text",
+    "session3Question",
+    "session3Option1",
+    "session3Option2",
+    "session3Option3",
+    "session3Correct",
+    3
+  );
+
+} catch (err) {
+  console.error("Session build failed:", err);
+
+  uploadingText.style.display = "none";
+  progressRow.style.display = "none";
+  uploadBtn.style.pointerEvents = "auto";
+  uploadBtn.style.opacity = "1";
+
+  return; // stop upload completely
+}
+  if (s1) sessions.push(s1);
+  if (s2) sessions.push(s2);
+  if (s3) sessions.push(s3);
+
+  if (sessions.length === 0) {
+    alert("Please complete at least Session 1 with quiz.");
+    return;
+  }
+}
   const privacy = document.getElementById("privacy").value;
 
- if(!title || !bio || !fileSelected || (fileType==="image" && !courseText)){
+ if(!title || !bio || !fileSelected || (fileType==="image" && sessions.length === 0)){
   alert("Please fill all required fields!");
   return;
 }
@@ -434,16 +781,32 @@ uploadBtn.addEventListener("click", async () => {
     window.location.href = "login.html";
     return;
   }
+// ✅ Instant feedback (button + div)
+uploadBtn.textContent = "Uploading...";
+uploadBtn.style.pointerEvents = "none";
+uploadBtn.style.opacity = "0.6";
 
-  uploadingText.style.display = "block";
+// Show div immediately with first message
+uploadingText.style.display = "block";
+uploadingText.textContent = "Preparing upload...";
+progressRow.style.display = "none";
+
+// ⏳ Then switch to real uploading UI
+setTimeout(() => {
+  uploadingText.textContent = "Uploading skill...";
   progressRow.style.display = "flex";
-  uploadBtn.style.pointerEvents = "none";
-  uploadBtn.style.opacity = "0.6";
+}, 800);
 
   try {
     // Upload to Cloudinary
     const form = new FormData();
-    form.append("file", fileSelected);
+    let uploadFile = fileSelected;
+
+if (fileType === "image") {
+  uploadFile = await compressImage(fileSelected);
+}
+
+form.append("file", uploadFile);
     form.append("upload_preset", uploadPreset);
 
     progressFill.style.width = `10%`;
@@ -477,9 +840,14 @@ uploadBtn.addEventListener("click", async () => {
   viewsArray: [],
   comments: [],
   shares: 0,
-  postType: fileType === "video" ? "video" : "skill",
+  postType:
+  currentUser.uid === MICROSWAB_AI_UID && fileType === "image"
+    ? "challenge"
+    : fileType === "video"
+    ? "video"
+    : "skill",
   // Save full course only for skill posts
-  fullCourse: fileType === "image" ? courseText : "",
+  sessions: fileType === "image" ? sessions : [],
   createdAt: serverTimestamp()
 };
 
@@ -497,17 +865,28 @@ await addDoc(collection(db, "allNotifications"), {
   posterUserId: currentUser.uid
 });
 uploadingText.textContent = "Upload complete — redirecting…";
+uploadBtn.textContent = "Upload Skill";
 
 // Redirect logic
 setTimeout(() => {
-  if(fileType === "video") {
+  // Founder challenge
+  if (
+    currentUser.uid === MICROSWAB_AI_UID &&
+    fileType === "image"
+  ) {
+    window.location.href = `challenge.html?challengeId=${docRef.id}`;
+  }
+  // Video posts
+  else if (fileType === "video") {
     window.location.href = "reels.html";
-  } else {
-    window.location.href = `course.html?skillId=${docRef.id}`;
+  }
+  // Normal skill posts
+  else {
+    window.location.href = `teacherchat.html?skillId=${docRef.id}`;
   }
 }, 650);
-
   } catch(err){
+    uploadBtn.textContent = "Upload Skill";
     console.error("Upload error:", err);
     alert("Upload failed. Check console.");
     uploadingText.style.display="none";
@@ -516,8 +895,18 @@ setTimeout(() => {
     uploadBtn.style.opacity="1";
   }
 });
+function enforceWordLimit(textareaId, maxWords) {
+  const textarea = document.getElementById(textareaId);
+
+  textarea.addEventListener("input", () => {
+    const words = textarea.value.trim().split(/\s+/);
+
+    if (words.length > maxWords) {
+      textarea.value = words.slice(0, maxWords).join(" ");
+      alert(`Maximum ${maxWords} words allowed.`);
+    }
+  });
+}
 </script>
 </body>
 </html>
-
-

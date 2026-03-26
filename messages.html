@@ -439,7 +439,7 @@ const AI_COST = 50;
 const STREAK_MILESTONES = {3:10,7:25,14:50,30:100};
 const DAILY_REWARD = 5;
 const STREAK_SAVE_COST = 10;
-const ONE_DAY = 60*1000;
+const ONE_DAY = 13 * 60 * 60 * 1000; 
 
 let cachedUsers = {};
 let allConvs = [];
@@ -605,7 +605,7 @@ if (lastActive && now - lastActive > ONE_DAY * 2 && !data.missedStreakNotified) 
 }
 
 // ===== DAILY STREAK (UPDATED WITH 3% GROWTH) =====
-const ONE_DAY_MS = 60 * 1000; // 1 "day" = 60 seconds for testing
+const ONE_DAY_MS = 13 * 60 * 60 * 1000; // 1 "day" = 60 seconds for testing
 const STREAK_REWARDS = [
   5, 10, 13, 16, 20, 24, 28, 32, 38, 43,
   48, 53, 58, 63, 68, 73, 78, 83, 88, 93

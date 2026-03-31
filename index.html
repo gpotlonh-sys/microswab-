@@ -334,7 +334,7 @@
   <!-- TOPBAR: Microswab + search -->
 <!-- TOPBAR -->
          <div class="logo">Microswab</div> <!-- SIGN UP BUTTON -->
-  <a href="signup.html" id="topSignupBtn" class="signup-btn">
+  <a href="home.html" id="topSignupBtn" class="signup-btn">
     Sign Up
   </a>
 
@@ -395,6 +395,7 @@
 </a>
 </a>
 </div>
+<button id="accountAccessBtn" style="display:none;">Log In / Sign Up</button>
 <!-- Skill Categories -->
 <div class="category-bar">
   <button class="category-btn active" data-category="all">All</button>
@@ -808,7 +809,22 @@
   font-size: 15px;
 }
 
+#accountAccessBtn {
+  display: none;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+}
 
+#accountAccessBtn:hover {
+  opacity: 0.9;
+}
 </style>
 
 <script>
@@ -928,6 +944,13 @@ const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
   const addStoryBtn = document.getElementById("addStoryBtn");
   const storiesBar = document.getElementById("storiesBar");
   const globalSearch = document.getElementById("globalSearch");
+  const accountAccessBtn = document.getElementById("accountAccessBtn");
+const feedLoading = document.getElementById("feedLoading");
+if (accountAccessBtn) {
+  accountAccessBtn.addEventListener("click", () => {
+    window.location.href = "home.html";
+  });
+}
 
   // Story viewer elements
   const storyViewer = document.getElementById("storyViewer");
@@ -1062,8 +1085,33 @@ const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
   storyViewer.addEventListener('pointerup', ()=>{ dragging = false; startY = null; });
 
   // ========== Firestore: STORIES & FEED logic ==========
-  onAuthStateChanged(auth, async user => {
-    if(!user) return;
+ onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    console.log("❌ No authenticated user found.");
+
+    if (accountAccessBtn) {
+      accountAccessBtn.style.display = "inline-block";
+    }
+
+    if (feedLoading) {
+      feedLoading.style.display = "none";
+    }
+
+    feed.innerHTML = `
+      <div style="text-align:center; padding:40px 20px; color:#666;">
+        <h3 style="margin-bottom:10px;">You're not logged in</h3>
+        <p>Please log in or sign up to continue using Microswab.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  console.log("✅ Logged in user:", user.uid);
+
+  if (accountAccessBtn) {
+    accountAccessBtn.style.display = "none";
+  }
     // ===== TOKEN BADGE LOGIC =====
 const tokenBadge = document.getElementById("tokenBadge");
 const homeTokenBalance = document.getElementById("homeTokenBalance");
@@ -1084,11 +1132,33 @@ tokenBadge.addEventListener("click", () => {
 });
 
     // Immediately set profile pics
-    const meSnap = await getDoc(doc(db,"users",user.uid));
-    if(meSnap.exists()){
-  const photoURL = meSnap.data().photoURL || "default-avatar.jpg";
-  storyProfilePic.src = photoURL;
+    const meRef = doc(db, "users", user.uid);
+const meSnap = await getDoc(meRef);
+
+if (!meSnap.exists()) {
+  console.error("❌ User exists in Auth but not in Firestore:", user.uid);
+
+  if (accountAccessBtn) {
+    accountAccessBtn.style.display = "inline-block";
+  }
+
+  if (feedLoading) {
+    feedLoading.style.display = "none";
+  }
+
+  feed.innerHTML = `
+    <div style="text-align:center; padding:40px 20px; color:#666;">
+      <h3 style="margin-bottom:10px;">Account setup incomplete</h3>
+      <p>Please log in again or create your account again.</p>
+    </div>
+  `;
+
+  return;
 }
+
+const meData = meSnap.data();
+const photoURL = meData.photoURL || "default-avatar.jpg";
+storyProfilePic.src = photoURL;
 
     addStoryBtn.addEventListener("click",()=> window.location.href="stories.html");
     // ===== Notification Red Dot Logic =====
@@ -1096,65 +1166,102 @@ const notificationBell = document.getElementById("notificationBell");
 const notificationCount = document.getElementById("notificationCount");
 
 // Listen for unread notifications in Firestore
-const notificationsRef = collection(db, "users", user.uid, "notifications");
-const q = query(notificationsRef, orderBy("createdAt", "desc"));
+let latestNotificationsSnapshot = null;
 
-onSnapshot(q, snapshot => {
-  // Count how many notifications are unread
+const notificationsRef = collection(db, "users", user.uid, "notifications");
+const notificationsQuery = query(notificationsRef, orderBy("createdAt", "desc"));
+
+onSnapshot(notificationsQuery, (snapshot) => {
+  latestNotificationsSnapshot = snapshot;
+
   const unreadCount = snapshot.docs.filter(doc => !doc.data().read).length;
 
   if (unreadCount > 0) {
     notificationCount.style.display = "inline-block";
-    notificationCount.textContent = unreadCount > 9 ? "9+" : unreadCount; // optional: cap display
+    notificationCount.textContent = unreadCount > 9 ? "9+" : unreadCount;
   } else {
     notificationCount.style.display = "none";
   }
 });
 
-// When user clicks the bell, mark all notifications as read
 notificationBell.addEventListener("click", async () => {
-  const batch = db.batch();
-  snapshot.docs.forEach(docSnap => {
-    if(!docSnap.data().read) batch.update(docSnap.ref, { read: true });
-  });
-  await batch.commit();
+  try {
+    if (!latestNotificationsSnapshot) return;
+
+    for (const docSnap of latestNotificationsSnapshot.docs) {
+      if (!docSnap.data().read) {
+        await updateDoc(docSnap.ref, { read: true });
+      }
+    }
+
+    window.location.href = "notifications.html";
+  } catch (error) {
+    console.error("Notification update failed:", error);
+  }
 });
-// ===== VIDEO RED DOT (Facebook-style) =====
-// ===== VIDEO RED DOT (Facebook-style) =====
+// ===== VIDEO RED DOT (Reliable Version) =====
+// ===== VIDEO RED DOT (Bulletproof Version) =====
 const videoDot = document.getElementById("videoDot");
 const videoBtn = document.getElementById("videoBtn");
 
-// last time user checked videos
-let lastSeenVideo = Number(localStorage.getItem("lastSeenVideoTime") || 0);
+if (videoDot && videoBtn) {
+  let lastSeenVideo = Number(localStorage.getItem("lastSeenVideoTime") || 0);
 
-// listen for newest VIDEO post only
-const latestVideoQuery = query(
-  collection(db, "skills"),
-  orderBy("createdAt", "desc")
-);
+  const latestVideoQuery = query(
+    collection(db, "skills"),
+    orderBy("createdAt", "desc")
+  );
 
-onSnapshot(latestVideoQuery, snapshot => {
-  if (snapshot.empty) return;
+  onSnapshot(latestVideoQuery, (snapshot) => {
+    if (snapshot.empty) {
+      videoDot.style.display = "none";
+      return;
+    }
 
-  // find first video post
-  const videoDoc = snapshot.docs.find(d => d.data().videoURL);
-  if (!videoDoc) return;
+    const videoPosts = snapshot.docs.filter(docSnap => {
+      const data = docSnap.data();
+      return (
+        data.videoURL ||
+        (data.fileURL && String(data.fileURL).toLowerCase().endsWith(".mp4"))
+      );
+    });
 
-  const latestTime = videoDoc.data().createdAt?.seconds || 0;
+    if (videoPosts.length === 0) {
+      videoDot.style.display = "none";
+      return;
+    }
 
-  if (latestTime > lastSeenVideo) {
-    videoDot.style.display = "block"; // 🔴 SHOW
-  }
-});
-videoBtn.addEventListener("click", () => {
-  const now = Date.now() / 1000;
+    const newestVideo = videoPosts[0].data();
 
-  // mark videos as seen
-  localStorage.setItem("lastSeenVideoTime", Math.floor(now));
+    let newestVideoTime = 0;
 
-  // hide the red dot instantly
-  videoDot.style.display = "none";
-});
+    if (newestVideo.createdAt?.toDate) {
+      newestVideoTime = Math.floor(newestVideo.createdAt.toDate().getTime() / 1000);
+    } else if (newestVideo.createdAt?.seconds) {
+      newestVideoTime = newestVideo.createdAt.seconds;
+    }
+
+    console.log("🎥 Newest video time:", newestVideoTime);
+    console.log("👀 Last seen video time:", lastSeenVideo);
+
+    if (newestVideoTime > lastSeenVideo) {
+      videoDot.style.display = "block";
+    } else {
+      videoDot.style.display = "none";
+    }
+  });
+
+  videoBtn.addEventListener("click", () => {
+    const now = Math.floor(Date.now() / 1000);
+
+    localStorage.setItem("lastSeenVideoTime", now);
+    lastSeenVideo = now;
+
+    videoDot.style.display = "none";
+
+    window.location.href = "reels.html";
+  });
+}
 // ===== REELS PREVIEW ON HOME =====
 const reelsPreviewList = document.getElementById("reelsPreviewList");
 
@@ -1301,14 +1408,13 @@ ${skill.fileURL ? `<img class="main" src="${escapeHtml(skill.fileURL)}" alt="ski
 
     const learnBtn = post.querySelector(".learn-btn");
 
-    learnBtn.addEventListener("click", () => {
-      if (isChallengePost) {
-        window.location.href = `challenge.html?challengeId=${skillId}`;
-      } else {
-        window.location.href = `teacherchat.html?uid=${skill.posterUserId}&skillId=${skillId}`;
-      }
-    });
-
+learnBtn.addEventListener("click", () => {
+  if (isChallengePost) {
+    window.location.href = `challenge.html?challengeId=${skillId}`;
+  } else {
+    window.location.href = `teacherchat.html?uid=${skill.posterUserId}&skillId=${skillId}`;
+  }
+});
     // Set poster info
     if(skill.posterUserId){
       getDoc(doc(db,"users",skill.posterUserId)).then(posterSnap=>{
@@ -1499,7 +1605,7 @@ commentBtn.addEventListener("click", () => {
         });
         // 🔹 After rendering each skill post
         
- post.querySelector(".learn-skill button").addEventListener("click", async ()=>{
+post.querySelector(".learn-skill button").addEventListener("click", async ()=>{
     if(!skillId || !auth.currentUser) return;
 
     const userRef = doc(db, "users", auth.currentUser.uid);
@@ -1512,7 +1618,6 @@ commentBtn.addEventListener("click", () => {
     // Redirect to the skill page
     window.location.href = `teacherchat.html?skillId=${encodeURIComponent(skillId)}`;
 });
-
       });
     });
   });

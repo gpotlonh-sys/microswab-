@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>  <html lang="en">  
 <head>  
 <meta charset="UTF-8">  
@@ -157,7 +156,7 @@ body {
   <span class="material-icons icon">diamond</span>  
 </div> 
 <div class="motivation-message" id="motivationMessage">
-  “Keep learning and teaching on Microswab! Earn tokens for every skill you master or share. Learners and teachers: reach 100% progress to unlock certificates and monetization. Teachers: hit 5,000 tokens to start turning your skills into real rewards.”
+  Unlock your certificate once your learning or teaching progress hit 100%
 </div>
 <!-- Daily Reward -->
 <!-- Daily Reward -->
@@ -341,7 +340,7 @@ auth.onAuthStateChanged(async user => {
   // Create user document if it doesn't exist  
   if (!snap.exists()) {  
   await setDoc(userRef, {  
-    tokens: 50,  // <-- give new users 50 tokens
+    tokens: 60,  // <-- give new users 60 tokens
     aiPaidUntil: 0,  
     createdAt: Date.now(),
     learningProgress: 0,
@@ -362,6 +361,14 @@ async function loadTokens(){
   if(docSnap.exists()){  
     const data = docSnap.data();  
     tokenBalanceElem.textContent = data.tokens || 0;  
+    // ✅ Ensure minimum starting tokens = 60
+if (data.tokens === undefined && !data.firstTimeBonusGiven) {
+  await updateDoc(docRef, {
+    tokens: 60,
+    firstTimeBonusGiven: true
+  });
+  tokenBalanceElem.textContent = 60;
+}
 
     // Show one-time token notification
     if(data.newTokenNotification){  
@@ -417,9 +424,9 @@ document.getElementById("earnTokens").addEventListener("click", async ()=>{
     <div class="popup">  
       <h3>Earn Tokens</h3>  
       <div style="margin:20px 0;">  
-        <button id="inviteBtn" style="background:#6a0dad;color:white;padding:12px 20px;border-radius:12px;font-weight:bold;font-size:16px;margin-bottom:10px;width:100%;">Invite 3 Friends (+30 tokens)</button>  
+        <button id="inviteBtn" style="background:#6a0dad;color:white;padding:12px 20px;border-radius:12px;font-weight:bold;font-size:16px;margin-bottom:10px;width:100%;">Invite 1 Friend (+60 tokens)</button>  
         <button id="postVideoBtn" style="background:#6a0dad;color:white;padding:12px 20px;border-radius:12px;font-weight:bold;font-size:16px;margin-bottom:10px;width:100%;">Post Skill Video (+5 tokens)</button>  
-        <button id="longAdsBtn" style="background:#6a0dad;color:white;padding:12px 20px;border-radius:12px;font-weight:bold;font-size:16px;margin-bottom:10px;width:100%;">Watch Long Ads (+5 tokens)</button>  
+        <button id="longAdsBtn" style="background:#6a0dad;color:white;padding:12px 20px;border-radius:12px;font-weight:bold;font-size:16px;margin-bottom:10px;width:100%;">Watch Long Ads (+10 tokens)</button>  
         <button id="closeEarnBtn" style="background:#ddd;color:#333;padding:12px 20px;border-radius:12px;font-weight:bold;font-size:16px;width:100%;">Close</button>  
       </div>  
     </div>  
@@ -429,7 +436,7 @@ document.getElementById("earnTokens").addEventListener("click", async ()=>{
 
   // KEEP THE REST OF YOUR EARN TOKENS LOGIC AS-IS...
   document.getElementById("inviteBtn").addEventListener("click", async ()=>{  
-    const referralLink = "microswab.netlify.app=" + currentUserId;  
+    const referralLink = "https://microswabb.netlify.app/?ref=" + currentUserId;
     overlay.innerHTML = `  
       <div class="popup">  
         <h3>Share Microswab 🚀</h3>  
@@ -449,7 +456,7 @@ document.getElementById("earnTokens").addEventListener("click", async ()=>{
           url:referralLink  
         });  
         const userRef = doc(db,"users",currentUserId);  
-        await updateDoc(userRef,{ tokens: increment(30) });  
+        await updateDoc(userRef,{ tokens: increment(60) });  
         loadTokens();  
         loadTokensPopup();  
       }catch(err){ console.log(err); }  
@@ -488,9 +495,9 @@ document.getElementById("earnTokens").addEventListener("click", async ()=>{
       if(count<=0){  
         clearInterval(interval);  
         const userRef = doc(db,"users",currentUserId);  
-        updateDoc(userRef,{ tokens: increment(5) });  
+        updateDoc(userRef,{ tokens: increment(10) });  
         loadTokens();  
-        showOverlay("You earned +5 tokens!");  
+        showOverlay("You earned +10 tokens!");  
         setTimeout(()=> closeOverlay(),2000);  
       }  
     },1000);  

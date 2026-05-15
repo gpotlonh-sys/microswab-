@@ -432,40 +432,19 @@
   </div>
   <!-- Microswab Welcome Section -->
 <div id="microswabWelcome" class="welcome-card">
-  <span class="close-welcome" onclick="closeWelcome()">✕</span>
 
-  <h2>Welcome to Microswab 👋</h2>
-  <p>
-    Microswab is a skill-sharing platform where real people teach real skills.
-    Learn directly from creators, and professionals, reach 100% progress to unlock certificate, earn tokens for every skills you learn or teach 
+  <h2>🎉 Welcome to Microswab</h2>
+
+  <p class="welcome-text">
+    Claim your free <strong>80 learning tokens</strong><br>
+    to start learning skills today.
   </p>
 
-  <!-- Demo Stats -->
-  <div class="welcome-stats">
-    <div class="stat">
-      <strong>2,300+</strong>
-      <span>Learners</span>
-    </div>
-    <div class="stat">
-      <strong>480+</strong>
-      <span>Skills</span>
-    </div>
-    <div class="stat">
-      <strong>120+</strong>
-      <span>Teachers</span>
-    </div>
-  </div>
+  <button class="claim-token-btn" onclick="window.location.href='tokens.html'">
+    Claim Tokens
+  </button>
 
-  <!-- Demo Users -->
-  <div class="demo-users">
-    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="user">
-    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="user">
-    <img src="https://randomuser.me/api/portraits/men/21.jpg" alt="user">
-    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="user">
-    <span>+ thousands learning daily</span>
-  </div>
 </div>
-
   
   <!-- 🎁 Microswab Surprise System -->
 <div id="surpriseCard" class="surprise-card" style="display:none;">
@@ -630,7 +609,51 @@
   line-height: 1.6;
   margin-bottom: 16px;
 }
+.welcome-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  margin: 18px 16px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.10);
+  text-align: center;
+}
 
+.welcome-card h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+.welcome-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 22px;
+}
+
+.claim-token-btn {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #22c55e;
+  color: white;
+  transition: 0.2s ease;
+}
+
+.claim-token-btn:hover {
+  background: #16a34a;
+}
+
+.claim-token-btn:active {
+  transform: scale(0.98);
+  }
+  
 /* Close icon */
 .close-welcome {
   position: absolute;

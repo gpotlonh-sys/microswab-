@@ -430,20 +430,51 @@
       <!-- dynamic stories appended here -->
     </div>
   </div>
-  <!-- Microswab Welcome Section -->
+ <!-- Microswab Welcome Section -->
 <div id="microswabWelcome" class="welcome-card">
 
   <h2>🎉 Welcome to Microswab</h2>
 
   <p class="welcome-text">
-    Claim your free <strong>80 learning tokens</strong><br>
+    Claim your free <strong>60 learning tokens</strong><br>
     to start learning skills today.
   </p>
 
-  <button class="claim-token-btn" onclick="window.location.href='tokens.html'">
-    Claim Tokens
-  </button>
+  <button
+  class="claim-token-btn"
+  id="claimWelcomeTokensBtn"
+>
+  Claim 60 Tokens
+</button>
 
+  <div class="welcome-stats">
+    <div class="stat">
+      <strong id="totalUsers">--</strong>
+      <span>Total Users</span>
+    </div>
+    <div class="stat">
+      <strong id="totalTokens">--</strong>
+      <span>Tokens Distributed</span>
+    </div>
+  </div>
+
+  <div class="demo-users" id="demoUsers">
+    <!-- Demo user avatars will be appended here -->
+  </div>
+
+  <div class="close-welcome" id="closeWelcome">✕</div>
+
+</div>
+
+<!-- Congratulations Modal -->
+<div id="congratsModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h2>🎉 Congratulations!</h2>
+    <p>You just received <strong>60 tokens</strong> 🎁</p>
+    <p>Now start your first course to continue your journey.</p>
+
+    <button id="startCourseBtn">Start Day 2 Course</button>
+  </div>
 </div>
   
   <!-- 🎁 Microswab Surprise System -->
@@ -848,6 +879,279 @@
 #accountAccessBtn:hover {
   opacity: 0.9;
 }
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.welcome-card {
+  background: #fff;
+  border-radius: 22px;
+  padding: 28px;
+  margin: 18px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.claim-token-btn {
+  background: #111;
+  color: white;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: 0.2s ease;
+}
+
+.claim-token-btn:hover {
+  transform: scale(1.02);
+}
+
+.claim-token-btn:active {
+  transform: scale(0.98);
+}
+/* STORY SOCIAL ACTIONS */
+
+.story-actions{
+  position:absolute;
+  bottom:90px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:18px;
+  z-index:30;
+}
+
+.story-action-btn{
+  background:rgba(0,0,0,0.55);
+  border:none;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:14px;
+  cursor:pointer;
+  backdrop-filter:blur(6px);
+}
+
+.story-action-btn.liked{
+  background:rgba(255,0,85,0.18);
+  color:#ff0055;
+  border:1px solid rgba(255,0,85,0.35);
+  transform:scale(1.06);
+}
+
+.story-action-btn{
+  transition:all 0.22s ease;
+}
+
+.story-action-btn:active{
+  transform:scale(0.92);
+}
+
+.story-view-counter{
+  background:rgba(0,0,0,0.55);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:14px;
+}
+
+.story-comments-panel{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  max-height:300px;
+  background:#fff;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  padding:14px;
+  display:none;
+  z-index:50;
+}
+
+.story-comments-list{
+  max-height:180px;
+  overflow-y:auto;
+  margin-bottom:12px;
+}
+
+.story-comment-item{
+  display:flex;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.story-comment-item img{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.story-comment-item strong{
+  display:block;
+  font-size:14px;
+}
+
+.story-comment-item span{
+  font-size:14px;
+  color:#333;
+}
+
+#storyCommentInput{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  outline:none;
+  font-size:14px;
+}
+.story-actions{
+  position:absolute;
+  bottom:110px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:18px;
+  z-index:50;
+}
+
+.story-action-btn{
+  border:none;
+  background:rgba(0,0,0,0.45);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:14px;
+  cursor:pointer;
+  backdrop-filter:blur(6px);
+}
+
+.story-action-btn .material-icons{
+  font-size:20px;
+}
+
+.story-action-btn.liked{
+  background:#ff004f;
+  color:white;
+}
+
+.story-view-counter{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  background:rgba(0,0,0,0.45);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:999px;
+  font-size:14px;
+}
+.story-comments-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.story-comments-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.story-comment-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.story-comment-item img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.story-comment-item div {
+  background: #f2f2f2;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+.story-comments-header{
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:14px 16px;
+
+  border-bottom:1px solid #eee;
+
+  background:#fff;
+
+}
+
+.story-comments-header span{
+
+  font-size:16px;
+  font-weight:700;
+
+}
+
+#closeCommentsBtn{
+
+  border:none;
+  background:none;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+}
+
+#closeCommentsBtn .material-icons{
+
+  font-size:24px;
+  color:#444;
+
+}
 </style>
 
 <script>
@@ -915,6 +1219,59 @@
 
       <div class="close-btn" id="closeStory">✕</div>
       <div class="story-caption" id="storyCaption"></div>
+      <!-- STORY SOCIAL ACTIONS -->
+<div class="story-actions">
+
+  <!-- LIKE -->
+  <button class="story-action-btn" id="storyLikeBtn">
+    <span class="material-icons">favorite_border</span>
+    <span id="storyLikeCount">0</span>
+  </button>
+
+  <!-- COMMENT -->
+  <button class="story-action-btn" id="storyCommentBtn">
+    <span class="material-icons">chat_bubble_outline</span>
+    <span id="storyCommentCount">0</span>
+  </button>
+
+  <!-- SHARE -->
+  <button class="story-action-btn" id="storyShareBtn">
+    <span class="material-icons">share</span>
+    <span id="storyShareCount">0</span>
+  </button>
+
+  <!-- VIEWS -->
+  <div class="story-view-counter">
+    <span class="material-icons">visibility</span>
+    <span id="storyViewCount">0</span>
+  </div>
+
+</div>
+
+<!-- STORY COMMENTS PANEL -->
+<div class="story-comments-panel" id="storyCommentsPanel">
+
+  <div class="story-comments-header">
+
+    <span>Comments</span>
+
+    <button id="closeCommentsBtn">
+      <span class="material-icons">
+        close
+      </span>
+    </button>
+
+  </div>
+
+  <div class="story-comments-list"
+       id="storyCommentsList"></div>
+
+<input
+  type="text"
+  id="storyCommentInput"
+  placeholder="Write a comment..."
+>
+</div>
     </div>
   </div>
 
@@ -925,9 +1282,20 @@
 const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import {
-    getFirestore, collection, doc, getDoc, query, orderBy, onSnapshot,
-    updateDoc, arrayUnion, arrayRemove, increment, addDoc
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  increment,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
   function formatPostDate(timestamp) {
   if (!timestamp || !timestamp.toDate) return "";
 
@@ -958,8 +1326,12 @@ const MICROSWAB_AI_UID = "nAM7ztQpGHX5XMNaF0CccGxMEHR2";
   };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// expose globally for welcome script
+window.auth = auth;
+window.db = db;
 
   // ========== Elements ==========
   const feed = document.getElementById("feed");
@@ -985,13 +1357,56 @@ if (accountAccessBtn) {
   const tapLeft = document.getElementById("tapLeft");
   const tapRight = document.getElementById("tapRight");
   const closeStory = document.getElementById("closeStory");
+  // STORY SOCIAL ELEMENTS
+const storyLikeBtn = document.getElementById("storyLikeBtn");
+const storyCommentBtn = document.getElementById("storyCommentBtn");
+const storyShareBtn = document.getElementById("storyShareBtn");
+
+const storyLikeCount = document.getElementById("storyLikeCount");
+const storyCommentCount = document.getElementById("storyCommentCount");
+const storyShareCount = document.getElementById("storyShareCount");
+const storyViewCount = document.getElementById("storyViewCount");
+
+const storyCommentsPanel = document.getElementById("storyCommentsPanel");
+const storyCommentsList = document.getElementById("storyCommentsList");
+const storyCommentInput = document.getElementById("storyCommentInput");
+const closeCommentsBtn =
+  document.getElementById(
+    "closeCommentsBtn"
+  );
+
+closeCommentsBtn.addEventListener(
+  "click",
+  ()=>{
+
+    storyCommentsPanel.style.display =
+      "none";
+
+  }
+);
 
   // State for stories
   let storiesData = []; // array of story objects (from firestore)
   let currentStoryIndex = 0;
   let viewerTimer = null;
-  const STORY_DURATION_MS = 5000; // 5s per story default
+  let isStoryPaused = false;
+let animationStartTime = 0;
+let pausedElapsed = 0;
+  const STORY_DURATION_MS = 10000; // 10s per story default
+const userCache = {};
 
+async function loadStoryUser(userId) {
+  if (!userId) return null;
+
+  if (userCache[userId]) return userCache[userId];
+
+  const snap = await getDoc(doc(db, "users", userId));
+
+  if (!snap.exists()) return null;
+
+  userCache[userId] = snap.data();
+  return snap.data();
+}
 
   // Minimal escape helper for safe insertion
   function escapeHtml(s){ return String(s || '').replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;', '`':'&#96;'}[c])); }
@@ -1015,6 +1430,14 @@ if (accountAccessBtn) {
   function openStoryViewer(index){
     if(!storiesData || storiesData.length === 0) return;
     currentStoryIndex = index;
+    const s = storiesData[currentStoryIndex];
+if(!s) return;
+
+// ALWAYS refresh UI values from object
+storyLikeCount.textContent = s.likes || 0;
+storyCommentCount.textContent = s.comments || 0;
+storyShareCount.textContent = s.shares || 0;
+storyViewCount.textContent = s.views || 0;
     showStory();
     storyViewer.classList.add('show');
     storyViewer.setAttribute('aria-hidden','false');
@@ -1044,11 +1467,105 @@ if (accountAccessBtn) {
       storyMedia.style.backgroundImage = `url('${escapeHtml(s.imageURL || 'default-avatar.jpg')}')`;
     }
     // user info
-    viewerUserAvatar.src = s.uploaderPhotoURL || 'default-avatar.jpg';
-    viewerUserName.textContent = s.uploaderName || 'User';
-   storyCaption.innerHTML = `
-  ${s.title ? `<div style="font-weight:700;font-size:16px;margin-bottom:6px;">${escapeHtml(s.title)}</div>` : ''}
-  ${s.caption ? `<div style="font-size:14px;opacity:0.95;">${escapeHtml(s.caption)}</div>` : ''}
+    try {
+  const userData = await loadStoryUser(s.uploaderId);
+
+  viewerUserAvatar.src =
+    userData?.photoURL || 'default-avatar.jpg';
+
+  viewerUserName.textContent =
+    (userData?.firstName || '') +
+    (userData?.secondName ? ' ' + userData.secondName : '') ||
+    'User';
+
+} catch (err) {
+  console.error("Story user load failed:", err);
+
+  viewerUserAvatar.src = 'default-avatar.jpg';
+  viewerUserName.textContent = 'User';
+}
+   // ===== STORY COUNTS =====
+
+storyLikeCount.textContent = s.likes || 0;
+storyCommentCount.textContent = s.comments || 0;
+storyShareCount.textContent = s.shares || 0;
+storyViewCount.textContent = s.views || 0;
+
+// ===== LIKE STATE =====
+
+// ===== LIKE STATE =====
+
+if (
+  Array.isArray(s.likesArray) &&
+  s.likesArray.includes(auth.currentUser.uid)
+){
+
+  storyLikeBtn.classList.add("liked");
+
+  storyLikeBtn.innerHTML = `
+    <span class="material-icons">
+      favorite
+    </span>
+    <span id="storyLikeCount">
+      ${s.likes || 0}
+    </span>
+  `;
+
+} else {
+
+  storyLikeBtn.classList.remove("liked");
+
+  storyLikeBtn.innerHTML = `
+    <span class="material-icons">
+      favorite_border
+    </span>
+    <span id="storyLikeCount">
+      ${s.likes || 0}
+    </span>
+  `;
+
+}
+
+// ===== VIEW TRACKING =====
+
+try{
+
+  const storyRef = doc(db,"stories",s.id);
+
+  if(
+    !s.viewsArray ||
+    !s.viewsArray.includes(auth.currentUser.uid)
+  ){
+
+    await updateDoc(storyRef,{
+      views: increment(1),
+      viewsArray: arrayUnion(auth.currentUser.uid)
+    });
+
+    s.views = (s.views || 0) + 1;
+
+    storyViewCount.textContent = s.views;
+
+  }
+
+}catch(err){
+  console.error(err);
+}
+
+// ===== STORY CAPTION =====
+
+storyCaption.innerHTML = `
+  ${s.title ? `
+    <div style="font-weight:700;font-size:16px;margin-bottom:6px;">
+      ${escapeHtml(s.title)}
+    </div>
+  ` : ''}
+
+  ${s.caption ? `
+    <div style="font-size:14px;opacity:0.95;">
+      ${escapeHtml(s.caption)}
+    </div>
+  ` : ''}
 `;
     // build progresses
     buildProgressBars(storiesData.length, currentStoryIndex);
@@ -1072,21 +1589,69 @@ if (accountAccessBtn) {
   }
 
   function startViewerTimer(){
-    stopViewerTimer();
-    const fills = Array.from(progressContainer.querySelectorAll('.fill'));
-    fills.forEach((f, idx) => { if(idx < currentStoryIndex) f.style.width = '100%'; else f.style.width = '0%'; });
-    const currentFill = fills[currentStoryIndex];
-    if(!currentFill){ closeStoryViewer(); return; }
-    const start = performance.now();
-    const duration = STORY_DURATION_MS;
-    function tick(now){
-      const elapsed = now - start;
-      const pct = Math.min(1, elapsed / duration);
-      currentFill.style.width = (pct * 100) + '%';
-      if(pct < 1){ viewerTimer = requestAnimationFrame(tick); } else { nextStory(); }
+
+  stopViewerTimer();
+
+  const fills = Array.from(
+    progressContainer.querySelectorAll('.fill')
+  );
+
+  fills.forEach((f, idx) => {
+    if(idx < currentStoryIndex){
+      f.style.width = '100%';
+    } else {
+      f.style.width = '0%';
     }
-    viewerTimer = requestAnimationFrame(tick);
+  });
+
+  const currentFill = fills[currentStoryIndex];
+
+  if(!currentFill){
+    closeStoryViewer();
+    return;
   }
+
+  animationStartTime =
+    performance.now() - pausedElapsed;
+
+  function tick(now){
+
+    if(isStoryPaused){
+
+      viewerTimer = requestAnimationFrame(tick);
+      return;
+
+    }
+
+    const elapsed =
+      now - animationStartTime;
+
+    pausedElapsed = elapsed;
+
+    const pct =
+      Math.min(1, elapsed / STORY_DURATION_MS);
+
+    currentFill.style.width =
+      (pct * 100) + '%';
+
+    if(pct < 1){
+
+      viewerTimer =
+        requestAnimationFrame(tick);
+
+    } else {
+
+      pausedElapsed = 0;
+      nextStory();
+
+    }
+
+  }
+
+  viewerTimer =
+    requestAnimationFrame(tick);
+
+}
 
   function stopViewerTimer(){ if(viewerTimer){ cancelAnimationFrame(viewerTimer); viewerTimer = null; } }
 
@@ -1096,11 +1661,320 @@ if (accountAccessBtn) {
   // Tap areas
   tapRight.addEventListener('click', (e)=>{ e.stopPropagation(); nextStory(); });
   tapLeft.addEventListener('click', (e)=>{ e.stopPropagation(); prevStory(); });
+  // ===== HOLD TO PAUSE STORY =====
+
+function pauseStory(){
+  isStoryPaused = true;
+
+  const vid =
+    document.getElementById("viewerVideo");
+
+  if(vid){
+    vid.pause();
+  }
+}
+
+function resumeStory(){
+  isStoryPaused = false;
+
+  const vid =
+    document.getElementById("viewerVideo");
+
+  if(vid){
+    vid.play().catch(()=>{});
+  }
+}
+
+[tapLeft, tapRight].forEach(el => {
+
+  el.addEventListener(
+    "pointerdown",
+    pauseStory
+  );
+
+  el.addEventListener(
+    "pointerup",
+    resumeStory
+  );
+
+  el.addEventListener(
+    "pointerleave",
+    resumeStory
+  );
+
+});
 
   // close handlers
   closeStory.addEventListener('click', closeStoryViewer);
   storyViewer.addEventListener('click', (e)=>{ /* noop to avoid accidental close */ });
+  // ===== STORY LIKE SYSTEM =====
 
+// ===== STORY LIKE SYSTEM =====
+
+storyLikeBtn.addEventListener("click", async ()=>{
+
+  const s = storiesData[currentStoryIndex];
+
+  if(!s) return;
+
+  const storyRef = doc(db,"stories",s.id);
+
+  try{
+
+    const alreadyLiked =
+      Array.isArray(s.likesArray) &&
+      s.likesArray.includes(auth.currentUser.uid);
+
+    if(alreadyLiked){
+
+      await updateDoc(storyRef,{
+        likes: increment(-1),
+        likesArray: arrayRemove(auth.currentUser.uid)
+      });
+
+      s.likes = Math.max((s.likes || 1) - 1, 0);
+
+      s.likesArray =
+        s.likesArray.filter(
+          uid => uid !== auth.currentUser.uid
+        );
+
+      storyLikeBtn.classList.remove("liked");
+
+      storyLikeBtn.innerHTML = `
+        <span class="material-icons">
+          favorite_border
+        </span>
+        <span id="storyLikeCount">
+          ${s.likes || 0}
+        </span>
+      `;
+
+    } else {
+
+      await updateDoc(storyRef,{
+        likes: increment(1),
+        likesArray: arrayUnion(auth.currentUser.uid)
+      });
+
+      s.likes = (s.likes || 0) + 1;
+
+      if(!s.likesArray){
+        s.likesArray = [];
+      }
+
+      s.likesArray.push(auth.currentUser.uid);
+
+      storyLikeBtn.classList.add("liked");
+
+      storyLikeBtn.innerHTML = `
+        <span class="material-icons">
+          favorite
+        </span>
+        <span id="storyLikeCount">
+          ${s.likes || 0}
+        </span>
+      `;
+
+    }
+
+  }catch(err){
+    console.error(err);
+  }
+
+});
+// ===== STORY SHARE SYSTEM =====
+
+storyShareBtn.addEventListener("click", async ()=>{
+
+  const s = storiesData[currentStoryIndex];
+  if(!s) return;
+
+  const shareUrl =
+    "https://microswab.netlify.app";
+
+  try{
+
+    if(navigator.share){
+
+      await navigator.share({
+        title: s.title || "Microswab Story",
+        text: s.caption || "Check this story on Microswab",
+        url: shareUrl
+      });
+
+    } else {
+
+      await navigator.clipboard.writeText(shareUrl);
+
+      alert("Story link copied");
+
+    }
+
+    await updateDoc(doc(db,"stories",s.id),{
+      shares: increment(1)
+    });
+
+    s.shares = (s.shares || 0) + 1;
+
+    storyShareCount.textContent = s.shares;
+
+  }catch(err){
+    console.error(err);
+  }
+
+});
+// ===== STORY COMMENTS TOGGLE =====
+
+storyCommentBtn.addEventListener("click", ()=>{
+
+  if(
+    storyCommentsPanel.style.display === "block"
+  ){
+
+    storyCommentsPanel.style.display = "none";
+
+  } else {
+
+    storyCommentsPanel.style.display = "block";
+
+    loadStoryComments();
+
+    storyCommentInput.focus();
+
+  }
+
+});
+// ===== LOAD STORY COMMENTS =====
+
+// ===== LOAD STORY COMMENTS =====
+
+let storyCommentsListener = null;
+
+function loadStoryComments(){
+
+  const s = storiesData[currentStoryIndex];
+
+  if(!s) return;
+
+  // remove old listener
+  if(storyCommentsListener){
+    storyCommentsListener();
+  }
+
+  const commentsRef = query(
+    collection(db,"stories",s.id,"comments"),
+    orderBy("createdAt","asc")
+  );
+
+  storyCommentsListener = onSnapshot(
+    commentsRef,
+    async snapshot => {
+
+      storyCommentsList.innerHTML = "";
+
+      storyCommentCount.textContent =
+        snapshot.size;
+
+      for(const d of snapshot.docs){
+
+        const c = d.data();
+
+        let userName = "User";
+        let userPhoto = "default-avatar.jpg";
+
+        try{
+
+          const userSnap = await getDoc(
+            doc(db,"users",c.userId)
+          );
+
+          if(userSnap.exists()){
+
+            const u = userSnap.data();
+
+            userName =
+              (u.firstName || "") +
+              " " +
+              (u.secondName || "");
+
+            userPhoto =
+              u.photoURL || "default-avatar.jpg";
+
+          }
+
+        }catch(err){
+          console.error(err);
+        }
+
+        const div = document.createElement("div");
+
+        div.className = "story-comment-item";
+
+        div.innerHTML = `
+          <img src="${userPhoto}">
+          
+          <div>
+            <strong>${escapeHtml(userName)}</strong>
+            
+            <span>${escapeHtml(c.text)}</span>
+          </div>
+        `;
+
+        storyCommentsList.appendChild(div);
+
+      }
+
+    }
+  );
+
+}
+
+
+// ===== SEND STORY COMMENT =====
+
+// ===== SEND STORY COMMENT =====
+
+storyCommentInput.addEventListener(
+  "keypress",
+  async e=>{
+
+  if(
+    e.key === "Enter" &&
+    storyCommentInput.value.trim() !== ""
+  ){
+
+    const s = storiesData[currentStoryIndex];
+
+    if(!s) return;
+
+    try{
+
+      await addDoc(
+        collection(db,"stories",s.id,"comments"),
+        {
+          text: storyCommentInput.value.trim(),
+          userId: auth.currentUser.uid,
+          createdAt: new Date()
+        }
+      );
+
+      await updateDoc(
+        doc(db,"stories",s.id),
+        {
+          comments: increment(1)
+        }
+      );
+
+      storyCommentInput.value = "";
+
+    }catch(err){
+      console.error(err);
+    }
+
+  }
+
+});
   // support swipe down to close (basic)
   let startY = null, dragging = false;
   storyViewer.addEventListener('pointerdown', (ev)=>{ startY = ev.clientY; dragging = true; });
@@ -1131,6 +2005,148 @@ if (accountAccessBtn) {
   }
 
   console.log("✅ Logged in user:", user.uid);
+  // ===== PROFESSIONAL WELCOME TOKEN SYSTEM =====
+const welcomeCard = document.getElementById("microswabWelcome");
+const claimBtn = document.getElementById("claimWelcomeTokensBtn");
+
+if (welcomeCard && claimBtn) {
+
+  // Show card
+  welcomeCard.style.display = "block";
+
+  // Smooth animation
+  welcomeCard.style.opacity = "0";
+  welcomeCard.style.transform = "translateY(20px)";
+
+  setTimeout(() => {
+    welcomeCard.style.transition = "all 0.4s ease";
+    welcomeCard.style.opacity = "1";
+    welcomeCard.style.transform = "translateY(0)";
+  }, 100);
+
+  claimBtn.addEventListener("click", async () => {
+
+    // Prevent double clicks
+    claimBtn.disabled = true;
+
+    // Fast loading effect
+    claimBtn.innerHTML = "Claiming...";
+    claimBtn.style.opacity = "0.8";
+
+    try {
+
+      const userRef = doc(db, "users", user.uid);
+
+      // INSTANT UI FEEL
+      setTimeout(async () => {
+
+        // Add tokens
+        await updateDoc(userRef, {
+  tokens: increment(60),
+  welcomeClaimed: true
+});
+
+        // Save reward
+        await setDoc(
+          doc(db, "users", user.uid, "rewards", "welcomeReward"),
+          {
+            claimed: true,
+            claimedAt: new Date()
+          }
+        );
+
+        // Professional success message
+        welcomeCard.innerHTML = `
+          <div style="
+            text-align:center;
+            animation: popIn 0.35s ease;
+          ">
+
+            <div style="
+              font-size:55px;
+              margin-bottom:10px;
+            ">
+              🎉
+            </div>
+
+            <h2 style="
+              margin-bottom:10px;
+              color:#111;
+              font-size:26px;
+              font-weight:700;
+            ">
+              Congratulations!
+            </h2>
+
+            <p style="
+              color:#555;
+              line-height:1.7;
+              font-size:15px;
+              margin-bottom:22px;
+            ">
+              You successfully claimed
+              <strong>60 learning tokens</strong>.<br>
+              Your learning journey starts now 🚀
+            </p>
+
+            <button
+              id="startCourseBtn"
+              style="
+                background:#111;
+                color:white;
+                border:none;
+                padding:14px 28px;
+                border-radius:14px;
+                font-size:15px;
+                font-weight:600;
+                cursor:pointer;
+                width:100%;
+                transition:0.2s;
+              "
+            >
+              Start Learning
+            </button>
+
+          </div>
+        `;
+
+        // Done button
+        document
+          .getElementById("startCourseBtn")
+          .addEventListener("click", () => {
+
+            // Smooth disappear
+            welcomeCard.style.transition = "all 0.4s ease";
+            welcomeCard.style.opacity = "0";
+            welcomeCard.style.transform = "scale(0.95)";
+
+            setTimeout(() => {
+
+              welcomeCard.style.display = "none";
+
+              // Open Day 2 course
+              window.location.href = "teacherchat.html?uid=3jzoJ6Hi5xUx5a9sOuwSiL1F5bd2&skillId=IZDUYZEMB2PL1eEYTadC";
+
+            }, 350);
+
+          });
+
+      }, 400); // FAST feeling
+
+    } catch (error) {
+
+      console.error(error);
+
+      claimBtn.disabled = false;
+      claimBtn.innerHTML = "Claim 60 Tokens";
+
+      alert("Failed to claim tokens");
+
+    }
+
+  });
+
+}
 
   if (accountAccessBtn) {
     accountAccessBtn.style.display = "none";
@@ -1182,6 +2198,13 @@ if (!meSnap.exists()) {
 const meData = meSnap.data();
 const photoURL = meData.photoURL || "default-avatar.jpg";
 storyProfilePic.src = photoURL;
+// ===== HIDE WELCOME IF ALREADY CLAIMED =====
+if (meData.welcomeClaimed === true) {
+  const welcomeCard = document.getElementById("microswabWelcome");
+  if (welcomeCard) {
+    welcomeCard.style.display = "none";
+  }
+}
 
     addStoryBtn.addEventListener("click",()=> window.location.href="stories.html");
     // ===== Notification Red Dot Logic =====
@@ -1348,22 +2371,35 @@ onSnapshot(reelsQuery, snapshot => {
       // build storiesData from snapshot
       const now = new Date();
 
-storiesData = snapshot.docs
-  .map(d => {
-    const data = d.data();
-    return {
-      id: d.id,
-      imageURL: data.imageURL || '',
-      videoURL: data.videoURL || '',
-      uploaderId: data.uploaderId || data.posterUserId || '',
-      uploaderName: data.uploaderName || data.posterName || '',
-      uploaderPhotoURL: data.uploaderPhotoURL || data.posterPhotoURL || '',
-      title: data.title || '',
-      caption: data.caption || '',
-      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date() // <-- important
-    };
-  })
-  .filter(story => (now - story.createdAt) < 24*60*60*1000); // <-- keep stories less than 24 hours old
+storiesData = snapshot.docs.map(d => {
+  const data = d.data();
+
+  return {
+    id: d.id,
+    imageURL: data.imageURL || "",
+    videoURL: data.videoURL || "",
+    uploaderId: data.uploaderId || "",
+    uploaderName: data.uploaderName || "User",
+    uploaderPhotoURL: data.uploaderPhotoURL || "default-avatar.jpg",
+
+    title: data.title || "",
+    caption: data.caption || "",
+
+    likes: data.likes || 0,
+    comments: data.comments || 0,
+    shares: data.shares || 0,
+    views: data.views || 0,
+
+    likesArray: Array.isArray(data.likesArray) ? data.likesArray : [],
+    viewsArray: Array.isArray(data.viewsArray) ? data.viewsArray : [],
+
+    createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date()
+  };
+})
+.filter(story =>
+  (now - story.createdAt)
+  < 24*60*60*1000
+);
       // render bar items (skip the add-story first element)
       storiesData.forEach((s, idx) => {
         const node = renderStoryItem(s, idx);
@@ -2049,4 +3085,53 @@ if (closeBtn) {
     border-radius:12px;
   ">
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const welcome = document.getElementById("microswabWelcome");
+  const claimBtn = document.getElementById("claimTokensBtn");
+  const congrats = document.getElementById("congratsModal");
+  const startCourseBtn = document.getElementById("startCourseBtn");
+
+  // show welcome for everyone (old + new users)
+  if (welcome) {
+    welcome.style.display = "block";
+  }
+
+  // CLAIM TOKENS
+  claimBtn.addEventListener("click", async () => {
+    const user = window.auth?.currentUser;
+
+    if (!user) {
+      alert("Please log in first");
+      return;
+    }
+
+    const db = window.db;
+
+    try {
+      // 🔥 ADD 60 TOKENS TO FIRESTORE
+      await updateDoc(doc(db, "users", user.uid), {
+        tokens: increment(60)
+      });
+
+      // hide welcome
+      welcome.style.display = "none";
+
+      // show congrats modal
+      congrats.style.display = "flex";
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to claim tokens");
+    }
+  });
+
+  // START COURSE BUTTON
+  startCourseBtn.addEventListener("click", () => {
+    window.location.href = "day2course.html";
+  });
+
+});
+</script>
 </html>

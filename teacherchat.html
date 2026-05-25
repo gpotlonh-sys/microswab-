@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,13 +14,33 @@ margin:0;
 font-family: Inter, sans-serif;
 background:#f7f6f3;
 }
-.header { background:#fff; padding:12px 16px; display:flex; align-items:center; border-bottom:1px solid #ddd; position:fixed; inset:0 0 auto 0; z-index:1000; }
+.header { background:#fff; padding:12px 16px; display:flex; align-items:center; border-bottom:1px solid #fcf9f9; position:fixed; inset:0 0 auto 0; z-index:1000; }
 .header img { width:50px; height:50px; border-radius:50%; margin-right:12px; }
 .name { font-size:17px; font-weight:700; }
-.container { max-width:720px; margin:90px auto 60px; padding:0 16px; }
-.lesson-title { font-size:22px; font-weight:700; }
+.container{
+max-width:760px;
+margin:90px auto 120px;
+padding:0 18px;
+}
+.lesson-title{
+font-size:28px;
+font-weight:800;
+line-height:1.2;
+margin-bottom:10px;
+color:#020617;
+}
 .lesson-progress { font-size:13px; color:#64748b; margin-bottom:14px; }
-.lesson-box { background:#fcfafa; padding:22px; border-radius:14px; box-shadow:0 8px 20px rgba(0,0,0,.05); line-height:1.8; white-space:pre-wrap; }
+.lesson-box{
+background:#ffffff;
+padding:28px 24px;
+border-radius:22px;
+box-shadow:0 10px 30px rgba(0,0,0,0.04);
+line-height:2;
+font-size:17px;
+color:#0f172a;
+white-space:pre-wrap;
+letter-spacing:0.1px;
+}
 .lesson-box.locked { filter:blur(5px); pointer-events:none; }
 .next-btn { width:100%; margin-top:22px; padding:14px; background:#1877f2; color:#fff; border:none; border-radius:12px; font-weight:600; }
 #topButtons{
@@ -31,30 +52,50 @@ gap:8px;
 z-index:9999;
 }
 
-#shareCourseBtn{
+#shareCourseBtn,
+#microswab-ai-btn,
+#editCourseBtn{
+
 display:flex;
 align-items:center;
-gap:6px;
-padding:8px 12px;
+gap:4px;
+
+padding:6px 10px;
+
 border:none;
-border-radius:20px;
-background:#10b981;
-color:#fff;
-font-size:13px;
+border-radius:14px;
+
+font-size:11px;
+font-weight:600;
+
 cursor:pointer;
+
+height:32px;
 }
 
+/* Share */
+#shareCourseBtn{
+background:#10b981;
+color:#fff;
+}
+
+/* AI */
 #microswab-ai-btn{
-display:flex;
-align-items:center;
-gap:6px;
-padding:8px 12px;
-border:none;
-border-radius:20px;
 background:#6a0dad;
 color:#fff;
-font-size:13px;
-cursor:pointer;
+}
+
+/* Edit */
+#editCourseBtn{
+background:#0f172a;
+color:#fff;
+}
+
+/* Smaller icons */
+#shareCourseBtn .material-icons-outlined,
+#microswab-ai-btn .material-icons-outlined,
+#editCourseBtn .material-icons-outlined{
+font-size:16px;
 }
 .payment-overlay, .reward-overlay { position:fixed; inset:0; background:rgba(2,6,23,.7); display:none; align-items:center; justify-content:center; z-index:99999; }
 .payment-box, .reward-box { background:#fff; width:90%; max-width:360px; padding:26px; border-radius:18px; text-align:center; }
@@ -213,7 +254,7 @@ display:flex;
 justify-content:space-around;
 align-items:center;
 padding:12px 0;
-border-top:1px solid #e2e8f0;
+border-top:1px solid #fbfcff;
 box-shadow:0 -4px 20px rgba(0,0,0,0.08);
 z-index:2000;
 }
@@ -266,7 +307,59 @@ color:#000;
 color:#000;
 text-decoration:none;
 }
+/* ===== SMOOTH READING MODE ===== */
+
+.header,
+#topButtons,
+.course-actions{
+transition:transform 0.35s ease, opacity 0.35s ease;
+will-change:transform;
+}
+
+/* hide top */
+.reading-mode .header,
+.reading-mode #topButtons{
+transform:translateY(-140%);
+opacity:0;
+pointer-events:none;
+}
+
+/* hide bottom */
+.reading-mode .course-actions{
+transform:translateY(140%);
+opacity:0;
+pointer-events:none;
+}
+
+/* cleaner reading spacing */
+.reading-mode .container{
+margin-top:30px;
+}
+
+/* improve lesson readability */
+.lesson-box{
+font-size:17px;
+line-height:1.95;
+color:#0f172a;
+background:#fff;
+}
+
+/* smoother reading */
+body{
+scroll-behavior:smooth;
+}
+#readingProgress{
+position:fixed;
+top:0;
+left:0;
+height:4px;
+width:0%;
+background:#6a0dad;
+z-index:999999;
+transition:width 0.1s linear;
+}
 </style>
+
 </head>
 
 <body>
@@ -286,13 +379,17 @@ text-decoration:none;
 Share
 </button>
 
+<button id="editCourseBtn" style="display:none;">
+<span class="material-icons-outlined">edit</span>
+Edit
+</button>
+
 <button id="microswab-ai-btn">
 <span class="material-icons-outlined">smart_toy</span>
 Ask AI
 </button>
 
 </div>
-
 <div class="container">
   <div class="lesson-title" id="lessonTitle"></div>
 
@@ -611,16 +708,41 @@ likeCount.textContent = parseInt(likeCount.textContent) + 1;
 };
 
   const userRef = doc(db,"users",user.uid);
-  const completionSnap = await getDoc(doc(db,"users",user.uid,"completedCourses",skillId));
-  const alreadyCompleted = completionSnap.exists();
+  const completionSnap = await getDoc(
+doc(db,"users",user.uid,"completedCourses",skillId)
+);
+
+const purchasedSnap = await getDoc(
+doc(db,"users",user.uid,"purchasedCourses",skillId)
+);
+
+const alreadyCompleted = completionSnap.exists();
+
+const alreadyPurchased = purchasedSnap.exists();
 
   if(user.uid === skill.posterUserId){
+
     unlock();
+
+    // Show edit button
+    const editBtn = document.getElementById("editCourseBtn");
+    editBtn.style.display = "flex";
+
+    // Open add.html in edit mode
+    editBtn.onclick = () => {
+      window.location.href = `add.html?edit=${skillId}`;
+    };
+
   } else {
-    if(alreadyCompleted){
-      unlock();
-      nextBtn.style.display = "none";
-    } else {
+   if(alreadyCompleted || alreadyPurchased){
+
+unlock();
+
+if(alreadyCompleted){
+nextBtn.style.display = "none";
+}
+
+} else {
       lessonBox.classList.add("locked");
       overlay.style.display = "flex";
 
@@ -642,6 +764,16 @@ likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
           await updateDoc(userRef,{tokens: increment(-PAYMENT)});
           await updateDoc(teacherRef,{tokens: increment(PAYMENT)});
+          /* SAVE PURCHASE ACCESS */
+
+await setDoc(
+doc(db,"users",user.uid,"purchasedCourses",skillId),
+{
+purchased:true,
+paidAt:serverTimestamp(),
+skillId:skillId
+}
+);
 
           await addDoc(collection(db,"users",user.uid,"notifications"),{
             message:`✅ You sent ${PAYMENT} tokens to the teacher`,
@@ -1032,4 +1164,41 @@ function renderPreviewSession(){
 
 </div>
 </body>
+<script>
+let lastScrollY = window.scrollY;
+
+window.addEventListener("scroll", () => {
+
+const currentScrollY = window.scrollY;
+
+/* ===== READING MODE ===== */
+
+if(currentScrollY > lastScrollY + 10){
+
+  document.body.classList.add("reading-mode");
+
+}else if(currentScrollY < lastScrollY - 10){
+
+  document.body.classList.remove("reading-mode");
+
+}
+
+lastScrollY = currentScrollY;
+
+/* ===== READING PROGRESS ===== */
+
+const progressBar = document.getElementById("readingProgress");
+
+const scrollTop = window.scrollY;
+
+const docHeight =
+document.body.scrollHeight - window.innerHeight;
+
+const progress =
+(scrollTop / docHeight) * 100;
+
+progressBar.style.width = progress + "%";
+
+});
+</script>
 </html>

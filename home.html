@@ -1,5 +1,4 @@
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -212,16 +211,24 @@ footer {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  serverTimestamp 
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
-// 🔥 YOUR FIREBASE CONFIG
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
   authDomain: "vs-code-d4d6b.firebaseapp.com",
@@ -239,44 +246,47 @@ const db = getFirestore(app);
 const mainContainer = document.getElementById("main-container");
 const headerTitle = document.getElementById("header-title");
 const loading = document.getElementById("loading");
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
+// loading
+function showLoading(){ loading.style.display = "flex"; }
+function hideLoading(){ loading.style.display = "none"; }
+
+// =====================
+// FIXED AUTH STATE (SAFE)
+// =====================
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return;
-
-  showLoading();
+  if (!user) {
+    renderMain();
+    return;
+  }
 
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
 
-  if (snap.exists() && snap.data().profileCompleted === true) {
-    window.location.replace("home.html");
-  } else {
+  // If no profile OR not completed → setup
+  if (!snap.exists() || snap.data().profileCompleted !== true) {
     window.location.replace("profile-setup.html");
+  } else {
+    window.location.replace("index.html");
   }
 });
-// SHOW LOADING
-function showLoading() {
-  loading.style.display = "flex";
-}
-// HIDE LOADING
-function hideLoading() {
-  loading.style.display = "none";
-}
 
-// MAIN BUTTONS
+// =====================
+// MAIN UI
+// =====================
 function renderMain() {
   mainContainer.innerHTML = `
     <div class="btn google-btn" id="google-btn">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
-      Sign Up with Google
+      Continue with Google
     </div>
 
     <div class="btn email-btn" id="email-btn">
-      <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png">
-      Sign Up with Email
+      Continue with Email
     </div>
+
     <div class="divider">or</div>
+
     <div class="btn login-btn" id="login-btn">Login</div>
   `;
 
@@ -285,7 +295,9 @@ function renderMain() {
   document.getElementById("login-btn").onclick = () => showForm("Login");
 }
 
-// EMAIL LOGIN/SIGNUP FORM
+// =====================
+// EMAIL FORM (FIXED LOGIN FLOW)
+// =====================
 function showForm(type) {
   headerTitle.textContent = type;
 
@@ -293,35 +305,41 @@ function showForm(type) {
     <button class="back-btn" id="back-btn">← Back</button>
 
     <form class="auth-form" id="auth-form">
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
       <button type="submit">${type}</button>
     </form>
   `;
 
-  document.getElementById("back-btn").onclick = () => {
-    headerTitle.textContent = "Welcome to Microswab 🎉🎉";
-    renderMain();
-  };
+  document.getElementById("back-btn").onclick = renderMain;
 
   document.getElementById("auth-form").onsubmit = async (e) => {
     e.preventDefault();
 
-    const emailVal = document.getElementById("email").value;
-    const passVal = document.getElementById("password").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
     try {
       showLoading();
 
-      let user;
+      let userCredential;
+
       if (type === "Sign Up") {
-        user = await createUserWithEmailAndPassword(auth, emailVal, passVal);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+        await saveUser(userCredential.user);
+
+        // NEW USERS → PROFILE SETUP
+        window.location.href = "profile-setup.html";
+
       } else {
-        user = await signInWithEmailAndPassword(auth, emailVal, passVal);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+        await saveUser(userCredential.user);
+
+        // OLD USERS → HOME
+        window.location.href = "index.html";
       }
-
-      await saveUser(user.user);
-
 
     } catch (err) {
       hideLoading();
@@ -330,10 +348,13 @@ function showForm(type) {
   };
 }
 
-// GOOGLE LOGIN
+// =====================
+// GOOGLE LOGIN FIXED
+// =====================
 async function googleSignIn() {
   try {
     showLoading();
+
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
 
@@ -347,15 +368,24 @@ async function googleSignIn() {
   }
 }
 
+// =====================
 // SAVE USER
+// =====================
 async function saveUser(user) {
-  await setDoc(doc(db, "users", user.uid), {
-    uid: user.uid,
-    email: user.email,
-    createdAt: serverTimestamp(),
-    profileCompleted: false
-  }, { merge: true });
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      uid: user.uid,
+      email: user.email,
+      createdAt: serverTimestamp(),
+      profileCompleted: false
+    });
+  }
 }
+
+// start
 renderMain();
 </script>
 </body>

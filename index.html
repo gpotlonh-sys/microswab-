@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -277,7 +278,31 @@
     }
     .story-viewer.show { display:flex; }
     .story-inner { width:100%; height:100%; position:relative; }
-    .story-media { width:100%; height:100%; background-position:center; background-size:cover; display:flex; align-items:center; justify-content:center; }
+    .story-media{
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#000;
+  overflow:hidden;
+}
+
+.story-media img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+}
+
+.story-media video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+}
     .story-top { position:absolute; top:12px; left:12px; right:12px; display:flex; align-items:center; gap:12px; z-index:2; }
     .story-top .user { display:flex; align-items:center; gap:8px; color:#fff; }
     .story-top img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.6); }
@@ -431,9 +456,9 @@
     </div>
   </div>
  <!-- Microswab Welcome Section -->
-<div id="microswabWelcome" class="welcome-card">
+<div id="microswabWelcome" class="welcome-card" style="display:none;">
 
-  <h2>🎉 Welcome to Microswab</h2>
+  <h2>Welcome to Microswab 🎉</h2>
 
   <p class="welcome-text">
     Claim your free <strong>60 learning tokens</strong><br>
@@ -447,20 +472,6 @@
   Claim 60 Tokens
 </button>
 
-  <div class="welcome-stats">
-    <div class="stat">
-      <strong id="totalUsers">--</strong>
-      <span>Total Users</span>
-    </div>
-    <div class="stat">
-      <strong id="totalTokens">--</strong>
-      <span>Tokens Distributed</span>
-    </div>
-  </div>
-
-  <div class="demo-users" id="demoUsers">
-    <!-- Demo user avatars will be appended here -->
-  </div>
 
   <div class="close-welcome" id="closeWelcome">✕</div>
 
@@ -499,26 +510,125 @@
   <button id="surpriseActionBtn">Okay</button>
 </div>
 
-<!-- ⏳ Surprise Countdown Bar -->
-<div id="surpriseCountdownBar" style="
-  display:none;
-  margin: 12px 16px;
-  padding: 12px 16px;
-  background: linear-gradient(135deg,#1e293b,#020617);
-  color:#fff;
-  border-radius:14px;
-  font-weight:700;
-  text-align:center;
-  box-shadow:0 8px 30px rgba(0,0,0,0.35);
-">
-  🎁 Next surprise in <span id="surpriseCountdownText">--</span>
-</div>
+
 <!-- ===== REELS PREVIEW (Instagram-style) ===== -->
-<div class="reels-preview">
-  <h3>🔥 New Skill Videos</h3>
-  <div id="reelsPreviewList" class="reels-row"></div>
+
+<!-- MICROSWAB CHALLENGE CARD -->
+<div id="taskChallengeCard" style="
+display:none;
+background:linear-gradient(135deg,#6a0dad,#8b5cf6);
+
+background:linear-gradient(135deg,#6a0dad,#8b5cf6);
+padding:18px;
+border-radius:18px;
+margin:12px;
+color:white;
+box-shadow:0 8px 24px rgba(106,13,173,.25);
+">
+
+<div style="
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:12px;
+">
+
+<div style="
+width:48px;
+height:48px;
+border-radius:14px;
+background:rgba(255,255,255,.15);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+">
+🚀
 </div>
 
+<div>
+<div style="
+font-size:18px;
+font-weight:700;
+">
+Microswab 7-Day Challenge
+</div>
+
+<div style="
+font-size:13px;
+opacity:.9;
+">
+Build consistency and improve faster
+</div>
+</div>
+
+</div>
+
+<p style="
+font-size:14px;
+line-height:1.6;
+margin:0 0 15px 0;
+opacity:.95;
+">
+Complete daily skill tasks, earn rewards, stay motivated, and grow with the Microswab community.
+</p>
+
+<button id="joinChallengeBtn" style="
+width:100%;
+padding:13px;
+border:none;
+border-radius:14px;
+background:white;
+color:#6a0dad;
+font-weight:700;
+font-size:15px;
+cursor:pointer;
+">
+Join Challenge →
+</button>
+
+</div>
+
+
+<!-- COUNTDOWN CARD -->
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+background:white;
+padding:14px;
+margin:12px;
+border-radius:16px;
+box-shadow:0 4px 16px rgba(0,0,0,.08);
+border:1px solid #f0f0f0;
+">
+
+<div style="
+font-size:12px;
+font-weight:600;
+color:#16a34a;
+">
+🔥 Your next Microswab task is ready!
+</div>
+
+<button
+onclick="location.href='tasks.html'"
+style="
+padding:5px 10px;
+font-size:11px;
+border:none;
+border-radius:8px;
+background:#6a0dad;
+color:white;
+font-weight:600;
+cursor:pointer;
+">
+Open
+</button>
+
+</div>
+</div>
 <style>
   /* ================= PROFESSIONAL SURPRISE SYSTEM ================= */
 
@@ -578,36 +688,7 @@
   transform: scale(0.97);
 }
 
-/* ⏳ Surprise Countdown Bar (Mobile Compact Inline, Small Height) */
-#surpriseCountdownBar {
-  display: flex;               /* inline with Microswab */
-  align-items: center;         /* vertical alignment */
-  justify-content: center;     /* center text inside box */
   
-  background-color: #111827;
-  color: #f8fafc;
-
-  padding: 1px 10px;           /* tiny vertical padding, more horizontal */
-  margin: 0;
-  border-radius: 4px;
-
-  font-size: 11px;             /* small text */
-  font-weight: 600;
-  text-align: center;
-
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  font-family: 'Inter', sans-serif;
-
-  max-width: 200px;            /* allow text to fit without wrapping */
-  line-height: 1;              /* very tight height */
-}
-
-#surpriseCountdownText {
-  font-weight: 700;
-  font-size: 11px;             
-  color: #22c55e;
-  margin-left: 4px;            /* spacing from "Next surprise in" */
-}
   .post-user-meta {
   display: flex;
   flex-direction: column;
@@ -1152,6 +1233,23 @@
   color:#444;
 
 }
+.task-countdown{
+
+font-size:13px;
+font-weight:600;
+
+background:#111;
+color:white;
+
+padding:7px 12px;
+
+border-radius:18px;
+
+display:inline-block;
+
+margin-top:8px;
+
+}
 </style>
 
 <script>
@@ -1209,6 +1307,12 @@
         <div class="user">
           <img id="viewerUserAvatar" src="default-avatar.jpg" alt="u">
           <div id="viewerUserName" style="color:#fff;font-weight:600;">User</div>
+          <div id="viewerStoryDate"
+style="
+font-size:12px;
+opacity:.8;
+margin-top:2px;
+"></div>
         </div>
       </div>
 
@@ -1357,6 +1461,8 @@ if (accountAccessBtn) {
   const tapLeft = document.getElementById("tapLeft");
   const tapRight = document.getElementById("tapRight");
   const closeStory = document.getElementById("closeStory");
+  const viewerStoryDate =
+document.getElementById("viewerStoryDate");
   // STORY SOCIAL ELEMENTS
 const storyLikeBtn = document.getElementById("storyLikeBtn");
 const storyCommentBtn = document.getElementById("storyCommentBtn");
@@ -1468,21 +1574,68 @@ storyViewCount.textContent = s.views || 0;
     }
     // user info
     try {
+
   const userData = await loadStoryUser(s.uploaderId);
 
   viewerUserAvatar.src =
-    userData?.photoURL || 'default-avatar.jpg';
+    userData?.photoURL ||
+    s.uploaderPhotoURL ||
+    "default-avatar.jpg";
 
   viewerUserName.textContent =
-    (userData?.firstName || '') +
-    (userData?.secondName ? ' ' + userData.secondName : '') ||
-    'User';
+  s.uploaderName ||
+  `${userData?.firstName || ""} ${userData?.secondName || ""}`.trim()
+  || userData?.name
+  || "User";
+  if(s.createdAt){
+
+const date =
+s.createdAt.toDate
+? s.createdAt.toDate()
+: new Date(s.createdAt);
+
+viewerStoryDate.textContent =
+date.toLocaleDateString(undefined,{
+month:"short",
+day:"numeric",
+year:"numeric"
+}) +
+" • " +
+date.toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
+
+}else{
+
+viewerStoryDate.textContent = "";
+
+}
+  
+  // Open user's profile when their name or avatar is clicked
+viewerUserName.style.cursor = "pointer";
+viewerUserAvatar.style.cursor = "pointer";
+
+viewerUserName.onclick = () => {
+  window.location.href = `profile.html?uid=${s.uploaderId}`;
+};
+
+viewerUserAvatar.onclick = () => {
+  window.location.href = `profile.html?uid=${s.uploaderId}`;
+};
 
 } catch (err) {
+
   console.error("Story user load failed:", err);
 
-  viewerUserAvatar.src = 'default-avatar.jpg';
-  viewerUserName.textContent = 'User';
+  viewerUserAvatar.src =
+    s.uploaderPhotoURL ||
+    "default-avatar.jpg";
+
+  viewerUserName.textContent =
+    s.uploaderName ||
+    "User";
+
 }
    // ===== STORY COUNTS =====
 
@@ -1993,6 +2146,21 @@ storyCommentInput.addEventListener(
     if (feedLoading) {
       feedLoading.style.display = "none";
     }
+    const userSnap =
+await getDoc(
+doc(db,"users",user.uid)
+);
+
+const userData =
+userSnap.data();
+
+if(userData?.taskLockedUntil){
+
+startHomeCountdown(
+userData.taskLockedUntil
+);
+
+}
 
     feed.innerHTML = `
       <div style="text-align:center; padding:40px 20px; color:#666;">
@@ -2005,6 +2173,9 @@ storyCommentInput.addEventListener(
   }
 
   console.log("✅ Logged in user:", user.uid);
+  
+  // ===== TASK COUNTDOWN =====
+
   // ===== PROFESSIONAL WELCOME TOKEN SYSTEM =====
 const welcomeCard = document.getElementById("microswabWelcome");
 const claimBtn = document.getElementById("claimWelcomeTokensBtn");
@@ -2174,6 +2345,7 @@ tokenBadge.addEventListener("click", () => {
     const meRef = doc(db, "users", user.uid);
 const meSnap = await getDoc(meRef);
 
+
 if (!meSnap.exists()) {
   console.error("❌ User exists in Auth but not in Firestore:", user.uid);
 
@@ -2196,14 +2368,84 @@ if (!meSnap.exists()) {
 }
 
 const meData = meSnap.data();
+// 🎁 Give new users 30 tokens automatically
+
+if (!meData.autoTokensGiven) {
+
+  await updateDoc(
+    doc(db, "users", user.uid),
+    {
+      tokens: increment(30),
+      autoTokensGiven: true
+    }
+  );
+
+}
+
+const challengeCard =
+document.getElementById("taskChallengeCard");
+
+if(challengeCard){
+
+  if(meData.challengeJoined === true){
+
+    challengeCard.remove();
+
+  } else {
+
+    challengeCard.style.display = "block";
+
+  }
+
+}
+const joinChallengeBtn =
+document.getElementById("joinChallengeBtn");
+
+if(joinChallengeBtn){
+
+  joinChallengeBtn.addEventListener(
+    "click",
+    async () => {
+
+      try{
+
+        await updateDoc(
+          doc(db,"users",user.uid),
+          {
+            challengeJoined: true
+          }
+        );
+
+        document.getElementById(
+          "taskChallengeCard"
+        ).style.display = "none";
+
+        location.href = "tasks.html";
+
+      }catch(error){
+        console.error(error);
+      }
+
+    }
+  );
+
+}
 const photoURL = meData.photoURL || "default-avatar.jpg";
 storyProfilePic.src = photoURL;
 // ===== HIDE WELCOME IF ALREADY CLAIMED =====
-if (meData.welcomeClaimed === true) {
-  const welcomeCard = document.getElementById("microswabWelcome");
-  if (welcomeCard) {
-    welcomeCard.style.display = "none";
+// reuse previously-declared `welcomeCard` from above
+if (typeof welcomeCard !== "undefined" && welcomeCard) {
+
+  if (meData.welcomeClaimed === true) {
+
+    welcomeCard.remove();
+
+  } else {
+
+    welcomeCard.style.display = "block";
+
   }
+
 }
 
     addStoryBtn.addEventListener("click",()=> window.location.href="stories.html");
@@ -2411,8 +2653,11 @@ storiesData = snapshot.docs.map(d => {
     const skillsQuery = query(collection(db,"skills"),orderBy("createdAt","desc"));
 
 onSnapshot(skillsQuery, snapshot => {
-  feed.innerHTML = ""; // ✅ prevents duplicates
+
+  feed.innerHTML = "";
   feedLoading.style.display = "none";
+
+  let postCount = 0;
 
   snapshot.docs.forEach(skillDoc => {
     const skill = skillDoc.data();
@@ -2464,6 +2709,57 @@ ${skill.fileURL ? `<img class="main" src="${escapeHtml(skill.fileURL)}" alt="ski
 </div>`;
 
     feed.appendChild(post);
+    postCount++;
+
+if (postCount === 1) {
+
+  const reelsSection = document.createElement("div");
+
+  reelsSection.className = "reels-preview";
+
+  reelsSection.innerHTML = `
+    <h3>🔥 New Skill Videos</h3>
+    <div class="reels-row"></div>
+  `;
+
+  feed.appendChild(reelsSection);
+
+  const reelsRow =
+    reelsSection.querySelector(".reels-row");
+
+  const videoPosts = snapshot.docs.filter(d => {
+    const data = d.data();
+    return data.videoURL;
+  });
+
+  videoPosts.slice(0,10).forEach(videoDoc => {
+
+    const data = videoDoc.data();
+
+    const card = document.createElement("div");
+
+    card.className = "reel-card";
+
+    card.innerHTML = `
+      <video src="${data.videoURL}" muted playsinline></video>
+      <span class="material-icons reel-play">
+        play_arrow
+      </span>
+      <div class="reel-overlay">
+        ${data.title || "New Skill"}
+      </div>
+    `;
+
+    card.onclick = () => {
+      location.href =
+      "reels.html?videoId=" + videoDoc.id;
+    };
+
+    reelsRow.appendChild(card);
+
+  });
+
+}
 
     const learnBtn = post.querySelector(".learn-btn");
 
@@ -3133,5 +3429,101 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+function startHomeCountdown(lockUntil){
+
+const box =
+document.getElementById(
+"challengeCountdown"
+);
+
+const timer =
+document.getElementById(
+"homeCountdown"
+);
+
+box.style.display = "block";
+
+function update(){
+
+const diff =
+lockUntil - Date.now();
+
+if(diff <= 0){
+
+box.style.display = "block";
+
+box.innerHTML = `
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+">
+
+<div style="
+font-size:12px;
+font-weight:600;
+color:#16a34a;
+">
+🔥 Your next Microswab task is ready!
+</div>
+
+<button
+onclick="location.href='tasks.html'"
+style="
+padding:5px 10px;
+font-size:11px;
+border:none;
+border-radius:8px;
+background:#6a0dad;
+color:white;
+font-weight:600;
+cursor:pointer;
+">
+Open
+</button>
+
+</div>
+`;
+
+clearInterval(window.homeCountdownInterval);
+
+localStorage.setItem(
+  "microswab_task_ready",
+  "true"
+);
+
+return;
+}
+
+
+const h =
+Math.floor(diff / 3600000);
+
+const m =
+Math.floor((diff % 3600000)/60000);
+
+const s =
+Math.floor((diff % 60000)/1000);
+
+timer.textContent =
+String(h).padStart(2,"0") +
+":" +
+String(m).padStart(2,"0") +
+":" +
+String(s).padStart(2,"0");
+box.style.padding = "14px";
+
+
+}
+
+
+update();
+
+setInterval(update,1000);
+
+}
+
 </script>
 </html>

@@ -11,7 +11,24 @@
 body{margin:0;font-family:Inter,system-ui,Arial;background:#f0f2f5;color:#050505;}
 .header{background:#fff;padding:15px;font-size:20px;font-weight:700;text-align:center;border-bottom:1px solid #ddd;}
 .main{max-width:500px;margin:auto;padding:15px;}
-.create-card{background:#fff;padding:15px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px;}
+.create-card{
+position:fixed;
+bottom:80px;
+right:20px;
+z-index:999;
+background:none;
+box-shadow:none;
+padding:0;
+}
+
+.create-card button{
+width:60px;
+height:60px;
+border-radius:50%;
+font-size:28px;
+background:#6a0dad;
+box-shadow:0 6px 20px rgba(106,13,173,.35);
+}
 .create-card button{width:100%;padding:12px;background:#1877f2;border:none;color:#fff;border-radius:8px;font-size:16px;}
 #create-form{display:none;background:#fff;padding:15px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,.15);margin-bottom:20px;}
 #create-form h3{margin-top:0;}
@@ -20,12 +37,60 @@ input,textarea,select{width:100%;padding:10px;margin:8px 0;border-radius:8px;bor
 .preview{width:100%;height:180px;border-radius:10px;background:#e4e6eb;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;}
 .preview img{width:100%;height:100%;object-fit:cover;}
 .groups{display:flex;flex-direction:column;gap:12px;}
-.group{background:#fff;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:pointer;position:relative;}
-.group img{width:60px;height:60px;border-radius:12px;object-fit:cover;}
-.group-info{flex:1;}
-.group-info h4{margin:0;font-size:15px;}
-.group-info span{font-size:12px;color:#65676b;}
-.group button{background:#e4e6eb;border:none;padding:8px 12px;border-radius:8px;}
+.group{
+background:#fff;
+border-radius:16px;
+padding:12px;
+display:flex;
+gap:12px;
+align-items:center;
+box-shadow:0 2px 12px rgba(0,0,0,.06);
+cursor:pointer;
+position:relative;
+transition:.2s;
+}
+
+.group:active{
+transform:scale(.98);
+}
+
+.group img{
+width:70px;
+height:70px;
+border-radius:14px;
+object-fit:cover;
+flex-shrink:0;
+}
+
+.group-info{
+flex:1;
+min-width:0;
+}
+
+.group-info h4{
+margin:0;
+font-size:15px;
+font-weight:700;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.group-info span{
+font-size:12px;
+color:#65676b;
+line-height:1.4;
+}
+
+.group button{
+background:#1877f2;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
+}
 .group-options{position:absolute;top:10px;right:10px;background:#e4e6eb;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-weight:bold;}
 .bottom-nav {position: fixed;bottom: 0;left: 0;width: 100%;height: 60px;background: #ffffff;border-top: 1px solid #ddd;display: flex;justify-content: space-around;align-items: center;z-index: 1000;}
 .bottom-nav a {text-decoration: none;color: #666;font-size: 11px;display: flex;flex-direction: column;align-items: center;}
@@ -42,14 +107,27 @@ input,textarea,select{width:100%;padding:10px;margin:8px 0;border-radius:8px;bor
 <body>
 
 <div class="header">Microswab Groups</div>
-
+<div style="padding:12px;background:#fff;">
+<input
+id="searchGroup"
+placeholder="Search groups..."
+style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#f0f2f5;
+outline:none;
+font-size:15px;
+">
+</div>
 <div class="main">
 
   <!-- CREATE -->
   <div class="create-card">
     <button id="openCreate">+ Create Group</button>
   </div>
-
+  
   <!-- FORM -->
   <div id="create-form">
     <h3>Create Group</h3>
@@ -175,13 +253,35 @@ auth.onAuthStateChanged(async user=>{
       const groupEl=document.createElement("div");
       groupEl.className="group";
       groupEl.innerHTML=`
-        <img src="${g.imageURL}">
-        <div class="group-info">
-          <h4>${g.name}</h4>
-          <span>${g.privacy} · Microswab</span>
-        </div>
-        <button>${isJoined ? "Joined" : "Join"}</button>
-      `;
+  <img src="${g.imageURL}">
+  <div class="group-info">
+    <h4>${g.name}</h4>
+
+    <span>
+      ${(g.members?.length || 0)} members
+    </span>
+
+    <br>
+
+   <span>
+${(g.desc || "No description").substring(0,45)}
+</span>
+
+<br>
+
+<span>
+${g.privacy} · ${(g.members?.length || 0)} Members
+</span>
+
+  </div>
+
+  <button style="
+background:${isJoined ? '#e7f3ff' : '#1877f2'};
+color:${isJoined ? '#1877f2' : '#fff'};
+">
+${isJoined ? "✓ Joined" : "Join"}
+</button>
+`;
 
       const btn=groupEl.querySelector("button");
       btn.onclick=async(e)=>{
@@ -289,10 +389,9 @@ deleteModal.onclick=e=>{
   }
 };
 </script>
-
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <a href="home.html" class="active">
+  <a href="index.html" class="active">
     <span class="material-icons-outlined">home</span>
     Home
   </a>
@@ -313,6 +412,5 @@ deleteModal.onclick=e=>{
     Profile
   </a>
 </div>
-
 </body>
 </html>

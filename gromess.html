@@ -3,134 +3,365 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Group Chat | Microswab</title>
+<title>Microswab Group Chat</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
 
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system;
-  background: #e5ddd5;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ===== HEADER ===== */
-.header {
-  display: flex;
-  align-items: center;
-  padding: 10px 12px;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-}
-.header button {
-  border: none;
-  background: none;
-  font-size: 22px;
-  color: #0088cc;
-  cursor: pointer;
-}
-.header img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  margin-left: 10px;
-}
-.header .title {
-  margin-left: 10px;
-  font-weight: 600;
-  font-size: 16px;
+body{
+height:100vh;
+display:flex;
+flex-direction:column;
+background:#efeae2;
+overflow:hidden;
 }
 
-/* ===== MESSAGE LIST ===== */
-#messageList {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 15px;
+background:#ffffff;
+border-bottom:1px solid #ececec;
+position:sticky;
+top:0;
+z-index:100;
+backdrop-filter:blur(10px);
+box-shadow:0 2px 10px rgba(0,0,0,.05);
 }
 
-/* ===== MESSAGE GROUP ===== */
-.message-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  max-width: 75%;
+
+.left{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
-.message-group.sent {
-  align-self: flex-end;
-}
-.message-group.received {
-  align-self: flex-start;
+.group-pic{
+width:40px;height:40px;border-radius:50%;
+object-fit:cover;
 }
 
-/* USERNAME (shown once) */
-.sender-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 3px;
+.group-name{font-weight:700;font-size:15px;}
+.group-sub{font-size:12px;color:#777;}
+
+.icons{
+display:flex;
+gap:12px;
+}
+.icon{font-size:22px;cursor:pointer;color:#444;}
+
+/* CHAT */
+#chat{
+flex:1;
+overflow-y:auto;
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
-/* MESSAGE BUBBLE */
-.bubble {
-  padding: 8px 12px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.4;
-  margin-bottom: 3px;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-  word-wrap: break-word;
+/* MESSAGE */
+.msg{
+display:flex;
+gap:8px;
+align-items:flex-end;
 }
 
-/* COLORS */
-.sent .bubble {
-  background: #0088cc;
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-.received .bubble {
-  background: #fff;
-  color: #111;
-  border-bottom-left-radius: 4px;
+.msg.sent{justify-content:flex-end;flex-direction:row-reverse;}
+
+.avatar{
+width:28px;height:28px;border-radius:50%;
 }
 
-/* TIME */
-.time {
-  font-size: 10px;
-  color: #777;
-  margin-top: 2px;
-  text-align: right;
+.bubble{
+max-width:78%;
+background:#fff;
+padding:10px 12px;
+border-radius:18px;
+font-size:14px;
+line-height:1.5;
+word-break:break-word;
+box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
 
-/* ===== INPUT ===== */
-#inputBar {
-  display: flex;
-  padding: 8px;
-  background: #fff;
-  border-top: 1px solid #ddd;
+
+.sent .bubble{
+background:#6a0dad;
+color:white;
 }
-#messageInput {
-  flex: 1;
-  padding: 10px 14px;
-  border-radius: 22px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  outline: none;
+
+.name{
+font-size:12px;
+font-weight:700;
+color:#6a0dad;
+margin-bottom:4px;
 }
-#sendBtn {
-  margin-left: 8px;
-  padding: 10px 16px;
-  border-radius: 22px;
-  border: none;
-  background: #0088cc;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
+.sent .name{
+color:#ffffff;
+opacity:.9;
+}
+
+.reply{
+font-size:11px;
+border-left:3px solid #6a0dad;
+padding-left:6px;
+margin-bottom:5px;
+color:#555;
+background:#f4f4f4;
+border-radius:5px;
+}
+
+/* INPUT */
+#inputBar{
+display:flex;
+gap:8px;
+padding:8px;
+background:#fff;
+border-top:1px solid #ddd;
+align-items:center;
+}
+
+#input{
+flex:1;
+padding:10px;
+border-radius:20px;
+border:none;
+background:#f2f2f2;
+outline:none;
+}
+
+button{
+border:none;
+cursor:pointer;
+}
+
+.send{
+width:40px;height:40px;
+border-radius:50%;
+background:#6a0dad;
+color:#fff;
+}
+
+/* SHARE */
+.share{
+position:fixed;
+right:15px;
+bottom:80px;
+background:#0084ff;
+color:#fff;
+padding:10px 12px;
+border-radius:20px;
+font-size:12px;
+}
+
+/* IMAGE */
+.chat-img{
+width:200px;
+border-radius:10px;
+margin-top:5px;
+cursor:pointer;
+}
+
+/* FULLSCREEN IMAGE */
+#viewer{
+display:none;
+position:fixed;
+inset:0;
+background:#000;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+#viewer img{max-width:100%;}
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+html,
+body{
+width:100%;
+max-width:100%;
+overflow-x:hidden;
+}
+
+/* Safe area for modern phones */
+body{
+padding-top:env(safe-area-inset-top);
+padding-bottom:env(safe-area-inset-bottom);
+}
+
+/* Header */
+.header{
+min-height:60px;
+padding:10px 12px;
+}
+
+.group-pic{
+width:42px;
+height:42px;
+flex-shrink:0;
+}
+
+.group-name{
+font-size:15px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+max-width:160px;
+}
+
+.group-sub{
+font-size:12px;
+}
+
+.icons{
+gap:10px;
+}
+
+.icon{
+font-size:22px;
+}
+
+/* Chat Area */
+#chat{
+padding:12px;
+padding-bottom:20px;
+scroll-behavior:smooth;
+}
+
+/* Message */
+.msg{
+width:100%;
+align-items:flex-end;
+}
+
+.bubble{
+max-width:78%;
+font-size:14px;
+line-height:1.4;
+overflow-wrap:break-word;
+word-break:break-word;
+}
+
+.avatar{
+width:36px;
+height:36px;
+border-radius:50%;
+flex-shrink:0;
+object-fit:cover;
+border:2px solid #fff;
+}
+
+
+.name{
+font-size:12px;
+}
+
+/* Images */
+.chat-img{
+width:100%;
+max-width:260px;
+height:auto;
+display:block;
+border-radius:16px;
+margin-top:8px;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+
+/* Input Bar */
+#inputBar{
+position:sticky;
+bottom:0;
+background:#ffffff;
+padding:10px;
+gap:8px;
+z-index:50;
+border-top:1px solid #ececec;
+box-shadow:0 -2px 10px rgba(0,0,0,.05);
+}
+
+#input{
+font-size:15px;
+min-height:46px;
+padding:12px 16px;
+width:100%;
+background:#f4f5f7;
+border-radius:24px;
+border:none;
+outline:none;
+}
+
+.send{
+width:48px;
+height:48px;
+flex-shrink:0;
+background:#6a0dad;
+color:white;
+border-radius:50%;
+box-shadow:0 4px 12px rgba(106,13,173,.35);
+}
+
+/* Share Button */
+.share{
+bottom:90px;
+right:15px;
+font-size:12px;
+padding:10px 14px;
+z-index:100;
+}
+
+/* Fullscreen image */
+#viewer img{
+max-width:100vw;
+max-height:100vh;
+object-fit:contain;
+}
+
+/* Small phones */
+@media (max-width:480px){
+
+.group-name{
+max-width:120px;
+font-size:14px;
+}
+
+.group-sub{
+font-size:11px;
+}
+
+.bubble{
+max-width:82%;
+font-size:14px;
+}
+
+.chat-img{
+max-width:220px;
+}
+
+.share{
+font-size:11px;
+padding:9px 12px;
+}
+}
+
+/* Tablets */
+@media (min-width:768px){
+
+.bubble{
+max-width:65%;
+}
+
+.chat-img{
+max-width:320px;
+}
+
+.group-name{
+font-size:16px;
+}
 }
 </style>
 </head>
@@ -139,19 +370,42 @@ body {
 
 <!-- HEADER -->
 <div class="header">
-  <button onclick="location.href='group.html'">←</button>
-  <img id="groupImage" src="default-avatar.jpg">
-  <div class="title" id="groupTitle">Group</div>
+<div class="left">
+<img id="groupImage" class="group-pic">
+<div>
+<div class="group-name" id="groupName">Loading...</div>
+<div class="group-sub" id="groupMembers">Loading...</div>
+
+</div>
 </div>
 
-<!-- MESSAGES -->
-<div id="messageList"></div>
+<div class="icons">
+<span id="pinBtn"
+class="material-icons-outlined icon">
+push_pin
+</span>
+<span class="material-icons-outlined icon">call</span>
+<span class="material-icons-outlined icon">videocam</span>
+</div>
+</div>
+
+<!-- CHAT -->
+<div id="chat"></div>
 
 <!-- INPUT -->
 <div id="inputBar">
-  <input id="messageInput" placeholder="Message">
-  <button id="sendBtn">Send</button>
+<button id="imgBtn"><span class="material-icons-outlined">image</span></button>
+<input id="input" placeholder="Message...">
+<button class="send" id="sendBtn">➤</button>
 </div>
+
+<input type="file" id="file" hidden>
+
+<!-- SHARE -->
+<button class="share" onclick="location.href='stories.html'">Share Progress</button>
+
+<!-- FULLSCREEN -->
+<div id="viewer"><img id="fullImg"></div>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -160,106 +414,308 @@ body {
 
 <script>
 firebase.initializeApp({
-  apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
-  authDomain:"vs-code-d4d6b.firebaseapp.com",
-  projectId:"vs-code-d4d6b",
-  storageBucket:"vs-code-d4d6b.appspot.com",
-  messagingSenderId:"1012283563694",
-  appId:"1:1012283563694:web:f25cfd82e9f762f617d73f"
+apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+authDomain:"vs-code-d4d6b.firebaseapp.com",
+projectId:"vs-code-d4d6b"
 });
 
-const db = firebase.firestore();
-const auth = firebase.auth();
+const db=firebase.firestore();
+const auth=firebase.auth();
 
-const params = new URLSearchParams(location.search);
-const groupId = params.get("groupId");
-
-const messageList = document.getElementById("messageList");
-const input = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
-
-let lastGroupSender = null;
-let lastGroupEl = null;
-
+const groupId=new URLSearchParams(location.search).get("groupId");
 /* LOAD GROUP INFO */
-db.collection("groups").doc(groupId).get().then(doc=>{
-  if(doc.exists){
-    groupTitle.textContent = doc.data().name;
-    groupImage.src = doc.data().imageURL || "default-avatar.jpg";
-  }
+db.collection("groups").doc(groupId)
+.onSnapshot(async doc=>{
+
+if(!doc.exists) return;
+
+const group = doc.data();
+
+currentGroup = group;
+
+document.getElementById("groupName").textContent =
+group.name || "Microswab Group";
+
+document.getElementById("groupImage").src =
+group.imageURL ||
+group.groupPhoto ||
+group.photoURL ||
+"group-default.png";
+
+document.getElementById("groupMembers").textContent =
+`${group.members ? group.members.length : 0} members`;
+
+const ownerDoc =
+await db.collection("users")
+.doc(group.owner)
+.get();
+
+groupOwner = ownerDoc.data();
+loadPinnedMessage();
+
+
 });
 
-/* AUTH */
-auth.onAuthStateChanged(user=>{
-  if(!user) return location.href="login.html";
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+const sendBtn=document.getElementById("sendBtn");
+let currentGroup = null;
+let groupOwner = null;
 
-  db.collection("groups").doc(groupId)
-    .collection("messages")
-    .orderBy("createdAt")
-    .onSnapshot(snapshot=>{
-      messageList.innerHTML = "";
-      lastGroupSender = null;
-      lastGroupEl = null;
+let reply=null;
 
-      snapshot.docs.forEach(doc=>{
-        renderMessage(doc.data(), user.uid);
-      });
+/* USER CACHE */
+const cache={};
+async function getUser(uid){
+if(cache[uid])return cache[uid];
+const d=await db.collection("users").doc(uid).get();
+const data=d.data()||{};
+cache[uid]=data;
+return data;
+}
 
-      messageList.scrollTop = messageList.scrollHeight;
-    });
+/* SEND TEXT */
+sendBtn.onclick=async()=>{
+if(!input.value.trim())return;
+
+await db.collection("groups").doc(groupId)
+.collection("messages").add({
+text:input.value,
+senderUid:auth.currentUser.uid,
+createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+replyTo:reply||null
 });
 
-/* SEND */
-sendBtn.onclick = async ()=>{
-  const text = input.value.trim();
-  if(!text) return;
-
-  await db.collection("groups").doc(groupId)
-    .collection("messages").add({
-      text,
-      senderUid: auth.currentUser.uid,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  input.value = "";
+input.value="";
+reply=null;
 };
 
-/* RENDER WITH GROUPING */
-async function renderMessage(msg, myUid){
-  const isMine = msg.senderUid === myUid;
+/* IMAGE UPLOAD */
+const cloud="dcpa8046h";
+const preset="microswab-profile";
 
-  if(msg.senderUid !== lastGroupSender){
-    const group = document.createElement("div");
-    group.className = "message-group " + (isMine ? "sent" : "received");
+document.getElementById("imgBtn").onclick=()=>file.click();
 
-    if(!isMine){
-      const userDoc = await db.collection("users").doc(msg.senderUid).get();
-      const name = userDoc.exists
-        ? `${userDoc.data().firstName || ""} ${userDoc.data().secondName || ""}`.trim()
-        : "User";
+document.getElementById("file").onchange=async(e)=>{
+const file=e.target.files[0];
+const form=new FormData();
+form.append("file",file);
+form.append("upload_preset",preset);
 
-      const nameEl = document.createElement("div");
-      nameEl.className = "sender-name";
-      nameEl.textContent = name;
-      group.appendChild(nameEl);
-    }
+const res=await fetch(`https://api.cloudinary.com/v1_1/${cloud}/upload`,{
+method:"POST",
+body:form
+});
 
-    messageList.appendChild(group);
-    lastGroupEl = group;
-    lastGroupSender = msg.senderUid;
-  }
+const data=await res.json();
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.textContent = msg.text;
+await db.collection("groups").doc(groupId)
+.collection("messages").add({
+imageURL:data.secure_url,
+senderUid:auth.currentUser.uid,
+createdAt:firebase.firestore.FieldValue.serverTimestamp()
+});
+};
+function loadPinnedMessage(){
 
-  const time = document.createElement("div");
-  time.className = "time";
-  time.textContent = msg.createdAt?.toDate?.().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) || "";
+if(!currentGroup?.pinnedMessage) return;
 
-  bubble.appendChild(time);
-  lastGroupEl.appendChild(bubble);
+const existingPin =
+document.getElementById("pinned-chat-message");
+
+if(existingPin) existingPin.remove();
+
+chat.insertAdjacentHTML("beforeend", `
+
+<div
+id="pinned-chat-message"
+class="msg">
+
+<img
+class="avatar"
+src="${groupOwner?.photoURL || 'default.png'}">
+
+<div class="bubble"
+style="
+border-left:4px solid gold;
+background:#fffdf3;
+">
+
+<div class="name">
+📌 Pinned Message
+</div>
+
+<div style="
+font-size:11px;
+font-weight:600;
+margin-bottom:5px;
+color:#6a0dad;
+">
+${groupOwner?.firstName || "Group Owner"}
+</div>
+
+<div>
+${currentGroup.pinnedMessage}
+</div>
+
+</div>
+
+</div>
+`);
+
 }
+
+/* RENDER */
+/* REALTIME CHAT */
+db.collection("groups")
+.doc(groupId)
+.collection("messages")
+.orderBy("createdAt","asc")
+.onSnapshot(async snap=>{
+
+chat.innerHTML = "";
+
+const docs = snap.docs;
+
+for(const doc of docs){
+
+const m = doc.data();
+let messageTime = "";
+
+if(m.createdAt){
+
+messageTime =
+m.createdAt.toDate()
+.toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
+
+}
+const me = m.senderUid === auth.currentUser.uid;
+
+const user = await getUser(m.senderUid);
+
+let replyHTML = "";
+
+if(m.replyTo){
+replyHTML = `
+<div class="reply">
+<b>${m.replyTo.senderName || "User"}</b><br>
+${m.replyTo.text || ""}
+</div>
+`;
+}
+
+let content = m.text || "";
+let pinnedBadge = "";
+
+if(m.pinned){
+
+pinnedBadge = `
+<div style="
+font-size:11px;
+font-weight:700;
+color:#d4a017;
+margin-bottom:5px;
+">
+📌 Pinned Message
+</div>
+`;
+
+}
+
+if(m.imageURL){
+content += `
+<img
+class="chat-img"
+src="${m.imageURL}"
+onclick="openImg('${m.imageURL}')">
+`;
+}
+
+chat.innerHTML += `
+<div class="msg ${me ? "sent" : ""}">
+<img class="avatar"
+src="${user.photoURL || 'default.png'}">
+
+<div class="bubble"
+onclick="setReply('${m.text || ""}','${m.senderUid}')">
+
+<div class="name">
+${user.firstName || "User"}
+</div>
+
+${pinnedBadge}
+
+${replyHTML}
+
+<div>${content}</div>
+
+<div style="
+font-size:10px;
+color:#888;
+text-align:right;
+margin-top:5px;
+">
+${messageTime}
+</div>
+
+</div>
+</div>
+`;
+}
+
+chat.scrollTop = chat.scrollHeight;
+
+});
+
+/* REPLY */
+function setReply(text,uid){
+reply={text,senderUid:uid};
+input.placeholder="Replying...";
+}
+
+/* IMAGE VIEW */
+function openImg(url){
+document.getElementById("viewer").style.display="flex";
+document.getElementById("fullImg").src=url;
+}
+document.getElementById("viewer").onclick=()=>viewer.style.display="none";
+document.getElementById("pinBtn").onclick = async ()=>{
+
+const text = prompt("Enter message to pin");
+
+if(!text) return;
+
+const groupDoc =
+await db.collection("groups")
+.doc(groupId)
+.get();
+
+if(groupDoc.data().owner !== auth.currentUser.uid){
+
+alert("Only group owner can pin messages");
+
+return;
+
+}
+
+await db.collection("groups")
+.doc(groupId)
+.collection("messages")
+.add({
+text:text,
+senderUid:auth.currentUser.uid,
+pinned:true,
+createdAt:
+firebase.firestore.FieldValue.serverTimestamp()
+});
+
+};
+
+
+
 </script>
 
 </body>

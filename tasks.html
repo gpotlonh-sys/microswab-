@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microswab Daily Challenge</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:linear-gradient(180deg,#eef2ff,#f8fafc);
+  color:#111;
+}
+
+.header{
+  background:linear-gradient(135deg,#6a0dad,#8e2de2);
+  color:white;
+  padding:18px;
+  text-align:center;
+  font-weight:800;
+}
+
+.container{ padding:15px; }
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  border:1px solid rgba(0,0,0,0.05);
+}
+
+.title{font-size:17px;font-weight:800;}
+
+.step{
+  background:#ffffff;
+  border:1px solid #eee;
+  border-radius:14px;
+  padding:14px;
+  margin-top:14px;
+  transition:0.2s;
+}
+.step:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+}
+
+.step h3{margin:0;font-size:13px;}
+.step p{font-size:13px;color:#444;}
+
+.go{
+  width:100%;
+  margin-top:10px;
+  padding:11px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#6a0dad,#8e2de2);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.2s;
+}
+.go:hover{
+  transform:scale(1.02);
+}
+.experience-box{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+
+.experience-box input{
+  flex:1;
+  padding:8px 10px;
+  border-radius:20px;
+  border:1px solid #ddd;
+}
+
+.send-btn{
+  width:38px;height:38px;
+  border-radius:50%;
+  background:#6a0dad;
+  color:white;
+  border:none;
+}
+
+.social{
+  display:flex;
+  justify-content:space-between;
+  margin-top:8px;
+  font-size:13px;
+}
+
+.like{display:flex;align-items:center;gap:5px;cursor:pointer;color:#555;}
+.like.active{color:#1877f2;}
+
+.comment-toggle{display:flex;align-items:center;gap:5px;cursor:pointer;}
+
+.comments{
+  display:none;
+  margin-top:8px;
+  background:#f7f7f7;
+  padding:8px;
+  border-radius:10px;
+}
+
+.comment{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+  font-size:13px;
+  align-items:flex-start;
+  padding:8px;
+  background:#fff;
+  border-radius:10px;
+  border:1px solid #eee;
+}
+
+.comment img{
+  width:26px;height:26px;border-radius:50%;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.btn{flex:1;padding:10px;border:none;border-radius:10px;font-weight:700;cursor:pointer;}
+
+.yes{background:#1e88e5;color:white;}
+.no{background:#e53935;color:white;}
+.later{background:#777;color:white;}
+
+.response{
+  display:flex;
+  gap:10px;
+  padding:8px;
+  margin-top:8px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.05);
+}
+
+.response img{
+  width:30px;height:30px;border-radius:50%;
+}
+</style>
+</head>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<body>
+<div id="successModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.75);
+z-index:9999;
+justify-content:center;
+align-items:center;
+">
+
+<div style="
+background:white;
+width:90%;
+max-width:450px;
+padding:25px;
+border-radius:20px;
+text-align:center;
+">
+
+<h1 style="color:#6a0dad;">
+🎉 Congratulations!
+</h1>
+
+<p style="font-size:15px;line-height:1.6;">
+You completed today's Microswab Challenge.
+
+Every skill you learn today moves you closer to becoming the person you want to become.
+
+Keep learning.
+Keep growing.
+Keep showing up.
+
+We're proud of you. 🚀
+</p>
+
+<button onclick="closeCongrats()"
+style="
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:12px;
+background:#6a0dad;
+color:white;
+font-weight:bold;
+">
+Continue
+</button>
+
+</div>
+</div>
+<div class="header" id="challengeHeader">
+🔥 Microswab Daily Challenge
+</div>
+
+<div class="container">
+<div class="card">
+  <div id="countdownBox" style="display:none; margin-bottom:10px; padding:10px; background:#e8f0ff; border-radius:12px; font-size:13px; font-weight:600; color:#1e3a8a;">
+  🎉 Good job! You completed today's task.
+  <br><br>
+  ⏳ Come back in 👉 <span id="countdownTimer">10:00:00</span>
+</div>
+
+<div class="title">Complete your daily learning mission</div>
+
+<!-- STEP 1 -->
+<div class="step">
+<h3>Step 1</h3>
+<p id="task1"></p>
+<button class="go" onclick="window.location.href='index.html'">Go Now</button>
+
+<div class="social">
+
+<div class="view-box">
+<span class="material-icons">visibility</span>
+<span id="v1">0</span>
+</div>
+
+<div class="like" onclick="toggleLike(1)">
+<span class="material-icons">thumb_up</span>
+<span id="l1">0</span>
+</div>
+
+<div class="comment-toggle" onclick="toggleComments(1)">
+<span class="material-icons">chat_bubble_outline</span>
+<span id="c1">0</span>
+</div>
+
+<div class="share-btn" onclick="shareTask(1)">
+<span class="material-icons">share</span>
+<span id="s1">0</span>
+</div>
+
+</div>
+
+
+
+<div class="experience-box">
+  <input id="e1" placeholder="Write experience...">
+  <button class="send-btn" onclick="sendComment(1)">➤</button>
+</div>
+
+<div class="comments" id="comments1"></div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+<h3>Step 2</h3>
+<p id="task2"></p>
+<button class="go" onclick="window.location.href='group.html'">Go Now</button>
+
+<div class="social">
+
+<div class="view-box">
+<span class="material-icons">visibility</span>
+<span id="v2">0</span>
+</div>
+
+<div class="like" onclick="toggleLike(2)">
+<span class="material-icons">thumb_up</span>
+<span id="l2">0</span>
+</div>
+
+<div class="comment-toggle" onclick="toggleComments(2)">
+<span class="material-icons">chat_bubble_outline</span>
+<span id="c2">0</span>
+</div>
+
+<div class="share-btn" onclick="shareTask(2)">
+<span class="material-icons">share</span>
+<span id="s2">0</span>
+</div>
+
+</div>
+
+<div class="experience-box">
+  <input id="e2" placeholder="Write experience...">
+  <button class="send-btn" onclick="sendComment(2)">➤</button>
+</div>
+
+<div class="comments" id="comments2"></div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<h3>Step 3</h3>
+<p id="task3"></p>
+<button class="go" onclick="window.location.href='group.html'">Go Now</button>
+
+
+<div class="social">
+
+<div class="view-box">
+<span class="material-icons">visibility</span>
+<span id="v3">0</span>
+</div>
+
+<div class="like" onclick="toggleLike(3)">
+<span class="material-icons">thumb_up</span>
+<span id="l3">0</span>
+</div>
+
+<div class="comment-toggle" onclick="toggleComments(3)">
+<span class="material-icons">chat_bubble_outline</span>
+<span id="c3">0</span>
+</div>
+
+<div class="share-btn" onclick="shareTask(3)">
+<span class="material-icons">share</span>
+<span id="s3">0</span>
+</div>
+
+</div>
+
+
+<div class="experience-box">
+  <input id="e3" placeholder="Write experience...">
+  <button class="send-btn" onclick="sendComment(3)">➤</button>
+</div>
+
+<div class="comments" id="comments3"></div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+<h3>Step 4</h3>
+<p id="task4"></p>
+<button class="go" onclick="window.location.href='stories.html'">Go Now</button>
+
+<div class="social">
+
+<div class="view-box">
+<span class="material-icons">visibility</span>
+<span id="v4">0</span>
+</div>
+
+<div class="like" onclick="toggleLike(4)">
+<span class="material-icons">thumb_up</span>
+<span id="l4">0</span>
+</div>
+
+<div class="comment-toggle" onclick="toggleComments(4)">
+<span class="material-icons">chat_bubble_outline</span>
+<span id="c4">0</span>
+</div>
+
+<div class="share-btn" onclick="shareTask(4)">
+<span class="material-icons">share</span>
+<span id="s4">0</span>
+</div>
+
+</div>
+
+
+<div class="experience-box">
+  <input id="e4" placeholder="Write experience...">
+  <button class="send-btn" onclick="sendComment(4)">➤</button>
+</div>
+
+<div class="comments" id="comments4"></div>
+</div>
+
+<!-- ACTIONS -->
+
+
+<div style="margin-top:15px;">
+<h3 style="text-align:center;">Have you completed all tasks?</h3>
+
+<div class="actions">
+<button class="btn yes" onclick="respond('yes')">YES</button>
+<button class="btn no" onclick="respond('no')">NO</button>
+<button class="btn later" onclick="respond('later')">NOT YET</button>
+</div>
+
+<div id="responses"></div>
+</div>
+
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+collection,
+addDoc,
+setDoc,
+deleteDoc,
+getDoc,
+onSnapshot,
+query,
+orderBy,
+serverTimestamp,
+increment,
+runTransaction,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+
+/* FIREBASE */
+const firebaseConfig = {
+apiKey:"AIzaSyBdF5IFp9MblVQ2GUvE2NC8TsgTpVuT7dM",
+authDomain:"vs-code-d4d6b.firebaseapp.com",
+projectId:"vs-code-d4d6b",
+storageBucket:"vs-code-d4d6b.appspot.com",
+messagingSenderId:"1012283563694",
+appId:"1:1012283563694:web:f25cfd82e9f762f617d73f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+let currentUser;
+const DAILY_TASKS = {
+
+1: [
+" Learn Something New\n\nChoose a course that interests you and complete at least one lesson today. After learning, write down 3 practical things you discovered. Don't just watch the lesson — think about how you can apply what you learned in real life. Your experience may inspire other learners too.",
+
+" Connect With Other Learners\n\nJoin a Microswab community and take part in a discussion. Ask a question, share an idea, or help another learner. Learning becomes easier when you interact with people who are growing alongside you.",
+
+" Share Your Work\n\nCreate or upload a design, project, or piece of work you have been practicing. Don't worry about being perfect. The goal is to improve through action and receive helpful feedback from the community.",
+
+" Post a Story\n\nShare your progress in Microswab Stories. Show other learners what you worked on today, what you learned, or what challenge you completed. Your story might motivate someone else to keep learning and improving."
+],
+
+2: [
+" Join a Valuable Discussion\n\nFind a discussion happening inside a Microswab community and contribute something meaningful. Share an idea, ask a thoughtful question, or help solve a problem. Your contribution can help others grow.",
+
+" Learn From Another Learner\n\nSpend time exploring another learner's work, experience, or advice. Learning doesn't only happen through courses — sometimes the best lessons come from people who are already practicing the skill.",
+
+" Share What You Learned\n\nWrite a short reflection about what you learned from today's discussion or interaction. Explain how it changed your thinking or helped you understand something better.",
+
+" Inspire Others Through Stories\n\nPost a story about what you learned today. Help other learners discover new ideas and encourage them to keep improving."
+],
+
+3: [
+" Create Something New\n\nTake action today by creating a simple design, project, or practice work. The goal is not perfection — the goal is progress through practice.",
+
+" Ask For Feedback\n\nShare your work inside the community and ask learners for honest feedback. Constructive criticism is one of the fastest ways to improve your skills.",
+
+" Reflect On Feedback\n\nWrite down the most valuable feedback you received and explain how you plan to use it to improve your work.",
+
+" Show Your Improvement\n\nMake improvements to your project and share the updated version in Stories. Let others see how feedback helped you grow."
+],
+
+4: [
+" Find Inspiration\n\nLook for a design, project, or creative work that inspires you. Study what makes it effective and identify techniques you would like to learn.",
+
+" Recreate It Your Way\n\nCreate your own version inspired by what you discovered. Focus on learning rather than copying exactly.",
+
+" Share Your Results\n\nPost both your inspiration and your version. Explain what you learned during the process and what challenges you faced.",
+
+" Request Ratings\n\nAsk the community to rate your work and share suggestions for improvement."
+],
+
+5: [
+" Learn A Mini Skill\n\nSpend 10–20 minutes learning a small but useful skill. Focus on understanding one concept well rather than trying to learn everything at once.",
+
+" Practice Immediately\n\nApply what you learned right away. The fastest way to remember something is to use it immediately after learning.",
+
+" Share Your Result\n\nPost your work or outcome and show the community what you achieved from today's lesson.",
+
+" Teach Someone Else\n\nWrite a comment explaining what you learned. Teaching others is one of the best ways to strengthen your own understanding."
+],
+
+6: [
+" Engage With The Community\n\nVisit community posts and leave helpful comments. Encourage others, ask thoughtful questions, or share useful advice.",
+
+" Help Another Learner\n\nFind at least two learners and provide useful feedback, encouragement, or support. Small acts of help make communities stronger.",
+
+" Share Motivation\n\nCreate a post or story that motivates learners to continue improving their skills and pursuing their goals.",
+
+" Reflect On Your Day\n\nWrite about today's learning experience. What did you learn? What challenged you? What progress did you make?"
+],
+
+7: [
+" Showcase Your Best Work\n\nChoose your best project, design, or achievement from this week and share it proudly with the community.",
+
+" Gather Feedback\n\nAsk learners what they liked most about your work and what improvements they would suggest for the future.",
+
+" Review Your Progress\n\nWrite about what improved this week. Think about the skills you gained, challenges you overcame, and lessons you learned.",
+
+" Celebrate Your Growth\n\nYou've completed an entire week of challenges. Share your achievement, celebrate your consistency, and prepare for the next level of growth."
+]
+
+};
+function loadDayTasks(day){
+const tasks = DAILY_TASKS[day] || DAILY_TASKS[1];
+window.taskIdPrefix = String(day);
+
+  document.getElementById("task1").textContent = tasks[0];
+  document.getElementById("task2").textContent = tasks[1];
+  document.getElementById("task3").textContent = tasks[2];
+  document.getElementById("task4").textContent = tasks[3];
+  document.getElementById("challengeHeader").textContent = `Day ${day} Challenge`;
+
+}
+window.closeCongrats = () => {
+document.getElementById("successModal").style.display = "none";
+}
+/* AUTH */
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  currentUser = user;
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  const data = userSnap.data();
+    loadDayTasks(data?.currentDay || 1);
+    await registerViews();
+
+
+  // If locked → show countdown after refresh
+  if (data?.taskLockedUntil) {
+    showCompletionUI(data.taskLockedUntil);
+  }
+
+  init();
+});
+function getStepRef(step){
+
+return doc(
+db,
+"dailyTasks",
+window.taskIdPrefix,
+"steps",
+String(step)
+);
+
+}
+async function registerViews(){
+
+if(!currentUser) return;
+
+for(let step=1; step<=4; step++){
+
+const stepRef = getStepRef(step);
+
+const viewRef = doc(
+db,
+"dailyTasks",
+window.taskIdPrefix,
+"steps",
+String(step),
+"views",
+currentUser.uid
+);
+
+const viewed = await getDoc(viewRef);
+
+if(!viewed.exists()){
+
+await setDoc(viewRef,{
+createdAt:serverTimestamp()
+});
+
+await setDoc(stepRef,{
+viewsCount:increment(1)
+},{merge:true});
+
+}
+
+}
+
+}
+window.shareTask = async(step)=>{
+
+const stepRef = getStepRef(step);
+
+try{
+
+if(navigator.share){
+
+await navigator.share({
+title:"Microswab",
+text:"Learn skills on Microswab",
+url:"https://microswabb.netlify.app"
+});
+
+}else{
+
+await navigator.clipboard.writeText(
+"https://microswabb.netlify.app"
+);
+
+alert("Link copied");
+}
+
+await setDoc(stepRef,{
+sharesCount:increment(1)
+},{merge:true});
+
+}catch(err){}
+
+};
+
+
+
+/* COMMENTS TOGGLE */
+window.toggleComments = (step)=>{
+const box = document.getElementById("comments"+step);
+box.style.display = box.style.display==="block"?"none":"block";
+};
+
+/* LIKE */
+window.toggleLike = async (step) => {
+  if (!currentUser) return;
+
+  const taskRef = doc(
+  db,
+  "dailyTasks",
+  window.taskIdPrefix,
+  "steps",
+  String(step)
+);
+    const likeRef = doc(
+        db,
+        "dailyTasks",
+        window.taskIdPrefix,
+        "steps",
+        String(step),
+        "likes",
+        currentUser.uid
+    );
+  const snap = await getDoc(likeRef);
+  const btn = document.querySelectorAll(".like")[step - 1];
+
+  // Ensure task doc exists first
+  const taskSnap = await getDoc(taskRef);
+  if (!taskSnap.exists()) {
+    await setDoc(taskRef, { likesCount: 0 }, { merge: true });
+  }
+
+  if (snap.exists()) {
+
+    btn.classList.remove("active");
+
+    const count =
+    document.getElementById("l"+step);
+
+    count.innerText =
+    Math.max(0, Number(count.innerText)-1);
+
+    deleteDoc(likeRef);
+
+}
+else {
+
+    btn.classList.add("active");
+
+    const count =
+    document.getElementById("l"+step);
+
+    count.innerText =
+    Number(count.innerText)+1;
+
+    setDoc(likeRef,{
+        uid:currentUser.uid,
+        createdAt:serverTimestamp()
+    });
+
+    setDoc(taskRef,{
+        likesCount:increment(1)
+    },{merge:true});
+
+}
+};
+
+/* COMMENT */
+window.sendComment = async(step)=>{
+
+if(!currentUser) return;
+
+const input = document.getElementById("e"+step);
+
+if(!input.value.trim()) return;
+
+const userDoc = await getDoc(
+  doc(db,"users",currentUser.uid)
+);
+
+const user = userDoc.data();
+
+await addDoc(
+
+collection(
+db,
+"dailyTasks",
+window.taskIdPrefix,
+"steps",
+String(step),
+"comments"
+),
+
+{
+text:input.value,
+uid:currentUser.uid,
+name:user.firstName,
+photo:user.photoURL,
+createdAt:serverTimestamp(),
+dateText:new Date().toLocaleString()
+}
+
+);
+
+input.value="";
+
+};
+
+
+/* RESPOND */
+window.respond = async (type) => {
+  if (!currentUser) return;
+
+  const userRef = doc(db, "users", currentUser.uid);
+  const userDoc = await getDoc(userRef);
+  const user = userDoc.data();
+
+  const now = Date.now();
+
+  // ONLY lock when YES is clicked
+ if (type === "yes") {
+
+  const lockUntil = now + (12 * 60 * 60 * 1000); // TEST = 12 hours
+
+  let currentDay = user.currentDay || 1;
+
+  let nextDay = currentDay + 1;
+
+  if (nextDay > 7) {
+
+    nextDay = 1;
+
+    document.getElementById("successModal").style.display = "flex";
+
+}
+
+  await setDoc(userRef, {
+    taskStartTime: now,
+    taskLockedUntil: lockUntil,
+    currentDay: nextDay
+  }, { merge: true });
+
+  showCompletionUI(lockUntil);
+}
+
+  // SAVE RESPONSE
+  await addDoc(collection(db, "dailyResponses"), {
+    uid: currentUser.uid,
+    type,
+    name: user.firstName,
+    photo: user.photoURL,
+    createdAt: serverTimestamp(),
+    dateText: new Date().toLocaleString()
+  });
+
+  // UI message
+  let msg = "";
+  if (type === "yes") msg = "Completed all daily challenge tasks.";
+  if (type === "no") msg = "Did not complete today’s challenge.";
+  if (type === "later") msg = "Will complete later today.";
+
+  const div = document.createElement("div");
+  div.className = "response";
+
+  div.innerHTML = `
+  <img src="${user.photoURL}">
+  <div>
+    <b>${user.firstName}</b><br>
+    ${msg}
+    <div style="font-size:11px;color:#888;margin-top:4px;">
+      just now
+    </div>
+  </div>
+`;
+
+  document.getElementById("responses").appendChild(div);
+};
+
+/* INIT LOAD */
+function timeAgo(date) {
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000);
+
+  if (diff < 60) return diff + "s ago";
+  if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+  if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+  if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
+  if (diff < 2592000) return Math.floor(diff / 604800) + "w ago";
+  if (diff < 31536000) return Math.floor(diff / 2592000) + "mo ago";
+
+  return Math.floor(diff / 31536000) + "y ago";
+}
+function init(){
+for(let i=1;i<=4;i++){
+
+const taskRef = doc(
+db,
+"dailyTasks",
+window.taskIdPrefix,
+"steps",
+String(i)
+);
+
+const commentsRef = collection(
+db,
+"dailyTasks",
+window.taskIdPrefix,
+"steps",
+String(i),
+"comments"
+);
+const responseRef = collection(db, "dailyResponses");
+
+onSnapshot(responseRef, (snap) => {
+  const box = document.getElementById("responses");
+  box.innerHTML = "";
+
+  snap.forEach((docSnap) => {
+    const r = docSnap.data();
+
+    const time = r.createdAt?.toDate
+      ? timeAgo(r.createdAt.toDate())
+      : r.dateText || "just now";
+
+    let msg = "";
+    if (r.type === "yes") msg = "Completed all daily challenge tasks.";
+    if (r.type === "no") msg = "Did not complete today’s challenge.";
+    if (r.type === "later") msg = "Will complete later today.";
+
+    box.innerHTML += `
+<div class="response">
+
+<img src="${r.photo}">
+
+<div style="flex:1">
+
+<b>${r.name}</b><br>
+
+${msg}
+
+<div style="
+font-size:11px;
+color:#888;
+margin-top:4px;
+">
+${time}
+</div>
+
+<div style="
+display:flex;
+gap:15px;
+margin-top:8px;
+font-size:13px;
+color:#555;
+">
+
+<span>👍 8</span>
+
+<span>💬 5</span>
+
+<span>🔗 0</span>
+
+</div>
+
+</div>
+
+</div>
+`;
+  });
+});
+/* likes realtime */
+onSnapshot(taskRef, async (snap) => {
+  const data = snap.data();
+document.getElementById("v"+i).innerText =
+formatNumber(data?.viewsCount || 0);
+
+document.getElementById("s"+i).innerText =
+formatNumber(data?.sharesCount || 0);
+document.getElementById("l"+i).innerText =
+formatNumber(data?.likesCount || 0);
+
+  // check if user liked
+  if (!currentUser) return;
+
+  const likeDoc = await getDoc(
+doc(
+db,
+"dailyTasks",
+window.taskIdPrefix,
+"steps",
+String(i),
+"likes",
+currentUser.uid
+)
+);
+  const btn = document.querySelectorAll(".like")[i - 1];
+
+  if (likeDoc.exists()) {
+    btn.classList.add("active");
+  } else {
+    btn.classList.remove("active");
+  }
+});
+function formatNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+  return num;
+}
+
+/* comments realtime */
+onSnapshot(query(commentsRef, orderBy("createdAt", "asc")), (snap) => {
+  const box = document.getElementById("comments" + i);
+  box.innerHTML = "";
+  document.getElementById("c" + i).innerText = snap.size;
+
+  snap.forEach((d) => {
+    const c = d.data();
+
+    const time = c.createdAt?.toDate
+      ? timeAgo(c.createdAt.toDate())
+      : "just now";
+
+    box.innerHTML += `
+  <div class="comment">
+    <img src="${c.photo}">
+    
+    <div style="flex:1">
+      <b>${c.name}</b><br>
+      ${c.text}
+
+      <div style="font-size:11px;color:#888;margin-top:3px;">
+        ${time}
+      </div>
+
+      <!-- FAKE ACTION BAR (NOT FUNCTIONAL YET) -->
+      <div style="display:flex; gap:10px; margin-top:5px; font-size:12px; color:#555;">
+        <span style="cursor:pointer;">👍 Like</span>
+        <span style="cursor:pointer;">💬 Reply</span>
+        <span style="cursor:pointer;">Share</span>
+      </div>
+    </div>
+  </div>
+`;
+  });
+});
+
+}
+}
+
+function showCompletionUI(lockUntil) {
+  const box = document.getElementById("countdownBox");
+  const timer = document.getElementById("countdownTimer");
+
+  box.style.display = "block";
+
+  function update() {
+    const now = Date.now();
+    const diff = lockUntil - now;
+
+    if (diff <= 0) {
+
+updateDoc(
+doc(db,"users",currentUser.uid),
+{
+taskLockedUntil:null
+}
+);
+
+box.innerHTML = `
+🔥 Your next task is ready!
+`;
+
+return;
+
+}
+
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    timer.innerHTML =
+      String(h).padStart(2,'0') + ":" +
+      String(m).padStart(2,'0') + ":" +
+      String(s).padStart(2,'0');
+  }
+
+  update();
+  setInterval(update, 1000);
+}
+</script>
+
+</body>
+</html>

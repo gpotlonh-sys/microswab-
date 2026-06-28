@@ -54,7 +54,8 @@ header button {
 .story-preview img {
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
+  background:#000;
 }
 
 .choose-btn {
@@ -227,18 +228,22 @@ onAuthStateChanged(auth, (user) => {
       // Get teacher profile info
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const profileData = userDoc.exists() ? userDoc.data() : {};
-      const uploaderName = profileData.name || profileData.displayName || "Teacher";
+      const uploaderName =
+  `${profileData.firstName || ""} ${profileData.secondName || ""}`.trim()
+  || profileData.name
+  || profileData.displayName
+  || "Teacher";
       const uploaderPhotoURL = profileData.photoURL || "default-avatar.jpg";
 
       // Save story to Firestore
       await addDoc(collection(db, "stories"), {
-        userId: user.uid,
-        uploaderName,
-        uploaderPhotoURL,
-        imageURL,
-        title: storyTitle.value,
-        createdAt: serverTimestamp()
-      });
+  uploaderId: user.uid,
+  uploaderName,
+  uploaderPhotoURL,
+  imageURL,
+  title: storyTitle.value,
+  createdAt: serverTimestamp()
+});
 
       postingOverlay.style.display = "none";
       alert("Story posted!");

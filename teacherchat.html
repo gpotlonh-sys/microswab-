@@ -235,15 +235,75 @@ gap:10px;
 
 .comment-item{
 display:flex;
-gap:10px;
-font-size:14px;
+gap:12px;
+padding:14px;
+background:#fff;
+border-radius:14px;
+border:1px solid #eef2f7;
+box-shadow:0 2px 8px rgba(0,0,0,.04);
 }
 
 .comment-item img{
-width:32px;
-height:32px;
+width:42px;
+height:42px;
 border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
 }
+
+.comment-body{
+flex:1;
+}
+
+.comment-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:5px;
+}
+
+.comment-name{
+font-weight:700;
+font-size:14px;
+color:#111827;
+}
+
+.comment-date{
+font-size:11px;
+color:#6b7280;
+}
+
+.comment-text{
+font-size:14px;
+line-height:1.6;
+color:#374151;
+margin-bottom:10px;
+word-break:break-word;
+}
+
+.comment-actions{
+display:flex;
+gap:20px;
+font-size:13px;
+color:#64748b;
+}
+
+.comment-action{
+display:flex;
+align-items:center;
+gap:4px;
+cursor:pointer;
+transition:.2s;
+}
+
+.comment-action:hover{
+color:#1877f2;
+}
+
+.comment-action .material-icons-outlined{
+font-size:18px;
+}
+
 .course-actions{
 position:fixed;
 bottom:0;
@@ -358,6 +418,51 @@ background:#6a0dad;
 z-index:999999;
 transition:width 0.1s linear;
 }
+.footer{
+    margin-top:40px;
+    padding:35px 20px;
+    background:#ffffff;
+    border-top:1px solid #e5e7eb;
+    text-align:center;
+}
+
+.footer-brand{
+    font-size:14px;
+    color:#475569;
+    margin-bottom:15px;
+    font-weight:600;
+}
+
+.footer-links{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.footer-links a{
+    text-decoration:none;
+    color:#1877f2;
+    font-size:14px;
+    font-weight:600;
+    transition:.2s;
+}
+
+.footer-links a:hover{
+    text-decoration:underline;
+}
+
+.footer-links span{
+    color:#94a3b8;
+}
+
+.footer-copy{
+    font-size:12px;
+    color:#94a3b8;
+}
+
 </style>
 
 </head>
@@ -442,11 +547,21 @@ background:#f1f5f9;
 <!-- Payment Modal -->
 <div class="payment-overlay" id="paymentOverlay">
   <div class="payment-box">
-    <h3>🔒 Continue Learning</h3>
-    <p>Pay <strong>30 tokens</strong> to continue</p>
+    <h3>Continue Your Learning Journey </h3>
+
+    <p>
+      Use <strong>30 learning tokens</strong> to unlock this course and continue building your skills on Microswab.
+    </p>
+
     <div class="error" id="paymentError"></div>
-    <button class="pay-btn" id="payBtn">Pay 30 Tokens</button>
-    <div class="success" id="paymentSuccess">🎉 Payment successful!</div>
+
+    <button class="pay-btn" id="payBtn">
+      Continue Learning
+    </button>
+
+    <div class="success" id="paymentSuccess">
+      🎉 Course unlocked successfully!
+    </div>
   </div>
 </div>
 
@@ -459,7 +574,26 @@ background:#f1f5f9;
   </div>
 </div>
 
-<footer>Learn fast • Teach real skills • Microswab</footer>
+<footer class="footer">
+
+  <div class="footer-brand">
+    Learn fast • Teach real skills • Microswab
+  </div>
+
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <span>•</span>
+    <a href="about.html#privacy">Privacy Policy</a>
+    <span>•</span>
+    <a href="about.html#terms">Terms of Use</a>
+  </div>
+
+  <div class="footer-copy">
+    © 2026 Microswab. All rights reserved.
+  </div>
+
+</footer>
+
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -562,10 +696,60 @@ const el = document.createElement("div");
 
 el.className="comment-item";
 
+const date = c.createdAt
+? c.createdAt.toDate().toLocaleString([],{
+day:"numeric",
+month:"short",
+hour:"2-digit",
+minute:"2-digit"
+})
+: "Just now";
+
 el.innerHTML = `
 <img src="${photo}">
-<div>
-<strong>${name}</strong> ${c.text}
+
+<div class="comment-body">
+
+<div class="comment-header">
+
+<div class="comment-name">
+${name}
+</div>
+
+<div class="comment-date">
+${date}
+</div>
+
+</div>
+
+<div class="comment-text">
+${c.text}
+</div>
+
+<div class="comment-actions">
+
+<div class="comment-action">
+
+<span class="material-icons-outlined">
+thumb_up
+</span>
+
+<span>Like</span>
+
+</div>
+
+<div class="comment-action">
+
+<span class="material-icons-outlined">
+chat_bubble_outline
+</span>
+
+<span>Reply</span>
+
+</div>
+
+</div>
+
 </div>
 `;
 

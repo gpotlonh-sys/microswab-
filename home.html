@@ -190,6 +190,42 @@ footer {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+footer.footer{
+  padding:20px 15px;
+  text-align:center;
+  color:#f4f4f4;
+}
+
+.footer-text{
+  margin:0 0 12px;
+  font-size:14px;
+  opacity:.95;
+}
+
+.footer-links{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.footer-links a{
+  color:white;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+  transition:.25s;
+}
+
+.footer-links a:hover{
+  text-decoration:underline;
+  opacity:.85;
+}
+
+.footer-links span{
+  opacity:.6;
+}
 </style>
 </head>
 
@@ -201,8 +237,33 @@ footer {
 
 <div class="container" id="main-container"></div>
 
-<footer>Microswab: the future of learning skills and earning</footer>
-</div>
+<footer class="footer">
+
+  <p class="footer-text">
+    Microswab: the future of learning skills and earning
+  </p>
+
+  <div class="footer-links">
+
+    <a href="about.html">
+      About Microswab
+    </a>
+
+    <span>•</span>
+
+    <a href="about.html#privacy">
+      Privacy Policy
+    </a>
+
+    <span>•</span>
+
+    <a href="about.html#terms">
+      Terms
+    </a>
+
+  </div>
+
+</footer>
 
 <!-- ⭐ LOADING ANIMATION OVERLAY -->
 <div class="loading-overlay" id="loading">

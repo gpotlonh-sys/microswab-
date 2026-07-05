@@ -102,11 +102,96 @@ font-weight:600;
 #deleteModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:500;}
 #deleteModal .modal-content{background:#fff;padding:20px;border-radius:12px;width:90%;max-width:400px;text-align:center;}
 #deleteModal button{padding:10px 20px;background:#e53935;color:white;border:none;border-radius:8px;cursor:pointer;}
+.whatsapp-community{
+background:#25D366;
+color:white;
+margin:15px;
+padding:16px;
+border-radius:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+box-shadow:0 8px 25px rgba(37,211,102,.25);
+}
+
+.wa-left{
+display:flex;
+align-items:center;
+gap:12px;
+flex:1;
+}
+
+.wa-icon{
+font-size:38px;
+}
+
+.whatsapp-community h3{
+margin:0;
+font-size:16px;
+font-weight:700;
+}
+
+.whatsapp-community p{
+margin:5px 0 0;
+font-size:13px;
+opacity:.95;
+line-height:1.4;
+}
+
+.join-wa-btn{
+background:white;
+color:#25D366;
+text-decoration:none;
+padding:11px 18px;
+border-radius:12px;
+font-weight:700;
+font-size:14px;
+white-space:nowrap;
+}
+
+@media(max-width:600px){
+
+.whatsapp-community{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.join-wa-btn{
+width:100%;
+text-align:center;
+margin-top:10px;
+}
+
+}
 </style>
 </head>
 <body>
 
 <div class="header">Microswab Groups</div>
+<div class="whatsapp-community">
+
+<div class="wa-left">
+<div class="wa-icon">💬</div>
+
+<div>
+<h3>Microswab WhatsApp Community</h3>
+<p>Join thousands of learners, ask questions, get design feedback and never miss updates.</p>
+</div>
+
+</div>
+
+<a
+href="https://wa.me/2349045913993"
+target="_blank"
+class="join-wa-btn">
+
+Join Now
+
+</a>
+
+</div>
+
 <div style="padding:12px;background:#fff;">
 <input
 id="searchGroup"
@@ -127,7 +212,7 @@ font-size:15px;
   <div class="create-card">
     <button id="openCreate">+ Create Group</button>
   </div>
-
+  
   <!-- FORM -->
   <div id="create-form">
     <h3>Create Group</h3>

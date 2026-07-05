@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,11 +64,22 @@ height:120px;
 border-radius:14px;
 overflow:hidden;
 position:relative;
-padding:2px;
+padding:4px;
 background:transparent;
 }
+
+
+
     .story.has-story .avatar-wrap{
-background:linear-gradient(135deg,#ad0d50,#9d4edd);
+    padding:3px;
+    background:linear-gradient(
+        45deg,
+        #feda75,
+        #fa7e1e,
+        #d62976,
+        #962fbf,
+        #4f5bd5
+    );
 }
     .story .avatar{
 width:100%;
@@ -406,6 +418,9 @@ text-overflow:ellipsis;
   <span></span>
   <span></span> 
 </div>
+<div id="groupHint" class="group-hint">
+    👈 Discover Communities
+</div>
   <div class="search">
     <input id="globalSearch" type="text" placeholder="Search skills..." />
     <span class="material-icons-outlined">search</span>
@@ -550,121 +565,8 @@ text-overflow:ellipsis;
 
 <!-- ===== REELS PREVIEW (Instagram-style) ===== -->
 
-<!-- MICROSWAB CHALLENGE CARD -->
-<div id="taskChallengeCard" style="
-display:none;
-background:linear-gradient(135deg,#6a0dad,#8b5cf6);
-
-background:linear-gradient(135deg,#6a0dad,#8b5cf6);
-padding:18px;
-border-radius:18px;
-margin:12px;
-color:white;
-box-shadow:0 8px 24px rgba(106,13,173,.25);
-">
-
-<div style="
-display:flex;
-align-items:center;
-gap:12px;
-margin-bottom:12px;
-">
-
-<div style="
-width:48px;
-height:48px;
-border-radius:14px;
-background:rgba(255,255,255,.15);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:24px;
-">
-🚀
-</div>
-
-<div>
-<div style="
-font-size:18px;
-font-weight:700;
-">
-Microswab 7-Day Challenge
-</div>
-
-<div style="
-font-size:13px;
-opacity:.9;
-">
-Build consistency and improve faster
-</div>
-</div>
-
-</div>
-
-<p style="
-font-size:14px;
-line-height:1.6;
-margin:0 0 15px 0;
-opacity:.95;
-">
-Complete daily skill tasks, earn rewards, stay motivated, and grow with the Microswab community.
-</p>
-
-<button id="joinChallengeBtn" style="
-width:100%;
-padding:13px;
-border:none;
-border-radius:14px;
-background:white;
-color:#6a0dad;
-font-weight:700;
-font-size:15px;
-cursor:pointer;
-">
-Join Challenge →
-</button>
-
-</div>
 
 
-<!-- COUNTDOWN CARD -->
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:8px;
-background:white;
-padding:14px;
-margin:12px;
-border-radius:16px;
-box-shadow:0 4px 16px rgba(0,0,0,.08);
-border:1px solid #f0f0f0;
-">
-
-<div style="
-font-size:12px;
-font-weight:600;
-color:#16a34a;
-">
-🔥 Your next Microswab task is ready!
-</div>
-
-<button
-onclick="location.href='tasks.html'"
-style="
-padding:5px 10px;
-font-size:11px;
-border:none;
-border-radius:8px;
-background:#6a0dad;
-color:white;
-font-weight:600;
-cursor:pointer;
-">
-Open
-</button>
-
-</div>
 </div>
 <style>
   /* ================= PROFESSIONAL SURPRISE SYSTEM ================= */
@@ -856,58 +758,66 @@ Open
 }
 /* ===== Reels Preview (Mobile Compact) ===== */
 
-.reels-preview {
-  margin: 8px 10px;
+.reels-preview{
+  margin:8px 10px;
 }
 
-.reels-preview h3 {
-  font-size: 14px;       /* smaller heading */
-  margin-bottom: 6px;
+.reels-preview h3{
+  font-size:15px;
+  font-weight:600;
+  margin-bottom:8px;
 }
 
-.reels-row {
-  display: flex;
-  gap: 8px;              /* tighter spacing */
-  overflow-x: auto;
-  padding-bottom: 4px;
+.reels-row{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:2px 0 6px;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
 }
 
-.reel-card {
-  min-width: 110px;      /* ↓ smaller width */
-  height: 180px;         /* ↓ proportional height */
-  border-radius: 12px;   /* slightly tighter */
-  background: #000;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  flex-shrink: 0;        /* prevents squish */
+.reels-row::-webkit-scrollbar{
+  display:none;
 }
 
-.reel-card video,
-.reel-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.reel-card{
+  min-width:95px;
+  width:95px;
+  height:160px;
+  border-radius:14px;
+  overflow:hidden;
+  background:#000;
+  position:relative;
+  cursor:pointer;
+  flex-shrink:0;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);
 }
 
-.reel-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 6px;          /* ↓ smaller padding */
-  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  color: #fff;
-  font-size: 11px;       /* ↓ smaller text */
+.reel-card img,
+.reel-card video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-.reel-play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 34px;       /* ↓ smaller play icon */
-  color: rgba(255,255,255,0.85);
+.reel-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:6px;
+  background:linear-gradient(to top,rgba(0,0,0,.75),transparent);
+  color:#fff;
+  font-size:10px;
+}
+
+.reel-play{
+  position:absolute;
+  top:8px;
+  right:8px;
+  font-size:18px;
+  color:#fff;
 }
 /* Hide horizontal scrollbar but keep scroll working */
 .reels-row {
@@ -1287,21 +1197,239 @@ display:inline-block;
 margin-top:8px;
 
 }
+@keyframes popupScale{
+
+0%{
+transform:scale(.8);
+opacity:0;
+}
+
+100%{
+transform:scale(1);
+opacity:1;
+}
+
+}
+.mission-card{
+width:92%;
+max-width:420px;
+margin:15px auto;
+padding:18px;
+background:#fff;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+border:1px solid #eee;
+}
+
+.mission-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:15px;
+
+}
+
+.mission-badge{
+
+background:#eef4ff;
+
+color:#2563eb;
+
+padding:8px 14px;
+
+border-radius:30px;
+
+font-weight:700;
+
+font-size:14px;
+
+}
+
+.mission-day{
+
+font-size:18px;
+
+font-weight:700;
+
+color:#111;
+
+}
+
+.mission-divider{
+
+height:1px;
+
+background:#eee;
+
+margin:15px 0;
+
+}
+.mission-title{
+font-size:20px;
+font-weight:700;
+margin-bottom:8px;
+}
+
+.mission-text{
+font-size:15px;
+line-height:1.6;
+color:#555;
+}
+
+.mission-btn{
+width:100%;
+padding:14px;
+border-radius:12px;
+font-size:15px;
+font-weight:700;
+}
+.mission-info{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:12px;
+
+margin-bottom:20px;
+
+}
+
+.info-box{
+
+background:#f8f9fb;
+
+padding:15px;
+
+border-radius:16px;
+
+text-align:center;
+
+}
+
+.info-box span{
+
+display:block;
+
+font-size:13px;
+
+color:#777;
+
+margin-bottom:5px;
+
+}
+
+.info-box strong{
+
+font-size:15px;
+
+color:#111;
+
+}
+
+.mission-timer{
+
+margin-top:15px;
+
+font-size:22px;
+
+font-weight:bold;
+
+text-align:center;
+
+color:#2563eb;
+
+}
+
+.cooldown-timer{
+
+margin-top:15px;
+
+font-size:22px;
+
+font-weight:bold;
+
+text-align:center;
+
+color:#ff6b00;
+
+}
+
+.mission-btn{
+
+width:100%;
+
+margin-top:20px;
+
+padding:16px;
+
+border:none;
+
+border-radius:16px;
+
+background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+color:white;
+
+font-size:16px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.mission-btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+.done-btn{
+
+background:linear-gradient(135deg,#16a34a,#22c55e);
+
+}
+.group-hint{
+position:absolute;
+top:58px;
+left:10px;
+background:#111;
+color:#fff;
+padding:8px 12px;
+border-radius:12px;
+font-size:13px;
+font-weight:600;
+white-space:nowrap;
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+animation:floatHint 1.8s infinite;
+z-index:999;
+}
+
+.group-hint::after{
+content:"";
+position:absolute;
+top:-6px;
+left:18px;
+border-left:6px solid transparent;
+border-right:6px solid transparent;
+border-bottom:6px solid #111;
+}
+
+@keyframes floatHint{
+0%{transform:translateY(0);}
+50%{transform:translateY(-4px);}
+100%{transform:translateY(0);}
+}
 </style>
 
 <script>
-  const challengeCard = document.getElementById("dailyChallenge");
-  const startBtn = document.getElementById("startChallengeBtn");
-
-  const STORAGE_KEY = "microswab_challenge_time";
-  const SEVEN_HOURS = 7 * 60 * 60 * 1000; // 7 hours in ms
-
-  const lastStartTime = localStorage.getItem(STORAGE_KEY);
-
-  // Hide challenge if already started and 7 hours haven't passed
-  if (lastStartTime && Date.now() - lastStartTime < SEVEN_HOURS) {
-    challengeCard.classList.add("hide");
-  }
 
   // When user clicks "Start Challenge"
   startBtn.addEventListener("click", () => {
@@ -1317,7 +1445,76 @@ margin-top:8px;
     }
   }, 60 * 1000);
 </script>
+<!-- DAILY MISSION CARD -->
+<div id="dailyMissionCard" class="mission-card">
 
+    <div class="mission-header">
+        <div class="mission-badge">🌟 Daily Mission</div>
+        <div id="dailyMissionDay" class="mission-day"></div>
+    </div>
+
+    <div class="mission-divider"></div>
+
+    <div id="missionContent">
+
+        <h2 class="mission-title">Today's Goal</h2>
+
+        <p id="dailyMissionText" class="mission-text"></p>
+
+        <div class="mission-info">
+
+            <div class="info-box">
+                <span>🎁 Reward</span>
+                <strong>+5 Learning Tokens</strong>
+            </div>
+
+            <div class="info-box">
+                <span>⏱️ Time</span>
+                <strong>30 Minutes</strong>
+            </div>
+
+        </div>
+
+        <div id="dailyMissionTimer" class="mission-timer"></div>
+
+        <button id="dailyMissionBtn" class="mission-btn">
+            Start Mission
+        </button>
+
+        <button id="dailyMissionDoneBtn"
+        class="mission-btn done-btn"
+        style="display:none;">
+            Mission Completed
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Separate Cooldown Card -->
+<div id="nextMissionCard"
+style="
+display:none;
+margin:16px 0;
+padding:14px 18px;
+background:#f8fbff;
+border:1px solid #d8e9ff;
+border-radius:14px;
+font-size:15px;
+font-weight:600;
+color:#0d6efd;
+text-align:center;
+">
+
+<span>⏳ Next mission in </span>
+
+<span id="dailyCooldownTimer">
+00h 00m 00s
+</span>
+
+</div>
+
+</div>
   <!-- FEED -->
   <div id="feedLoading" style="text-align:center; padding:20px; font-weight:600; color:#555;">
   Loading feed...
@@ -1415,6 +1612,69 @@ margin-top:2px;
 </div>
     </div>
   </div>
+  <div id="missionCongratsPopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.55);
+z-index:99999;
+justify-content:center;
+align-items:center;
+">
+
+<div style="
+background:#fff;
+width:90%;
+max-width:360px;
+border-radius:22px;
+padding:30px 22px;
+text-align:center;
+animation:popupScale .25s ease;
+">
+
+<div style="font-size:65px;">🎉</div>
+
+<h2 style="
+margin-top:12px;
+margin-bottom:10px;
+font-size:25px;
+font-weight:700;
+color:#111;
+">
+Congratulations!
+</h2>
+
+<p style="
+color:#666;
+font-size:15px;
+line-height:1.7;
+margin-bottom:25px;
+">
+You earned <b>+5 Learning Tokens</b>.<br>
+Keep learning every day to build your streak!
+</p>
+
+<button id="missionCongratsOkBtn" style="
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#111;
+color:#fff;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+">
+OK
+</button>
+
+</div>
+
+</div>
+
 
 <script type="module">
   // ========== Firebase imports ==========
@@ -2417,6 +2677,7 @@ tokenBadge.addEventListener("click", () => {
 const meSnap = await getDoc(meRef);
 
 
+
 if (!meSnap.exists()) {
   console.error("❌ User exists in Auth but not in Firestore:", user.uid);
 
@@ -2439,6 +2700,170 @@ if (!meSnap.exists()) {
 }
 
 const meData = meSnap.data();
+const dailyMissionCard = document.getElementById("dailyMissionCard");
+const dailyMissionText = document.getElementById("dailyMissionText");
+const dailyMissionDay = document.getElementById("dailyMissionDay");
+const dailyMissionTimer = document.getElementById("dailyMissionTimer");
+const dailyCooldownTimer = document.getElementById("dailyCooldownTimer");
+const dailyMissionBtn = document.getElementById("dailyMissionBtn");
+const dailyMissionDoneBtn = document.getElementById("dailyMissionDoneBtn");
+// ===== RESTORE DAILY MISSION STATE =====
+
+// ===== RESTORE DAILY MISSION STATE =====
+
+// ===== RESTORE DAILY MISSION STATE =====
+
+const now = Date.now();
+
+if (
+    dailyMissionBtn &&
+    dailyMissionDoneBtn &&
+    dailyMissionTimer &&
+    dailyCooldownTimer
+) {
+
+    if (
+        meData.dailyMissionStarted &&
+        meData.dailyMissionEnd &&
+        meData.dailyMissionEnd > now
+    ) {
+
+        dailyMissionBtn.style.display = "none";
+dailyMissionBtn.style.display = "none";
+dailyMissionDoneBtn.style.display = "block";
+dailyMissionTimer.style.display = "block";
+
+startMissionCountdown(meData.dailyMissionEnd);
+        dailyMissionTimer.style.display = "block";
+
+if (typeof startMissionCountdown === "function") {
+    startMissionCountdown(meData.dailyMissionEnd);
+}
+    } else if (
+        meData.taskLockedUntil &&
+        meData.taskLockedUntil > now
+    ) {
+
+        dailyMissionBtn.style.display = "none";
+        dailyMissionDoneBtn.style.display = "none";
+        dailyMissionTimer.style.display = "none";
+        dailyCooldownTimer.style.display = "block";
+
+if (typeof start24HourCountdown === "function") {
+    start24HourCountdown(meData.taskLockedUntil);
+
+
+}
+    }
+
+}
+let missionDay = meData.dailyMissionDay || 1;
+
+// If user is locked AND 24h passed → move to next day
+if (meData.taskLockedUntil && now >= meData.taskLockedUntil) {
+
+  missionDay = missionDay + 1;
+
+  if (missionDay > 7) missionDay = 1;
+
+  await updateDoc(userRef, {
+    dailyMissionDay: missionDay,
+    taskLockedUntil: null,
+    dailyMissionStarted: false,
+    dailyMissionEnd: null
+  });
+}
+
+// ===== DAILY MISSION =====
+
+// ===== COMPLETE DAILY MISSION =====
+dailyMissionDoneBtn.addEventListener("click", async () => {
+
+  try {
+
+    await updateDoc(userRef, {
+      tokens: increment(5)
+    });
+
+    document.getElementById("missionRewardPopup").style.display = "flex";
+
+document.getElementById("missionRewardOkBtn").onclick = async () => {
+
+document.getElementById("missionRewardPopup").style.display = "none";
+
+const nextMissionTime = Date.now() + (11*60*60*1000 ); // change to 24*60*60*1000 later
+
+await updateDoc(userRef,{
+taskLockedUntil:nextMissionTime,
+dailyMissionStarted:false,
+dailyMissionEnd:null
+});
+
+dailyMissionCard.style.display = "none";
+
+document.getElementById("nextMissionCard").style.display = "block";
+
+start24HourCountdown(nextMissionTime);
+
+
+};
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Failed to complete mission.");
+
+  }
+
+});
+
+const DAILY_MISSIONS = [
+  "Welcome aboard! Your task today is to complete today's lesson. Take your time and carefully finish the practical exercise. When you're done, post your design on your Microswab Story, share it in the Microswab Graphic Design Community, and leave a comment on today's lesson.",
+  "Don't miss today's lesson! After completing it, share one thing you learned by posting it in the Microswab Graphic Design Community or the Microswab WhatsApp group.",
+  "Create one beautiful design today and post it on your Microswab Story. Let other learners rate your work and give you helpful feedback.",
+  "Visit the Microswab Graphic Design Community and reply to three learners' posts. Share useful graphic design tips and see how they respond to your advice.",
+  "Invite 1–3 friends who are interested in learning graphic design. Tell them about Microswab and the benefits they'll get by joining.",
+  "Open PixelLab and design a creative flyer about yourself. Share it on your Microswab Story and in the Graphic Design Community.",
+  "Don't miss today's tutorial! Complete the lesson, keep practicing, and continue building your graphic design skills."
+];
+
+// Always show the card
+dailyMissionCard.style.display = "none";
+
+setTimeout(() => {
+
+  // Don't show if user is currently in the cooldown period
+  if (!meData.taskLockedUntil || meData.taskLockedUntil <= Date.now()) {
+
+    dailyMissionCard.style.display = "block";
+
+  }
+
+}, 2000);
+
+// Update UI
+dailyMissionDay.textContent = `Day ${missionDay} of 7`;
+dailyMissionText.textContent = DAILY_MISSIONS[missionDay - 1];
+// ===== START DAILY MISSION =====
+dailyMissionBtn.addEventListener("click", async () => {
+
+  const endTime = Date.now() + (30 * 60 * 1000);
+
+  await updateDoc(doc(db, "users", user.uid), {
+    dailyMissionStarted: true,
+    dailyMissionEnd: endTime
+  });
+
+  dailyMissionBtn.style.display = "none";
+  dailyMissionDoneBtn.style.display = "block";
+  dailyMissionTimer.style.display = "block";
+
+  startMissionCountdown(endTime);
+
+});
+
+
 // 🎁 Give new users 30 tokens automatically
 
 if (!meData.autoTokensGiven) {
@@ -2453,54 +2878,8 @@ if (!meData.autoTokensGiven) {
 
 }
 
-const challengeCard =
-document.getElementById("taskChallengeCard");
 
-if(challengeCard){
 
-  if(meData.challengeJoined === true){
-
-    challengeCard.remove();
-
-  } else {
-
-    challengeCard.style.display = "block";
-
-  }
-
-}
-const joinChallengeBtn =
-document.getElementById("joinChallengeBtn");
-
-if(joinChallengeBtn){
-
-  joinChallengeBtn.addEventListener(
-    "click",
-    async () => {
-
-      try{
-
-        await updateDoc(
-          doc(db,"users",user.uid),
-          {
-            challengeJoined: true
-          }
-        );
-
-        document.getElementById(
-          "taskChallengeCard"
-        ).style.display = "none";
-
-        location.href = "tasks.html";
-
-      }catch(error){
-        console.error(error);
-      }
-
-    }
-  );
-
-}
 const photoURL = meData.photoURL || "default-avatar.jpg";
 storyProfilePic.src = photoURL;
 // ===== HIDE WELCOME IF ALREADY CLAIMED =====
@@ -2711,7 +3090,7 @@ storiesData = snapshot.docs.map(d => {
 })
 .filter(story =>
   (now - story.createdAt)
-  < 24*60*60*1000
+< 24*60*60*1000
 );
       // render bar items (skip the add-story first element)
       storiesData.forEach((s, idx) => {
@@ -3215,11 +3594,9 @@ topSignupBtn.addEventListener("click", () => {
   window.location.href = "home.html";
 });
 
-// 10s signup prompt for new users
+// Show signup prompt immediately
 if (!isLoggedIn()) {
-  setTimeout(() => {
-    signupPrompt.style.display = "flex";
-  }, 10000);
+  signupPrompt.style.display = "flex";
 }
 
 // Prompt signup button click
@@ -3500,101 +3877,180 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+function start24HourCountdown(endTime) {
 
-function startHomeCountdown(lockUntil){
+  const timer = document.getElementById("dailyCooldownTimer");
 
-const box =
-document.getElementById(
-"challengeCountdown"
-);
+  clearInterval(window.dailyMissionInterval);
 
-const timer =
-document.getElementById(
-"homeCountdown"
-);
+  function update() {
 
-box.style.display = "block";
+    const remaining = endTime - Date.now();
 
-function update(){
+    if (remaining <= 0) {
 
-const diff =
-lockUntil - Date.now();
+      clearInterval(window.dailyMissionInterval);
 
-if(diff <= 0){
+      timer.textContent = "🎯 Your next mission is ready!";
 
-box.style.display = "block";
+      setTimeout(() => {
+        const user = window.auth?.currentUser;
+        if (!user) return;
 
-box.innerHTML = `
-<div style="
-display:flex;
-justify-content:space-between;
+        const db = window.db;
+
+        const missionDay = Number(localStorage.getItem("dailyMissionDay") || 0) + 1;
+
+        updateDoc(doc(db, "users", user.uid), {
+  dailyMissionDay: (missionDay % 7) + 1,
+  taskLockedUntil: null,
+  dailyMissionStarted: false,
+  dailyMissionEnd: null
+});
+
+location.reload();
+      }, 500);
+
+      return;
+    }
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    timer.textContent =
+      ` ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  update();
+
+  window.dailyMissionInterval = setInterval(update, 1000);
+}
+function startMissionCountdown(endTime) {
+
+  const timer = document.getElementById("dailyMissionTimer");
+
+  clearInterval(window.dailyMissionTimerInterval);
+
+  function update() {
+
+    const remaining = endTime - Date.now();
+
+    if (remaining <= 0) {
+
+      clearInterval(window.dailyMissionTimerInterval);
+
+      timer.textContent = "✅ Mission time finished";
+
+      document.getElementById("dailyMissionDoneBtn").style.display = "block";
+
+      return;
+    }
+
+    const minutes = Math.floor(remaining / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    timer.textContent =
+      `⏳ complete Mission in: ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+  }
+
+  update();
+
+  window.dailyMissionTimerInterval = setInterval(update, 1000);
+
+}
+const groupHint = document.getElementById("groupHint");
+
+if(!localStorage.getItem("groupHintSeen")){
+
+groupHint.style.display="block";
+
+setTimeout(()=>{
+
+groupHint.style.opacity="0";
+
+setTimeout(()=>{
+
+groupHint.remove();
+
+},400);
+
+},8000);
+
+localStorage.setItem("groupHintSeen","true");
+
+}else{
+
+groupHint.remove();
+
+}
+</script>
+<div id="missionRewardPopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+z-index:99999;
+justify-content:center;
 align-items:center;
-gap:8px;
 ">
 
 <div style="
-font-size:12px;
-font-weight:600;
-color:#16a34a;
+background:#fff;
+width:90%;
+max-width:350px;
+border-radius:20px;
+padding:25px;
+text-align:center;
+box-shadow:0 15px 40px rgba(0,0,0,.25);
+animation:pop .25s ease;
 ">
-🔥 Your next Microswab task is ready!
-</div>
 
-<button
-onclick="location.href='tasks.html'"
+<div style="font-size:60px;">🎉</div>
+
+<h2 style="margin:10px 0;">
+Mission Completed!
+</h2>
+
+<p style="color:#666;">
+You earned <b>+5 Learning Tokens</b>.<br>
+Keep learning every day.
+</p>
+
+<button id="missionRewardOkBtn"
 style="
-padding:5px 10px;
-font-size:11px;
+margin-top:20px;
+width:100%;
+padding:14px;
+background:#0d6efd;
+color:#fff;
 border:none;
-border-radius:8px;
-background:#6a0dad;
-color:white;
-font-weight:600;
+border-radius:12px;
+font-size:16px;
+font-weight:bold;
 cursor:pointer;
 ">
-Open
+Okay
 </button>
 
 </div>
-`;
 
-clearInterval(window.homeCountdownInterval);
+</div>
 
-localStorage.setItem(
-  "microswab_task_ready",
-  "true"
-);
-
-return;
+<style>
+@keyframes pop{
+from{
+transform:scale(.8);
+opacity:0;
 }
-
-
-const h =
-Math.floor(diff / 3600000);
-
-const m =
-Math.floor((diff % 3600000)/60000);
-
-const s =
-Math.floor((diff % 60000)/1000);
-
-timer.textContent =
-String(h).padStart(2,"0") +
-":" +
-String(m).padStart(2,"0") +
-":" +
-String(s).padStart(2,"0");
-box.style.padding = "14px";
-
-
+to{
+transform:scale(1);
+opacity:1;
 }
-
-
-update();
-
-setInterval(update,1000);
-
 }
-
-</script>
+</style>
 </html>

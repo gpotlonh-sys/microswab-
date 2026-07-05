@@ -1495,7 +1495,9 @@ border-bottom:6px solid #111;
 <div id="nextMissionCard"
 style="
 display:none;
-margin:16px 0;
+justify-content:center;
+align-items:center;
+gap:6px;
 padding:14px 18px;
 background:#f8fbff;
 border:1px solid #d8e9ff;
@@ -1503,15 +1505,13 @@ border-radius:14px;
 font-size:15px;
 font-weight:600;
 color:#0d6efd;
-text-align:center;
 ">
 
-<span>⏳ Next mission in </span>
+<span>⏳ Next mission in</span>
 
-<span id="dailyCooldownTimer">
-00h 00m 00s
-</span>
+<span id="dailyCooldownTimer">00h 00m 00s</span>
 
+</div>
 </div>
 
 </div>
@@ -2747,12 +2747,12 @@ if (typeof startMissionCountdown === "function") {
         dailyMissionBtn.style.display = "none";
         dailyMissionDoneBtn.style.display = "none";
         dailyMissionTimer.style.display = "none";
-        dailyCooldownTimer.style.display = "block";
+        document.getElementById("nextMissionCard").style.display = "flex";
+
+dailyCooldownTimer.style.display = "block";
 
 if (typeof start24HourCountdown === "function") {
     start24HourCountdown(meData.taskLockedUntil);
-
-
 }
     }
 
@@ -2848,7 +2848,7 @@ dailyMissionText.textContent = DAILY_MISSIONS[missionDay - 1];
 // ===== START DAILY MISSION =====
 dailyMissionBtn.addEventListener("click", async () => {
 
-  const endTime = Date.now() + (30 * 60 * 1000);
+  const endTime = Date.now() + (20 * 60 * 1000);
 
   await updateDoc(doc(db, "users", user.uid), {
     dailyMissionStarted: true,
@@ -3883,7 +3883,7 @@ function start24HourCountdown(endTime) {
 
   clearInterval(window.dailyMissionInterval);
 
-  function update() {
+  async function update() {
 
     const remaining = endTime - Date.now();
 
@@ -3893,23 +3893,39 @@ function start24HourCountdown(endTime) {
 
       timer.textContent = "🎯 Your next mission is ready!";
 
-      setTimeout(() => {
-        const user = window.auth?.currentUser;
-        if (!user) return;
+      const user = auth.currentUser;
+      if (!user) return;
 
-        const db = window.db;
+      try {
 
-        const missionDay = Number(localStorage.getItem("dailyMissionDay") || 0) + 1;
+        const userRef = doc(db, "users", user.uid);
 
-        updateDoc(doc(db, "users", user.uid), {
-  dailyMissionDay: (missionDay % 7) + 1,
-  taskLockedUntil: null,
-  dailyMissionStarted: false,
-  dailyMissionEnd: null
-});
+        const userSnap = await getDoc(userRef);
 
-location.reload();
-      }, 500);
+        if (!userSnap.exists()) return;
+
+        let missionDay = userSnap.data().dailyMissionDay || 1;
+
+        missionDay++;
+
+        if (missionDay > 7) {
+          missionDay = 1;
+        }
+
+        await updateDoc(userRef, {
+          dailyMissionDay: missionDay,
+          taskLockedUntil: null,
+          dailyMissionStarted: false,
+          dailyMissionEnd: null
+        });
+
+        setTimeout(() => {
+          location.reload();
+        }, 500);
+
+      } catch (err) {
+        console.error("Failed to unlock next mission:", err);
+      }
 
       return;
     }
@@ -3918,46 +3934,13 @@ location.reload();
     const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
 
-    timer.textContent =
-      ` ${hours}h ${minutes}m ${seconds}s`;
+    timer.textContent = `${hours}h ${minutes}m ${seconds}s`;
+
   }
 
   update();
 
   window.dailyMissionInterval = setInterval(update, 1000);
-}
-function startMissionCountdown(endTime) {
-
-  const timer = document.getElementById("dailyMissionTimer");
-
-  clearInterval(window.dailyMissionTimerInterval);
-
-  function update() {
-
-    const remaining = endTime - Date.now();
-
-    if (remaining <= 0) {
-
-      clearInterval(window.dailyMissionTimerInterval);
-
-      timer.textContent = "✅ Mission time finished";
-
-      document.getElementById("dailyMissionDoneBtn").style.display = "block";
-
-      return;
-    }
-
-    const minutes = Math.floor(remaining / (1000 * 60));
-    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-
-    timer.textContent =
-      `⏳ complete Mission in: ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-  }
-
-  update();
-
-  window.dailyMissionTimerInterval = setInterval(update, 1000);
 
 }
 const groupHint = document.getElementById("groupHint");

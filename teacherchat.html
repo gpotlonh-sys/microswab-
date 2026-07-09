@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -594,6 +593,7 @@ background:#f1f5f9;
 
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -639,6 +639,19 @@ const rewardOverlay = document.getElementById("rewardOverlay");
 const rewardOkBtn = document.getElementById("rewardOkBtn");
 const teacherPic = document.getElementById("teacherPic");
 const teacherName = document.getElementById("teacherName");
+const achievementOverlay =
+document.getElementById("achievementOverlay");
+
+const closeAchievementBtn =
+document.getElementById("closeAchievementBtn");
+
+closeAchievementBtn.onclick = () => {
+
+    achievementOverlay.style.display = "none";
+
+    window.location.href = "index.html";
+
+};
 
 let sessions = [];
 let currentSessionIndex = 0;
@@ -1133,6 +1146,9 @@ rewardOkBtn.onclick = async ()=>{
 
   // 3️⃣ Disable OK button to prevent double click
   rewardOkBtn.disabled = true;
+  //show achievement overlay
+      achievementOverlay.style.display = "flex";
+
 
   try {
 
@@ -1153,6 +1169,15 @@ rewardOkBtn.onclick = async ()=>{
       (userSnap.data().learningProgress || 0) + 5,
       100
     );
+    const achievementPhoto = document.getElementById("achievementPhoto");
+const achievementName = document.getElementById("achievementName");
+
+achievementPhoto.src =
+  userSnap.data().photoURL || "default-avatar.jpg";
+
+achievementName.textContent =
+  `${userSnap.data().firstName || ""} ${userSnap.data().secondName || ""}`.trim();
+
 
     await updateDoc(userRef,{learningProgress:newProgress});
 
@@ -1172,9 +1197,7 @@ rewardOkBtn.onclick = async ()=>{
     }
 
     // 8️⃣ Show message immediately
-    alert(`✅ You received ${REWARD} tokens!
-Your learning progress is now ${newProgress}%.
-Teacher's progress updated.`);
+    // Fill achievement card
 
   } catch(err){
     console.error("Reward error:", err);
@@ -1220,6 +1243,51 @@ if (imageViewer) {
     imageViewer.style.display = "none";
   });
 }
+shareAchievementBtn.onclick = async () => {
+
+  const card = document.getElementById("achievementCard");
+
+  try {
+
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
+
+    const dataUrl = canvas.toDataURL("image/png");
+
+    const response = await fetch(dataUrl);
+    const blob = await response.blob();
+
+    const file = new File(
+      [blob],
+      "Microswab-Achievement.png",
+      { type: "image/png" }
+    );
+
+    if (navigator.share && navigator.canShare({ files: [file] })) {
+
+      await navigator.share({
+        title: "Microswab Achievement",
+        text: "I just completed today's lesson on Microswab!",
+        files: [file]
+      });
+
+    } else {
+
+      alert("Your browser doesn't support sharing images.");
+
+    }
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Failed to generate achievement image.");
+
+  }
+
+};
 // ============================
 // PREVIEW MODE FOR INVITED USERS
 // ============================
@@ -1384,5 +1452,229 @@ const progress =
 progressBar.style.width = progress + "%";
 
 });
+
 </script>
+<!-- ========================= -->
+<!-- ACHIEVEMENT OVERLAY -->
+<!-- ========================= -->
+
+<div id="achievementOverlay" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#f5f7fb;
+z-index:999999;
+overflow:auto;
+padding:25px 20px;
+box-sizing:border-box;
+">
+
+<div style="
+max-width:430px;
+margin:0 auto;
+text-align:center;
+">
+
+<h2 style="
+font-size:28px;
+margin-bottom:12px;
+color:#111;
+">
+🎉 Great Job!
+</h2>
+
+<p style="
+font-size:15px;
+line-height:1.7;
+color:#555;
+margin-bottom:25px;
+">
+You're improving your graphic design skills one lesson at a time.<br><br>
+
+Don't keep your progress to yourself.
+
+Share today's achievement on your WhatsApp Status and inspire someone else to start learning too.
+</p>
+
+<!-- Achievement Card -->
+
+<div id="achievementCard" style="
+background:white;
+border-radius:22px;
+padding:25px;
+box-shadow:0 12px 35px rgba(0,0,0,.08);
+text-align:center;
+">
+
+<img
+src="logo.png"
+id="achievementLogo"
+style="
+width:60px;
+height:60px;
+border-radius:15px;
+margin-bottom:12px;
+">
+
+<h3 style="
+margin:0;
+font-size:20px;
+">
+30-Day Graphic Design Challenge
+</h3>
+
+<img
+id="achievementPhoto"
+src=""
+style="
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+margin:20px auto 10px;
+display:block;
+border:4px solid #22c55e;
+">
+
+<h2
+id="achievementName"
+style="
+margin:0;
+font-size:22px;
+">
+Learner
+</h2>
+
+<p style="
+margin-top:8px;
+font-weight:600;
+color:#16a34a;
+">
+Lesson Completed Successfully
+</p>
+
+<div style="
+margin-top:22px;
+background:#ececec;
+height:12px;
+border-radius:20px;
+overflow:hidden;
+">
+
+<div style="
+width:100%;
+height:100%;
+background:#22c55e;
+">
+</div>
+
+</div>
+
+<div style="
+margin-top:8px;
+font-weight:bold;
+">
+100% Completed
+</div>
+
+<div style="
+margin-top:22px;
+display:flex;
+justify-content:space-between;
+">
+
+<div>
+
+<div style="
+font-size:13px;
+color:#777;
+">
+Current Streak
+</div>
+
+<div style="
+font-weight:bold;
+font-size:18px;
+">
+1 Day
+</div>
+
+</div>
+
+<div>
+
+<div style="
+font-size:13px;
+color:#777;
+">
+Reward
+</div>
+
+<div style="
+font-weight:bold;
+font-size:18px;
+color:#16a34a;
+">
++10 Tokens
+</div>
+
+</div>
+
+</div>
+
+<p style="
+margin-top:25px;
+font-weight:600;
+color:#444;
+">
+Keep Learning. Keep Growing.
+</p>
+
+<div style="
+margin-top:18px;
+font-size:13px;
+color:#888;
+">
+microswabb.netlify.app
+</div>
+
+</div>
+
+<button
+id="shareAchievementBtn"
+style="
+margin-top:25px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:15px;
+background:#25D366;
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+">
+📲 Share Today's Achievement
+</button>
+
+<button
+id="closeAchievementBtn"
+style="
+margin-top:14px;
+background:none;
+border:none;
+font-size:15px;
+color:#666;
+cursor:pointer;
+">
+Maybe Later
+</button>
+
+</div>
+
+</div>
+
 </html>
